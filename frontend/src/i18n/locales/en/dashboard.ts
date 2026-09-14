@@ -224,6 +224,8 @@ export default {
       opencode: {
         title: 'OpenCode Example',
         subtitle: 'opencode.json',
+        description: 'Merge the configuration below into your OpenCode config file, save it, and restart OpenCode.',
+        openaiReasoningHint: 'This example defaults to Medium reasoning effort; you can switch variants in OpenCode. If you used an older example, update the full configuration for the affected models while keeping your other settings. Project or agent settings may override the defaults. Save, restart, and send a new request to verify. A dash in usage records does not necessarily mean no reasoning.',
         hint: 'Config path: ~/.config/opencode/opencode.json (or opencode.jsonc), create if not exists. Use default providers (openai/anthropic/google) or custom provider_id. API Key can be configured directly or via /connect command. This is an example, adjust models and options as needed.',
       },
     },

@@ -600,7 +600,7 @@ describe('UseKeyModal', () => {
     expect(codeBlock.text()).not.toContain('"name": "GPT-5.4 Nano"')
   })
 
-  it('renders GPT-5.6 and GPT-6 Astra capabilities in OpenCode config', async () => {
+  it('copies explicit default and variant reasoning settings for every OpenAI model', async () => {
     const wrapper = mount(UseKeyModal, {
       props: {
         show: true,
@@ -638,15 +638,64 @@ describe('UseKeyModal', () => {
     expect(models['gpt-6']).toEqual({
       name: 'GPT-6 (Astra)',
       limit: { context: 1050000, output: 128000 },
-      options: { store: false },
-      variants: { low: {}, medium: {}, high: {}, xhigh: {}, max: {} }
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
     })
     expect(models['gpt-6-astra']).toEqual({
       name: 'GPT-6 Astra',
       limit: { context: 1050000, output: 128000 },
-      options: { store: false },
-      variants: { low: {}, medium: {}, high: {}, xhigh: {}, max: {} }
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
     })
+    // Validate the actual copied artifact, including models absent from a client's catalog.
+    const copyButton = wrapper.findAll('button').find((button) =>
+      button.text() === 'keys.useKeyModal.copy'
+    )
+    expect(copyButton).toBeDefined()
+    await copyButton!.trigger('click')
+    expect(JSON.parse(copyToClipboardMock.mock.lastCall![0])).toEqual(parsed)
+    expect(parsed.provider.openai.options).toEqual({
+      baseURL: 'https://example.com/v1', apiKey: 'sk-test'
+    })
+    expect(parsed.agent).toEqual({
+      build: { options: { store: false } }, plan: { options: { store: false } }
+    })
+    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
+    const xhighModels = ['gpt-5.2', 'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark']
+    expect(Object.keys(models).sort()).toEqual([...maxModels, ...xhighModels, 'codex-mini-latest'].sort())
+    for (const id of Object.keys(models)) {
+      const model = models[id]
+      expect(model.reasoning, id).toBe(true)
+      expect(model.options, id).toEqual({
+        store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content']
+      })
+      const efforts = ['low', 'medium', 'high']
+      if (id !== 'codex-mini-latest') efforts.push('xhigh')
+      if (maxModels.includes(id)) efforts.push('max')
+      expect(Object.keys(model.variants), id).toEqual(efforts)
+      for (const effort of efforts) {
+        expect(model.variants[effort], `${id}/${effort}`).toEqual({ reasoningEffort: effort })
+      }
+    }
+    expect(wrapper.text()).toContain('keys.useKeyModal.opencode.description')
+    expect(wrapper.text()).toContain('keys.useKeyModal.opencode.openaiReasoningHint')
+    expect(wrapper.text()).not.toContain('keys.useKeyModal.openai.description')
+    await wrapper.setProps({ platform: 'gemini' })
+    expect(wrapper.text()).not.toContain('keys.useKeyModal.opencode.openaiReasoningHint')
   })
 
   it('renders Claude Fable 5 OpenCode config with adaptive thinking', async () => {
