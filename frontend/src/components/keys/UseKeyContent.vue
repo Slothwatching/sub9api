@@ -492,6 +492,9 @@ const currentTabs = computed(() => {
 })
 
 const platformDescription = computed(() => {
+  if (activeClientTab.value === 'opencode') {
+    return t('keys.useKeyModal.opencode.description')
+  }
   if (activeClientTab.value === 'codex' &&
     props.platform !== 'openai' &&
     props.platform !== 'grok' &&
@@ -1309,15 +1312,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-6-astra': {
@@ -1326,15 +1332,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.2': {
@@ -1343,14 +1352,17 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 400000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }
       }
     },
     'gpt-5.6': {
@@ -1359,15 +1371,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.6-sol': {
@@ -1376,15 +1391,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.6-terra': {
@@ -1393,15 +1411,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.6-luna': {
@@ -1410,15 +1431,18 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.5': {
@@ -1427,14 +1451,17 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }
       }
     },
     'gpt-5.4': {
@@ -1443,14 +1470,17 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }
       }
     },
     'gpt-5.4-mini': {
@@ -1459,14 +1489,17 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 400000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }
       }
     },
     'gpt-5.3-codex-spark': {
@@ -1475,14 +1508,17 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 128000,
         output: 32000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }
       }
     },
     'codex-mini-latest': {
@@ -1491,13 +1527,16 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 200000,
         output: 100000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
       variants: {
-        low: {},
-        medium: {},
-        high: {}
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' }
       }
     }
   }
@@ -1881,7 +1920,9 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
   return {
     path: pathLabel ?? 'opencode.json',
     content,
-    hint: t('keys.useKeyModal.opencode.hint')
+    hint: platform === 'openai'
+      ? `${t('keys.useKeyModal.opencode.hint')} ${t('keys.useKeyModal.opencode.openaiReasoningHint')}`
+      : t('keys.useKeyModal.opencode.hint')
   }
 }
 

@@ -228,6 +228,8 @@ export default {
       opencode: {
         title: 'OpenCode 配置示例',
         subtitle: 'opencode.json',
+        description: '将以下配置合并到 OpenCode 配置文件中，保存后重启 OpenCode。',
+        openaiReasoningHint: '本示例默认使用 Medium 推理强度，可在 OpenCode 中切换档位。已使用旧示例的用户，请更新对应模型的完整配置，保留自己的其他设置。项目或 Agent 设置可能覆盖默认值；保存后重启并发起新请求验证。用量记录中的“-”不一定代表没有推理。',
         hint: '配置文件路径：~/.config/opencode/opencode.json（或 opencode.jsonc），不存在需手动创建。可使用默认 provider（openai/anthropic/google）或自定义 provider_id。API Key 支持直接配置或通过客户端 /connect 命令配置。示例仅供参考，模型与选项可按需调整。'
       }
     },
