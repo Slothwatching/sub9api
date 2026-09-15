@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(git rev-parse --show-toplevel)
-baseline=efcc0490f93ed98d7d05b839ccd83fe96c757c4e
+baseline=2d5892593c94f9168ce7d60b932889c306bc8a87
 scratch=$(mktemp -d)
 container_id=''
 cleanup() {

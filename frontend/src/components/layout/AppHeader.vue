@@ -49,8 +49,8 @@
         <LocaleSwitcher />
         <ThemeToggle />
 
-        <!-- Subscription Progress (for users with active subscriptions) -->
-        <SubscriptionProgressMini v-if="user" />
+        <!-- Subscription Progress (for users with active subscriptions; not mounted at all when the feature is off) -->
+        <SubscriptionProgressMini v-if="user && subscriptionFeatureEnabled" />
 
         <!-- Balance Display -->
         <div
@@ -297,6 +297,8 @@ const displayName = computed(() => {
   if (!user.value) return ''
   return user.value.username || user.value.email?.split('@')[0] || ''
 })
+
+const subscriptionFeatureEnabled = computed(() => isFeatureFlagEnabled(FeatureFlags.subscription))
 
 function toggleMobileSidebar() {
   appStore.toggleMobileSidebar()
