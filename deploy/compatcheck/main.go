@@ -43,7 +43,7 @@ func run() error {
 		if _, err := db.ExecContext(ctx, `
 INSERT INTO users (email, password_hash) VALUES ('compat@example.invalid', 'not-a-credential');
 INSERT INTO user_platform_quotas (user_id, platform, daily_usage_usd, weekly_usage_usd, monthly_usage_usd, daily_window_start, weekly_window_start, monthly_window_start, deleted_at, daily_limit_usd)
-SELECT id, 'openai', 1.25, 2.5, 3.75, '2026-09-14T01:00:00Z', '2026-09-10T01:00:00Z', '2026-09-01T01:00:00Z', NULL, NULL FROM users WHERE email='compat@example.invalid'
+SELECT id, 'openai', 1.25, 2.5, 3.75, '2026-09-14T01:00:00Z'::timestamptz, '2026-09-10T01:00:00Z'::timestamptz, '2026-09-01T01:00:00Z'::timestamptz, NULL::timestamptz, NULL::numeric FROM users WHERE email='compat@example.invalid'
 UNION ALL SELECT id, 'gemini', 4, 5, 6, NULL, NULL, NULL, '2026-09-12T01:00:00Z', NULL FROM users WHERE email='compat@example.invalid'
 UNION ALL SELECT id, 'anthropic', 7, 8, 9, NULL, NULL, NULL, NULL, 20 FROM users WHERE email='compat@example.invalid';
 CREATE TABLE compat_expected_quota AS SELECT id, to_jsonb(q) AS row_data FROM user_platform_quotas q;
