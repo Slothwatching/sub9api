@@ -38,6 +38,18 @@ func run() error {
 	client := dbent.NewClient(dbent.Driver(entsql.OpenDB(dialect.Postgres, db)))
 	phase := os.Args[1]
 	if phase == "baseline" {
+		// Synthetic rows exercise exact preservation of nonzero usage, windows,
+		// soft-deleted history and an active configured limit across the purge.
+		if _, err := db.ExecContext(ctx, `
+INSERT INTO users (email, password_hash) VALUES ('compat@example.invalid', 'not-a-credential');
+INSERT INTO user_platform_quotas (user_id, platform, daily_usage_usd, weekly_usage_usd, monthly_usage_usd, daily_window_start, weekly_window_start, monthly_window_start, deleted_at, daily_limit_usd)
+SELECT id, 'openai', 1.25, 2.5, 3.75, '2026-09-14T01:00:00Z'::timestamptz, '2026-09-10T01:00:00Z'::timestamptz, '2026-09-01T01:00:00Z'::timestamptz, NULL::timestamptz, NULL::numeric FROM users WHERE email='compat@example.invalid'
+UNION ALL SELECT id, 'gemini', 4, 5, 6, NULL, NULL, NULL, '2026-09-12T01:00:00Z', NULL FROM users WHERE email='compat@example.invalid'
+UNION ALL SELECT id, 'anthropic', 7, 8, 9, NULL, NULL, NULL, NULL, 20 FROM users WHERE email='compat@example.invalid';
+CREATE TABLE compat_expected_quota AS SELECT id, to_jsonb(q) AS row_data FROM user_platform_quotas q;
+`); err != nil {
+			return err
+		}
 		for _, name := range []string{"selected", "empty"} {
 			config := domain.GroupModelsListConfig{Enabled: true}
 			if name == "selected" {
@@ -46,6 +58,19 @@ func run() error {
 			if _, err := client.Group.Create().SetName(name).SetPlatform("openai").SetModelsListConfig(config).Save(ctx); err != nil {
 				return err
 			}
+		}
+	}
+	if phase != "baseline" {
+		var preserved bool
+		if err := db.QueryRowContext(ctx, `SELECT
+  (SELECT count(*) FROM sub9api_quota_upgrade_archive a JOIN compat_expected_quota e ON a.original_id=e.id AND a.row_data=e.row_data) = 2
+  AND (SELECT count(*) FROM user_platform_quotas q JOIN compat_expected_quota e ON q.id=e.id AND to_jsonb(q)=e.row_data) = 1
+  AND NOT EXISTS (SELECT 1 FROM user_platform_quotas q JOIN compat_expected_quota e ON q.id=e.id WHERE q.daily_limit_usd IS NULL)
+`).Scan(&preserved); err != nil {
+			return err
+		}
+		if !preserved {
+			return fmt.Errorf("quota archive or configured limit changed")
 		}
 	}
 	if phase == "rollback" {
