@@ -845,7 +845,7 @@ describe('UseKeyModal', () => {
     )
   })
 
-  it.each(['anthropic', 'gemini', 'antigravity', 'kimi', 'zhipu', 'minimax'] as const)(
+  it.each(['anthropic', 'gemini', 'antigravity', 'kimi', 'zhipu', 'minimax', 'opencode_go'] as const)(
     'offers Codex catalog configuration for the %s routed group',
     async (platform) => {
       const wrapper = mount(UseKeyModal, {
