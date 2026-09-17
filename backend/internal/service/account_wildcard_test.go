@@ -676,3 +676,20 @@ func TestAccountGetModelMapping_CacheInvalidatesOnInPlaceValueChange(t *testing.
 		t.Fatalf("expected cache invalidated after in-place value change, got: %v", second)
 	}
 }
+
+// Compatible providers may accept custom names without account model mappings.
+func TestDeepseekCompatibilityPreservesUnmappedModels(t *testing.T) {
+	account := &Account{Platform: PlatformDeepseek, Type: AccountTypeAPIKey}
+	for _, model := range []string{"deepseek-chat", "custom-deepseek-model", "deepseek-flash[1m]"} {
+		if !account.IsModelSupported(model) {
+			t.Errorf("unmapped compatible model %q must remain available", model)
+		}
+		if got := normalizeOpenAIModelForUpstream(account, model); got != model {
+			t.Errorf("compatible model changed during forwarding: got %q, want %q", got, model)
+		}
+	}
+	account.Credentials = map[string]any{"model_mapping": map[string]any{"local-alias": "deepseek-flash"}}
+	if !account.IsModelSupported("local-alias") || account.IsModelSupported("unmapped-model") {
+		t.Fatal("explicit administrator mappings must still determine model support")
+	}
+}
