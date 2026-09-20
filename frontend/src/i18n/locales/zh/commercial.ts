@@ -8,15 +8,15 @@ export default {
       "enlarge": "放大图片：{title}",
       "otherMethods": "手动配置与其他接入方式",
       "otherMethodsHint": "需要查看配置文件或使用其他客户端？以下保留完整接入选项。",
-      "reference": "操作图为脱敏示例，按钮位置可能随版本变化。资料核对：2026-09-08。",
+      "reference": "操作图为脱敏示例，按钮位置可能随版本变化。资料核对：2026-09-20。",
       "manual": "CC Switch 官方说明",
       "download": {
         "short": "下载安装",
         "title": "下载安装 CC Switch",
         "body": "在使用 Codex 的同一台电脑上安装并打开 CC Switch。已经安装的用户可以直接进行下一步。",
-        "mac": "在官方发布页的 Assets 中下载 macOS .dmg 安装包，打开后将 CC Switch 拖入 Applications（应用程序），再从应用程序中启动。",
-        "windows": "在官方发布页的 Assets 中下载 Windows .msi 安装包，双击并按提示安装，然后打开 CC Switch。",
-        "linux": "在官方发布页的 Assets 中选择与你的发行版和处理器匹配的 .deb、.rpm 或 .AppImage 文件，按系统方式安装或运行。",
+        "mac": "在官方网站点击下载按钮，选择 macOS 安装包（.dmg），打开后将 CC Switch 拖入 Applications（应用程序），再从应用程序中启动。",
+        "windows": "在官方网站点击下载按钮，选择与处理器匹配的 Windows 安装包（.msi），按提示安装后打开 CC Switch。",
+        "linux": "在官方网站点击下载按钮，选择与你的发行版和处理器匹配的 AppImage、.deb 或 .rpm 文件，按系统方式安装或运行。",
         "action": "前往官方下载"
       },
       "create": {

@@ -90,7 +90,7 @@ type Step = typeof steps[number]
 const systems = ['mac', 'windows', 'linux'] as const
 const systemNames = { mac: 'macOS', windows: 'Windows', linux: 'Linux' }
 const os = ref<typeof systems[number]>(/Windows/i.test(navigator.userAgent) ? 'windows' : /Linux/i.test(navigator.userAgent) && !/Android/i.test(navigator.userAgent) ? 'linux' : 'mac')
-const downloadUrl = 'https://github.com/farion1231/cc-switch/releases/latest'
+const downloadUrl = 'https://ccswitch.io/'
 const manualUrl = computed(() => `https://github.com/farion1231/cc-switch/blob/main/${locale.value === 'zh' ? 'README_ZH.md' : 'README.md'}`)
 const baseUrl = computed(() => app.cachedPublicSettings?.api_base_url || window.location.origin)
 const pictures: Partial<Record<Step, { src: string; width: number; height: number }>> = {
