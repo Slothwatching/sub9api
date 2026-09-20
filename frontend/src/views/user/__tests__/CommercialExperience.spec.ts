@@ -19,7 +19,7 @@ describe('connection and onboarding behavior', () => {
    await flushPromises()
    const guide = w.get('#cc-switch-guide')
    expect(guide.findAll('ol > li')).toHaveLength(5)
-   expect(guide.get('a[href="https://github.com/farion1231/cc-switch/releases/latest"]').attributes('rel')).toBe('noopener noreferrer')
+   expect(guide.get('a[href="https://ccswitch.io/"]').attributes('rel')).toBe('noopener noreferrer')
    expect(guide.get('a[href="/keys"]').exists()).toBe(true)
    expect(guide.get('a[href="/usage"]').exists()).toBe(true)
    expect(guide.findAll('a').some(a => a.attributes('href')?.startsWith('ccswitch:'))).toBe(false)

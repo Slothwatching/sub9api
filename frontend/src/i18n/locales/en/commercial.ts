@@ -8,15 +8,15 @@ export default {
       "enlarge": "Enlarge image: {title}",
       "otherMethods": "Manual configuration and other clients",
       "otherMethodsHint": "Need configuration files or another client? All connection options are available below.",
-      "reference": "Screenshots use sanitized examples. Button positions may vary by version. References checked: 2026-09-08.",
+      "reference": "Screenshots use sanitized examples. Button positions may vary by version. References checked: 2026-09-20.",
       "manual": "Official CC Switch instructions",
       "download": {
         "short": "Install",
         "title": "Download and open CC Switch",
         "body": "Install and open CC Switch on the same computer where you use Codex. Already installed it? Continue to the next step.",
-        "mac": "Under Assets on the official release page, download the macOS .dmg installer. Open it, drag CC Switch into Applications, then launch it from Applications.",
-        "windows": "Under Assets on the official release page, download the Windows .msi installer. Double-click it, follow the installation prompts, and open CC Switch.",
-        "linux": "Under Assets on the official release page, choose the .deb, .rpm, or .AppImage file for your distribution and processor, then install or run it using your system's normal process.",
+        "mac": "On the official site, select the download button, then choose the macOS installer (.dmg). Open it, drag CC Switch into Applications, then launch it from Applications.",
+        "windows": "On the official site, select the download button, then choose the Windows installer (.msi) that matches your processor. Run it, follow the installation prompts, and open CC Switch.",
+        "linux": "On the official site, select the download button, then choose the AppImage, .deb, or .rpm build for your distribution and processor, and install or run it using your system's normal process.",
         "action": "Open official downloads"
       },
       "create": {
