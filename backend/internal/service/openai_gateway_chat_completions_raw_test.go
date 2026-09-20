@@ -1258,7 +1258,9 @@ func TestForwardAsRawChatCompletions_RestoresMappedResponseModel(t *testing.T) {
 					upstream := &httpUpstreamRecorder{resp: &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {contentType}}, Body: io.NopCloser(strings.NewReader(upstreamBody))}}
 					svc := &OpenAIGatewayService{cfg: rawChatCompletionsTestConfig(), httpUpstream: upstream}
 					account := rawChatCompletionsTestAccount()
-					expectedModel, expectedUpstream := returned, "public"
+					// 分叉本地：不论是否配置渠道映射，客户端都只看到自己请求的公开名，
+					// 见 openai_gateway_public_model.go。上游此处在无映射时保留上游自报名。
+					expectedModel, expectedUpstream := "public", "public"
 					if mapped {
 						account.Credentials["model_mapping"] = map[string]any{"public": "ZHIPU/GLM-5.3"}
 						expectedModel = "public"

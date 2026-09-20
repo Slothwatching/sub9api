@@ -336,7 +336,6 @@ func (s *OpenAIGatewayService) handleStreamingResponseWithReasoning(ctx context.
 		lastDownstreamWriteAt = time.Now()
 	}
 
-	needModelReplace := originalModel != mappedModel
 	streamOutputAccumulator := apicompat.NewBufferedResponseAccumulator()
 	streamDoneItems := newResponsesStreamOutputItems()
 	streamImageOutputs := make([]json.RawMessage, 0, 1)
@@ -663,9 +662,7 @@ func (s *OpenAIGatewayService) handleStreamingResponseWithReasoning(ctx context.
 				line = "data: " + data
 			}
 			// Replace model in response if needed.
-			if needModelReplace {
-				line = s.replaceModelInSSELine(line, mappedModel, originalModel)
-			}
+			line = s.rewriteClientModelInSSELine(line, mappedModel, originalModel)
 			startsClientOutput := forceFlushFailedEvent || openAIStreamDataStartsClientOutput(data, eventType)
 			startsVisibleOutput := openAIStreamDataStartsVisibleOutput(data, eventType)
 			startsTTFTOutput := openAIStreamDataStartsTTFT(data, eventType, forceFlushFailedEvent, ttftMode)
@@ -1627,9 +1624,7 @@ func (s *OpenAIGatewayService) handleNonStreamingResponse(ctx context.Context, r
 	logOpenAISuccessMissingUsage(ctx, c, account, resp, usage, "json", false)
 
 	// Replace model in response if needed
-	if originalModel != mappedModel {
-		body = s.replaceModelInResponseBody(body, mappedModel, originalModel)
-	}
+	body = s.rewriteClientModelInResponseBody(body, mappedModel, originalModel)
 	body, err = restoreGrokResponsesClientToolPayload(c, body)
 	if err != nil {
 		return nil, fmt.Errorf("restore Grok Responses client tool response: %w", err)
@@ -1725,9 +1720,7 @@ func (s *OpenAIGatewayService) handleSSEToJSON(resp *http.Response, c *gin.Conte
 		}
 		finalResponse = supplementCompactionItemFromSSE(c, finalResponse, bodyText)
 		body = finalResponse
-		if originalModel != mappedModel {
-			body = s.replaceModelInResponseBody(body, mappedModel, originalModel)
-		}
+		body = s.rewriteClientModelInResponseBody(body, mappedModel, originalModel)
 		// Correct tool calls in final response
 		body = s.correctToolCallsInResponseBody(body)
 		restoredBody, restoreErr := restoreGrokResponsesClientToolPayload(c, body)
@@ -1745,9 +1738,7 @@ func (s *OpenAIGatewayService) handleSSEToJSON(resp *http.Response, c *gin.Conte
 		restoredBody = restoreCodexToolNamesFromContext(c, restoredBody)
 		body = restoredBody
 	} else {
-		if originalModel != mappedModel {
-			bodyText = s.replaceModelInSSEBody(bodyText, mappedModel, originalModel)
-		}
+		bodyText = s.rewriteClientModelInSSEBody(bodyText, mappedModel, originalModel)
 		body = []byte(bodyText)
 	}
 

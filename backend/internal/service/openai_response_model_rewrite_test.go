@@ -47,10 +47,9 @@ func TestMappedResponseModelForwarding(t *testing.T) {
 						name += "/passthrough"
 					}
 					t.Run(name, func(t *testing.T) {
-						model := returned
-						if mapped != "public" {
-							model = "public"
-						}
+						// 分叉本地：不论是否配置渠道映射，客户端都只看到自己请求的公开名，
+						// 见 openai_gateway_public_model.go。上游此处在无映射时保留上游自报名。
+						model := "public"
 						payload := `{"model":"` + returned + `","choices":[{"delta":{"content":"keep alias","tool_calls":[{"function":{"arguments":"{\"model\":\"alias\"}"}}]}}],"usage":{"prompt_tokens":1,"completion_tokens":1}}`
 						want := strings.Replace(payload, `"model":"`+returned+`"`, `"model":"`+model+`"`, 1)
 						contentType := "application/json"
