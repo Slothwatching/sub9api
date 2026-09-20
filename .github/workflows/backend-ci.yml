@@ -104,6 +104,17 @@ jobs:
           args: --timeout=30m
           working-directory: backend
 
+  release-helpers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r .github/release-tools/requirements-release.txt
+      - run: python -m unittest discover -s .github/release-tools -p 'test_release_matrix.py'
+      - run: bash -n .github/release-tools/release-images.sh
+
   security:
     uses: ./.github/workflows/security-scan.yml
 
@@ -147,7 +158,7 @@ jobs:
 
   release-ready:
     if: always()
-    needs: [shell, test, frontend, golangci-lint, security, image]
+    needs: [shell, test, frontend, golangci-lint, release-helpers, security, image]
     runs-on: ubuntu-latest
     steps:
       - name: Require every verification job to succeed
