@@ -5,6 +5,7 @@ import router from './router'
 import i18n, { initI18n } from './i18n'
 import { useAppStore } from '@/stores/app'
 import { updateFavicon } from '@/utils/branding'
+import { hydrateInjectedConfig } from '@/utils/injectedConfig'
 import { isIOSDevice } from '@/utils/device'
 import { initializeTheme } from '@/utils/theme'
 import './style.css'
@@ -25,6 +26,9 @@ function initIOSViewportZoomFix() {
 }
 
 async function bootstrap() {
+  // Read the server-injected public settings before anything consumes them.
+  hydrateInjectedConfig()
+
   // Apply theme class globally before app mount to keep all routes consistent.
   initializeTheme()
   initIOSViewportZoomFix()

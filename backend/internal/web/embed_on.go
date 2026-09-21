@@ -24,6 +24,12 @@ import (
 const (
 	// NonceHTMLPlaceholder is the placeholder for nonce in HTML script tags
 	NonceHTMLPlaceholder = "__CSP_NONCE_VALUE__"
+
+	// AppConfigElementID is the id of the JSON data block carrying the injected
+	// public settings; the frontend reads it before mounting (see main.ts).
+	// It must not be "__APP_CONFIG__": DOM named access would then expose the
+	// <script> element itself as window.__APP_CONFIG__ and shadow the parsed settings.
+	AppConfigElementID = "app-config"
 )
 
 //go:embed all:dist
@@ -202,9 +208,13 @@ func (s *FrontendServer) serveIndexHTML(c *gin.Context) {
 }
 
 func (s *FrontendServer) injectSettings(settingsJSON []byte) []byte {
-	// Create the script tag to inject with nonce placeholder
-	// The placeholder will be replaced with actual nonce at request time
-	script := []byte(`<script nonce="` + NonceHTMLPlaceholder + `">window.__APP_CONFIG__=` + string(settingsJSON) + `;</script>`)
+	// The settings ride in a non-executable JSON data block instead of an inline
+	// script. index.html is served with an ETag, so browsers replay the cached body
+	// after a 304 while the CSP header carries a freshly generated nonce; an inline
+	// script would then be blocked ("Executing inline script violates ... CSP") and
+	// the SPA would fall back to the async settings API, flashing the default brand
+	// name on slow connections. A data block needs no nonce and stays cacheable.
+	script := []byte(`<script type="application/json" id="` + AppConfigElementID + `">` + string(escapeJSONForScriptBlock(settingsJSON)) + `</script>`)
 
 	// Inject before </head>
 	headClose := []byte("</head>")
@@ -215,6 +225,18 @@ func (s *FrontendServer) injectSettings(settingsJSON []byte) []byte {
 	result = injectSiteFavicon(result, settingsJSON)
 
 	return result
+}
+
+// escapeJSONForScriptBlock makes the payload safe to embed inside a <script> element.
+// encoding/json already escapes "<", ">" and "&" as \u003c/\u003e/\u0026, so this is a
+// defensive net for payloads produced by other encoders.
+func escapeJSONForScriptBlock(settingsJSON []byte) []byte {
+	if !bytes.ContainsAny(settingsJSON, "<>&") {
+		return settingsJSON
+	}
+	escaped := bytes.ReplaceAll(settingsJSON, []byte("<"), []byte(`\u003c`))
+	escaped = bytes.ReplaceAll(escaped, []byte(">"), []byte(`\u003e`))
+	return bytes.ReplaceAll(escaped, []byte("&"), []byte(`\u0026`))
 }
 
 // injectSiteFavicon replaces the static favicon with a configured, browser-safe image URL.

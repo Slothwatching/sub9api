@@ -13,6 +13,7 @@ import {
   type ReleaseInfo
 } from '@/api/admin/system'
 import { getPublicSettings as fetchPublicSettingsAPI } from '@/api/auth'
+import { hydrateInjectedConfig } from '@/utils/injectedConfig'
 
 export const useAppStore = defineStore('app', () => {
   // ==================== State ====================
@@ -315,9 +316,12 @@ export const useAppStore = defineStore('app', () => {
     }
 
     // Check for injected config from server (eliminates flash)
-    if (!publicSettingsLoaded.value && !force && window.__APP_CONFIG__) {
-      applySettings(window.__APP_CONFIG__)
-      return Promise.resolve(window.__APP_CONFIG__)
+    if (!publicSettingsLoaded.value && !force) {
+      const injected = hydrateInjectedConfig()
+      if (injected) {
+        applySettings(injected)
+        return Promise.resolve(injected)
+      }
     }
 
     // Return cached data if available and not forcing refresh
@@ -427,8 +431,9 @@ export const useAppStore = defineStore('app', () => {
    * @returns true if config was found and applied, false otherwise
    */
   function initFromInjectedConfig(): boolean {
-    if (window.__APP_CONFIG__) {
-      applySettings(window.__APP_CONFIG__)
+    const injected = hydrateInjectedConfig()
+    if (injected) {
+      applySettings(injected)
       return true
     }
     return false
