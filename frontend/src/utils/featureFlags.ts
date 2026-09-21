@@ -6,10 +6,11 @@
  *
  * `public settings` reach the frontend through two channels:
  *
- *   1. **SSR injection** — the backend embeds `window.__APP_CONFIG__` into the
- *      HTML. `main.ts` calls `appStore.initFromInjectedConfig()` synchronously
- *      before Vue mounts, so `cachedPublicSettings` is populated on first
- *      render.
+ *   1. **SSR injection** — the backend embeds the settings into the HTML as a
+ *      JSON data block, which `main.ts` hydrates onto `window.__APP_CONFIG__`
+ *      (see `utils/injectedConfig.ts`) before calling
+ *      `appStore.initFromInjectedConfig()` synchronously — so
+ *      `cachedPublicSettings` is populated on first render.
  *   2. **Async API** — `App.vue` awaits `appStore.fetchPublicSettings()` on
  *      mount as a fallback (used when injection is missing or stale).
  *
