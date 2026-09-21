@@ -217,7 +217,7 @@ func (m *mockSettingsProvider) GetPublicSettingsForInjection(ctx context.Context
 }
 
 func TestFrontendServer_InjectSettings(t *testing.T) {
-	t.Run("injects_settings_with_nonce_placeholder", func(t *testing.T) {
+	t.Run("injects_settings_as_json_data_block", func(t *testing.T) {
 		provider := &mockSettingsProvider{
 			settings: map[string]string{"key": "value"},
 		}
@@ -228,10 +228,39 @@ func TestFrontendServer_InjectSettings(t *testing.T) {
 		settingsJSON := []byte(`{"test":"data"}`)
 		result := server.injectSettings(settingsJSON)
 
-		// Should contain the script with nonce placeholder
-		assert.Contains(t, string(result), `<script nonce="__CSP_NONCE_VALUE__">`)
-		assert.Contains(t, string(result), `window.__APP_CONFIG__={"test":"data"};`)
+		assert.Contains(t, string(result), `<script type="application/json" id="app-config">{"test":"data"}</script>`)
 		assert.Contains(t, string(result), `</script></head>`)
+	})
+
+	t.Run("injected_block_carries_no_executable_script", func(t *testing.T) {
+		// An inline script would be blocked by CSP whenever the browser replays the
+		// ETag-cached HTML against a response carrying a freshly generated nonce.
+		provider := &mockSettingsProvider{
+			settings: map[string]string{"key": "value"},
+		}
+
+		server, err := NewFrontendServer(provider)
+		require.NoError(t, err)
+
+		result := server.injectSettings([]byte(`{"site_name":"Sloth Code"}`))
+
+		assert.NotContains(t, string(result), `window.__APP_CONFIG__=`)
+		assert.NotContains(t, string(result), `id="__APP_CONFIG__"`)
+		assert.NotContains(t, string(result), NonceHTMLPlaceholder)
+	})
+
+	t.Run("escapes_markup_inside_payload", func(t *testing.T) {
+		provider := &mockSettingsProvider{
+			settings: map[string]string{"key": "value"},
+		}
+
+		server, err := NewFrontendServer(provider)
+		require.NoError(t, err)
+
+		result := server.injectSettings([]byte(`{"site_name":"</script><script>alert(1)</script>"}`))
+
+		assert.NotContains(t, string(result), `</script><script>alert(1)`)
+		assert.Contains(t, string(result), `\u003c/script\u003e`)
 	})
 
 	t.Run("injects_before_head_close", func(t *testing.T) {
@@ -247,9 +276,9 @@ func TestFrontendServer_InjectSettings(t *testing.T) {
 
 		// Script should be injected before </head>
 		headCloseIndex := bytes.Index(result, []byte("</head>"))
-		scriptIndex := bytes.Index(result, []byte(`<script nonce="`))
+		scriptIndex := bytes.Index(result, []byte(`<script type="application/json"`))
 
-		assert.True(t, scriptIndex < headCloseIndex, "script should be before </head>")
+		assert.True(t, scriptIndex >= 0 && scriptIndex < headCloseIndex, "script should be before </head>")
 	})
 
 	t.Run("handles_complex_settings", func(t *testing.T) {
@@ -267,7 +296,7 @@ func TestFrontendServer_InjectSettings(t *testing.T) {
 		settingsJSON := []byte(`{"nested":{"array":[1,2,3]},"special":"<>&"}`)
 		result := server.injectSettings(settingsJSON)
 
-		assert.Contains(t, string(result), `window.__APP_CONFIG__={"nested":{"array":[1,2,3]},"special":"<>&"};`)
+		assert.Contains(t, string(result), `<script type="application/json" id="app-config">{"nested":{"array":[1,2,3]},"special":"\u003c\u003e\u0026"}</script>`)
 	})
 }
 
@@ -297,7 +326,9 @@ func TestFrontendServer_ServeIndexHTML(t *testing.T) {
 		body := w.Body.String()
 		// Nonce placeholder should be replaced
 		assert.NotContains(t, body, NonceHTMLPlaceholder)
-		assert.Contains(t, body, `nonce="`+testNonce+`"`)
+		// Settings ride in a data block, which needs no nonce to survive a cached replay.
+		assert.Contains(t, body, `<script type="application/json" id="app-config">`)
+		_ = testNonce
 	})
 
 	t.Run("caches_html_content", func(t *testing.T) {
@@ -327,8 +358,7 @@ func TestFrontendServer_ServeIndexHTML(t *testing.T) {
 		// Settings provider should not be called again
 		assert.Equal(t, 1, provider.called)
 
-		// But nonce should be different
-		assert.Contains(t, w2.Body.String(), `nonce="nonce2"`)
+		assert.Equal(t, w1.Body.String(), w2.Body.String())
 	})
 
 	t.Run("sets_etag_header", func(t *testing.T) {
@@ -650,11 +680,11 @@ func TestFrontendServer_Middleware(t *testing.T) {
 
 		// Request for existing static file
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/logo.png", nil)
+		req := httptest.NewRequest(http.MethodGet, "/logo.svg", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Header().Get("Content-Type"), "image/png")
+		assert.Contains(t, w.Header().Get("Content-Type"), "image/svg+xml")
 		assert.Empty(t, w.Header().Get("Cache-Control"))
 
 		entries, err := fs.ReadDir(server.distFS, "assets")
@@ -735,11 +765,11 @@ func TestServeEmbeddedFrontend(t *testing.T) {
 		router.Use(middleware)
 
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/logo.png", nil)
+		req := httptest.NewRequest(http.MethodGet, "/logo.svg", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Header().Get("Content-Type"), "image/png")
+		assert.Contains(t, w.Header().Get("Content-Type"), "image/svg+xml")
 	})
 
 	t.Run("serves_index_html_for_root", func(t *testing.T) {
