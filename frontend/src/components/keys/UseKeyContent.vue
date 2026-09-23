@@ -1395,16 +1395,20 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
+      // GPT-6 Sol/Luna also accept none (upstream #7509).
       variants: {
-        none: {},
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        none: { reasoningEffort: 'none' },
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.6-sol': {
@@ -1453,16 +1457,20 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         context: 1050000,
         output: 128000
       },
+      reasoning: true,
       options: {
-        store: false
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       },
+      // GPT-6 Sol/Luna also accept none (upstream #7509).
       variants: {
-        none: {},
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
+        none: { reasoningEffort: 'none' },
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
       }
     },
     'gpt-5.6-luna': {

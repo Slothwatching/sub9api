@@ -715,7 +715,7 @@ describe('UseKeyModal', () => {
     expect(parsed.agent).toEqual({
       build: { options: { store: false } }, plan: { options: { store: false } }
     })
-    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
+    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-6-sol', 'gpt-6-luna', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
     const xhighModels = ['gpt-5.2', 'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark']
     expect(Object.keys(models).sort()).toEqual([...maxModels, ...xhighModels, 'codex-mini-latest'].sort())
     for (const id of Object.keys(models)) {
@@ -724,7 +724,7 @@ describe('UseKeyModal', () => {
       expect(model.options, id).toEqual({
         store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content']
       })
-      const efforts = ['low', 'medium', 'high']
+      const efforts = ['gpt-6-sol', 'gpt-6-luna'].includes(id) ? ['none', 'low', 'medium', 'high'] : ['low', 'medium', 'high']
       if (id !== 'codex-mini-latest') efforts.push('xhigh')
       if (maxModels.includes(id)) efforts.push('max')
       expect(Object.keys(model.variants), id).toEqual(efforts)
