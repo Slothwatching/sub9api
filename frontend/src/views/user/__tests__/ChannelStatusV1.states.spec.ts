@@ -4,7 +4,7 @@ const mocks = vi.hoisted(() => ({ list: vi.fn(), error: vi.fn() }))
 vi.mock('vue-i18n', async (importOriginal) => ({ ...await importOriginal<typeof import('vue-i18n')>(), useI18n: () => ({ t: (key: string) => key }) }))
 vi.mock('@/stores/app', () => ({ useAppStore: () => ({ showError: mocks.error }) }))
 vi.mock('@/api/channelMonitor', () => ({ list: mocks.list, status: vi.fn() }))
-vi.mock('@/composables/useAutoRefresh', () => ({ useAutoRefresh: () => ({ countdown: { value: 60 }, setEnabled: vi.fn(), resetCountdown: vi.fn() }) }))
+vi.mock('@/composables/useAutoRefresh', () => ({ useAutoRefresh: () => ({ countdown: { value: 60 }, enabled: { value: true }, setEnabled: vi.fn(), resetCountdown: vi.fn() }) }))
 import View from '../ChannelStatusV1View.vue'
 const global = { stubs: { AppLayout: { template: '<main><slot /></main>' }, MonitorHero: { props: ['overallStatus'], template: '<button data-testid="status" @click="$emit(\'refresh\')">{{ overallStatus }}</button>' }, MonitorCardGrid: { props: ['items'], template: '<div data-testid="rows">{{ items.length }}</div>' }, MonitorDetailDialog: true } }
 beforeEach(() => vi.clearAllMocks())
