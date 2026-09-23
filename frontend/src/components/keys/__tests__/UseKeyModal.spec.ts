@@ -668,12 +668,14 @@ describe('UseKeyModal', () => {
 
     const parsed = JSON.parse(wrapper.find('pre code').text())
     const models = parsed.provider.openai.models
-    for (const model of ['gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']) {
+    for (const model of ['gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-6-sol', 'gpt-6-luna']) {
       expect(models[model]).toBeDefined()
       expect(models[model].variants).toHaveProperty('max')
       expect(models[model].variants).toHaveProperty('xhigh')
     }
     expect(models['gpt-5.6'].name).toBe('GPT-5.6 (Sol)')
+    expect(models['gpt-6-sol'].variants).toHaveProperty('none')
+    expect(models['gpt-6-luna'].limit).toEqual({ context: 1050000, output: 128000 })
     expect(models['gpt-6']).toEqual({
       name: 'GPT-6 (Astra)',
       limit: { context: 1050000, output: 128000 },
@@ -713,7 +715,7 @@ describe('UseKeyModal', () => {
     expect(parsed.agent).toEqual({
       build: { options: { store: false } }, plan: { options: { store: false } }
     })
-    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
+    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-6-sol', 'gpt-6-luna', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
     const xhighModels = ['gpt-5.2', 'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark']
     expect(Object.keys(models).sort()).toEqual([...maxModels, ...xhighModels, 'codex-mini-latest'].sort())
     for (const id of Object.keys(models)) {
@@ -722,7 +724,7 @@ describe('UseKeyModal', () => {
       expect(model.options, id).toEqual({
         store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content']
       })
-      const efforts = ['low', 'medium', 'high']
+      const efforts = ['gpt-6-sol', 'gpt-6-luna'].includes(id) ? ['none', 'low', 'medium', 'high'] : ['low', 'medium', 'high']
       if (id !== 'codex-mini-latest') efforts.push('xhigh')
       if (maxModels.includes(id)) efforts.push('max')
       expect(Object.keys(model.variants), id).toEqual(efforts)
@@ -735,6 +737,22 @@ describe('UseKeyModal', () => {
     expect(wrapper.text()).not.toContain('keys.useKeyModal.openai.description')
     await wrapper.setProps({ platform: 'gemini' })
     expect(wrapper.text()).not.toContain('keys.useKeyModal.opencode.openaiReasoningHint')
+  })
+
+  it('exports Opus 5.5 only on the Anthropic provider with adaptive defaults', async () => {
+    const wrapper = mount(UseKeyModal, {
+      props: { show: true, apiKey: 'sk-test', baseUrl: 'https://example.com/v1', platform: 'anthropic' },
+      global: { stubs: { BaseDialog: { template: '<div><slot /><slot name="footer" /></div>' }, Icon: { template: '<span />' } } }
+    })
+    const tab = wrapper.findAll('button').find(button => button.text().includes('keys.useKeyModal.cliTabs.opencode'))
+    expect(tab).toBeDefined()
+    await tab!.trigger('click')
+    await nextTick()
+    const model = JSON.parse(wrapper.find('pre code').text()).provider.anthropic.models['claude-opus-5-5']
+    expect(model.limit).toEqual({ context: 1000000, output: 128000 })
+    expect(model.options).toEqual({ thinking: { type: 'adaptive' }, effort: 'medium' })
+    expect(model.variants.xhigh.effort).toBe('xhigh')
+    expect(model.variants).not.toHaveProperty('none')
   })
 
   it('renders Claude Fable 5 OpenCode config with adaptive thinking', async () => {

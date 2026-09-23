@@ -1389,6 +1389,28 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         max: { reasoningEffort: 'max' }
       }
     },
+    'gpt-6-sol': {
+      name: 'GPT-6 Sol',
+      limit: {
+        context: 1050000,
+        output: 128000
+      },
+      reasoning: true,
+      options: {
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
+      },
+      // GPT-6 Sol/Luna also accept none (upstream #7509).
+      variants: {
+        none: { reasoningEffort: 'none' },
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
+    },
     'gpt-5.6-sol': {
       name: 'GPT-5.6 Sol',
       limit: {
@@ -1422,6 +1444,28 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         include: ['reasoning.encrypted_content']
       },
       variants: {
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
+    },
+    'gpt-6-luna': {
+      name: 'GPT-6 Luna',
+      limit: {
+        context: 1050000,
+        output: 128000
+      },
+      reasoning: true,
+      options: {
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
+      },
+      // GPT-6 Sol/Luna also accept none (upstream #7509).
+      variants: {
+        none: { reasoningEffort: 'none' },
         low: { reasoningEffort: 'low' },
         medium: { reasoningEffort: 'medium' },
         high: { reasoningEffort: 'high' },
@@ -1878,6 +1922,21 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     provider[platform].models = geminiModels
   } else if (platform === 'anthropic') {
     provider[platform].npm = '@ai-sdk/anthropic'
+    provider[platform].models = {
+      'claude-opus-5-5': {
+        name: 'Claude Opus 5.5',
+        limit: { context: 1000000, output: 128000 },
+        modalities: { input: ['text', 'image', 'pdf'], output: ['text'] },
+        options: { thinking: { type: 'adaptive' }, effort: 'medium' },
+        variants: {
+          low: { effort: 'low' },
+          medium: { effort: 'medium' },
+          high: { effort: 'high' },
+          xhigh: { effort: 'xhigh' },
+          max: { effort: 'max' }
+        }
+      }
+    }
   } else if (platform === 'antigravity-claude') {
     provider[platform].npm = '@ai-sdk/anthropic'
     provider[platform].name = 'Antigravity (Claude)'
