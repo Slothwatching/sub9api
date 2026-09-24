@@ -3,15 +3,23 @@ export default {
     "ccSwitch": {
       "recommended": "推荐接入方式",
       "title": "用 CC Switch 配置 Codex",
-      "intro": "已有 Codex 桌面应用？按下面 5 步完成配置：安装 CC Switch、创建密钥、导入、启用，再开始使用。",
+      "intro": "按下面 6 步完成配置：安装 ChatGPT 桌面版（含 Codex）、安装 CC Switch、创建密钥、导入、启用，再开始使用。已经完成的步骤可以直接跳过。",
       "os": "电脑系统",
       "enlarge": "放大图片：{title}",
       "otherMethods": "手动配置与其他接入方式",
       "otherMethodsHint": "需要查看配置文件或使用其他客户端？以下保留完整接入选项。",
       "reference": "操作图为脱敏示例，按钮位置可能随版本变化。资料核对：2026-09-20。",
       "manual": "CC Switch 官方说明",
+      "app": {
+        "short": "安装 ChatGPT",
+        "title": "下载安装 ChatGPT 桌面版（含 Codex）",
+        "body": "Codex 已集成在新版 ChatGPT 桌面应用中。还没有安装的用户先从官方渠道下载安装；已经安装的用户可以直接进行下一步。",
+        "mac": "点击下方按钮直接下载官方安装包（.dmg，约 650 MB），打开后将 ChatGPT 拖入 Applications（应用程序），再从应用程序中启动。",
+        "windows": "点击下方按钮打开 Microsoft Store 中由 OpenAI 发布的 ChatGPT 页面，点击「获取」完成安装。需要 Windows 10 2004 或更高版本。",
+        "action": "前往官方下载"
+      },
       "download": {
-        "short": "下载安装",
+        "short": "安装 CC Switch",
         "title": "下载安装 CC Switch",
         "body": "在使用 Codex 的同一台电脑上安装并打开 CC Switch。已经安装的用户可以直接进行下一步。",
         "mac": "在官方网站点击下载按钮，选择 macOS 安装包（.dmg），打开后将 CC Switch 拖入 Applications（应用程序），再从应用程序中启动。",

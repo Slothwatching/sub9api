@@ -3,15 +3,23 @@ export default {
     "ccSwitch": {
       "recommended": "Recommended setup",
       "title": "Connect Codex with CC Switch",
-      "intro": "Already have the Codex desktop app? Follow these five steps: install CC Switch, create a key, import it, enable the provider, and start using Codex.",
+      "intro": "Follow these six steps: install the ChatGPT desktop app (with Codex), install CC Switch, create a key, import it, enable the provider, and start using Codex. Skip any step you have already done.",
       "os": "Computer operating system",
       "enlarge": "Enlarge image: {title}",
       "otherMethods": "Manual configuration and other clients",
       "otherMethodsHint": "Need configuration files or another client? All connection options are available below.",
       "reference": "Screenshots use sanitized examples. Button positions may vary by version. References checked: 2026-09-20.",
       "manual": "Official CC Switch instructions",
+      "app": {
+        "short": "Install ChatGPT",
+        "title": "Download the ChatGPT desktop app (with Codex)",
+        "body": "Codex is built into the new ChatGPT desktop app. If you don't have it yet, install it from the official source; otherwise continue to the next step.",
+        "mac": "The button downloads the official installer (.dmg, about 650 MB). Open it, drag ChatGPT into Applications, then launch it from Applications.",
+        "windows": "The button opens OpenAI's ChatGPT page in the Microsoft Store. Select Get to install it. Requires Windows 10 version 2004 or later.",
+        "action": "Open official download"
+      },
       "download": {
-        "short": "Install",
+        "short": "Install CC Switch",
         "title": "Download and open CC Switch",
         "body": "Install and open CC Switch on the same computer where you use Codex. Already installed it? Continue to the next step.",
         "mac": "On the official site, select the download button, then choose the macOS installer (.dmg). Open it, drag CC Switch into Applications, then launch it from Applications.",

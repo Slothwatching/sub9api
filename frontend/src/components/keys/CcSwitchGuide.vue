@@ -22,6 +22,14 @@
             <h3 class="pt-1 text-lg font-semibold">{{ t(`commercial.ccSwitch.${step}.title`) }}</h3>
             <p class="max-w-3xl text-sm leading-7 text-gray-600 dark:text-dark-300">{{ t(`commercial.ccSwitch.${step}.body`) }}</p>
 
+            <template v-if="step === 'app'">
+              <div role="group" :aria-label="t('commercial.ccSwitch.os')" class="inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-gray-100 p-1 dark:bg-dark-800">
+                <button v-for="system in appSystems" :key="system" type="button" :aria-pressed="appOs === system" class="min-h-9 rounded-md px-4 text-sm transition-colors" :class="appOs === system ? 'bg-white font-medium text-gray-900 shadow-sm dark:bg-dark-600 dark:text-white' : 'text-gray-600 hover:text-gray-900 dark:text-dark-300 dark:hover:text-white'" @click="appOs = system">{{ systemNames[system] }}</button>
+              </div>
+              <p class="text-sm leading-6 text-gray-600 dark:text-dark-300">{{ t(`commercial.ccSwitch.app.${appOs}`) }}</p>
+              <a :href="appDownloadUrls[appOs]" target="_blank" rel="noopener noreferrer" class="btn btn-primary gap-2"><Icon name="download" size="sm" />{{ t('commercial.ccSwitch.app.action') }}<Icon name="externalLink" size="sm" /></a>
+            </template>
+
             <template v-if="step === 'download'">
               <div role="group" :aria-label="t('commercial.ccSwitch.os')" class="inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-gray-100 p-1 dark:bg-dark-800">
                 <button v-for="system in systems" :key="system" type="button" :aria-pressed="os === system" class="min-h-9 rounded-md px-4 text-sm transition-colors" :class="os === system ? 'bg-white font-medium text-gray-900 shadow-sm dark:bg-dark-600 dark:text-white' : 'text-gray-600 hover:text-gray-900 dark:text-dark-300 dark:hover:text-white'" @click="os = system">{{ systemNames[system] }}</button>
@@ -85,12 +93,17 @@ import BaseDialog from '@/components/common/BaseDialog.vue'
 const { t, locale } = useI18n()
 const app = useAppStore()
 const auth = useAuthStore()
-const steps = ['download', 'create', 'import', 'enable', 'verify'] as const
+const steps = ['app', 'download', 'create', 'import', 'enable', 'verify'] as const
 type Step = typeof steps[number]
 const systems = ['mac', 'windows', 'linux'] as const
 const systemNames = { mac: 'macOS', windows: 'Windows', linux: 'Linux' }
 const os = ref<typeof systems[number]>(/Windows/i.test(navigator.userAgent) ? 'windows' : /Linux/i.test(navigator.userAgent) && !/Android/i.test(navigator.userAgent) ? 'linux' : 'mac')
 const downloadUrl = 'https://ccswitch.io/'
+// The ChatGPT desktop app has included Codex since 2026-07. OpenAI's terms do not allow
+// redistribution, so link to its official DMG and Microsoft Store listing only.
+const appSystems = ['mac', 'windows'] as const
+const appOs = ref<typeof appSystems[number]>(os.value === 'windows' ? 'windows' : 'mac')
+const appDownloadUrls = { mac: 'https://persistent.oaistatic.com/codex-app-prod/Codex.dmg', windows: 'https://apps.microsoft.com/detail/9PLM9XGG6VKS' }
 const manualUrl = computed(() => `https://github.com/farion1231/cc-switch/blob/main/${locale.value === 'zh' ? 'README_ZH.md' : 'README.md'}`)
 const baseUrl = computed(() => app.cachedPublicSettings?.api_base_url || window.location.origin)
 const pictures: Partial<Record<Step, { src: string; width: number; height: number }>> = {
