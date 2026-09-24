@@ -98,7 +98,7 @@ export default {
       "copySha": "Copy the SHA-256 checksum of {name}",
       "admin": {
         "title": "Connection center videos & downloads",
-        "notice": "Enabled entries appear in the connection center for signed-in users only; visitors see a sign-in prompt. Upload files to object storage first (scripts/azure/upload-media.sh in the ops repository prints the URL and SHA-256) and enter HTTPS addresses here. Anyone with a direct link can still download it, so never upload keys, balances or private information.",
+        "notice": "Enabled entries appear in the connection center for signed-in users only; visitors see a sign-in prompt. Upload files to object storage (for example Azure Blob) first and enter their HTTPS addresses here; add a SHA-256 for installers so users can verify downloads. Anyone with a direct link can still download a file, so never upload keys, balances or private information.",
         "videos": "Video tutorials",
         "downloads": "Installers",
         "enabled": "Enabled",

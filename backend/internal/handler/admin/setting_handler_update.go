@@ -1364,6 +1364,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		communityLinksJSON = string(encoded)
 	}
 
+	// 分叉本地改动：接入中心视频教程与安装包（与 community_links 同样的设置扩展方式）
 	connectResourcesJSON := previousSettings.ConnectResources
 	if req.ConnectResources != nil {
 		if err := service.ValidateConnectResources(*req.ConnectResources); err != nil {

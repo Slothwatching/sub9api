@@ -196,7 +196,7 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		SettingKeyCustomMenuItems,
 		SettingKeyCustomEndpoints,
 		SettingKeyCommunityLinks,
-		SettingKeyConnectResources,
+		SettingKeyConnectResources, // 分叉本地改动：仅用于计算 connect_resources_available，地址不下发
 		SettingKeyLinuxDoConnectEnabled,
 		SettingKeyDingTalkConnectEnabled,
 		SettingKeyWeChatConnectEnabled,
