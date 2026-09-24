@@ -48,7 +48,7 @@
               <p v-if="downloadNote(item)" class="break-words text-sm text-gray-600 dark:text-dark-300">{{ downloadNote(item) }}</p>
               <button v-if="item.sha256" type="button" class="max-w-full text-left font-mono text-xs text-gray-500 underline-offset-4 hover:underline dark:text-dark-400" :title="item.sha256" :aria-label="t('commercial.tutorials.copySha', { name: downloadName(item) })" @click="copyToClipboard(item.sha256)">SHA-256 {{ item.sha256.slice(0, 16) }}… · {{ t('common.copy') }}</button>
             </div>
-            <a :href="item.url" rel="noopener noreferrer" class="btn btn-secondary shrink-0 gap-2" download><Icon name="download" size="sm" />{{ t('commercial.tutorials.download') }}</a>
+            <a :href="item.url" target="_blank" rel="noopener noreferrer" class="btn btn-secondary shrink-0 gap-2" download><Icon name="download" size="sm" />{{ t('commercial.tutorials.download') }}</a>
           </li>
         </ul>
       </div>

@@ -67,6 +67,10 @@ describe('ConnectTutorials', () => {
     expect(w.get('video').attributes('src')).toBe('https://media.example.com/mac.mp4')
     expect(w.text()).toContain('CC Switch')
     expect(w.text()).toContain('Node.js')
+    // Official store pages open beside /connect instead of replacing it.
+    const link = w.findAll('a').find(a => a.attributes('href') === 'https://media.example.com/ccs.dmg')!
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toBe('noopener noreferrer')
   })
 
   it('falls back to an available system and uses English text when present', async () => {
