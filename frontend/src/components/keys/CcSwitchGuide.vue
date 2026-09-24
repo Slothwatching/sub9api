@@ -66,6 +66,14 @@
       </li>
     </ol>
 
+    <section id="cc-switch-images" aria-labelledby="cc-switch-images-title" class="scroll-mt-24 space-y-3 border-t border-gray-200 py-7 dark:border-dark-700 sm:py-8">
+      <h3 id="cc-switch-images-title" class="inline-flex items-center gap-2 text-lg font-semibold"><Icon name="sparkles" size="sm" class="text-primary-700 dark:text-primary-300" />{{ t('commercial.ccSwitch.images.title') }}</h3>
+      <p class="max-w-3xl text-sm leading-7 text-gray-600 dark:text-dark-300">{{ t('commercial.ccSwitch.images.body') }}</p>
+      <pre data-testid="image-prompt" class="max-w-3xl overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white">{{ imagePrompt }}</pre>
+      <button type="button" class="btn btn-primary gap-2" @click="copyToClipboard(imagePrompt, t('commercial.ccSwitch.images.copied'))"><Icon :name="copied ? 'check' : 'copy'" size="sm" />{{ t('commercial.ccSwitch.images.copy') }}</button>
+      <p class="max-w-3xl text-sm leading-6 text-gray-600 dark:text-dark-300">{{ t('commercial.ccSwitch.images.note') }}</p>
+    </section>
+
     <div class="space-y-2 border-t border-gray-200 pt-5 dark:border-dark-700">
       <details v-for="topic in ['open', 'group', 'switch']" :key="topic" class="border-b border-gray-200 py-3 dark:border-dark-700">
         <summary class="cursor-pointer text-sm font-medium">{{ t(`commercial.ccSwitch.help.${topic}Q`) }}</summary>
@@ -89,6 +97,7 @@ import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import Icon from '@/components/icons/Icon.vue'
 import BaseDialog from '@/components/common/BaseDialog.vue'
+import { useClipboard } from '@/composables/useClipboard'
 
 const { t, locale } = useI18n()
 const app = useAppStore()
@@ -111,6 +120,13 @@ const pictures: Partial<Record<Step, { src: string; width: number; height: numbe
   import: { src: '/guides/cc-switch/import-key.webp', width: 417, height: 185 },
   enable: { src: '/guides/cc-switch/enable-provider.webp', width: 1875, height: 312 }
 }
+// Codex only offers its built-in image_gen tool to an API-key provider that sends this header
+// (ModelProviderInfo::uses_openai_actor_authorization). CC Switch's "keep official login" mode
+// writes such a provider, and its import link cannot carry extra config lines, so the guide
+// hands users a prompt that lets Codex add the line itself.
+const imageGenHeaderLine = 'http_headers = { "x-openai-actor-authorization" = "local-image-extension" }'
+const imagePrompt = computed(() => t('commercial.ccSwitch.images.prompt', { line: imageGenHeaderLine }))
+const { copied, copyToClipboard } = useClipboard()
 const enlarged = ref<Step | null>(null)
 function openPicture(step: Step) {
   if (pictures[step]) enlarged.value = step

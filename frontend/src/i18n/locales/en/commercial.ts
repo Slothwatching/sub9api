@@ -59,6 +59,14 @@ export default {
         "keyUsage": "View key usage",
         "note": "After receiving a reply, check for a matching request or usage change on this site. Test requests are billed under your normal usage rules. Importing a provider, seeing a balance, or reading a step does not confirm a successful model request."
       },
+      "images": {
+        "title": "Generate images",
+        "body": "The Codex desktop app can generate images. After completing the setup above, send the message below to Codex, and it adds the one configuration line that image generation needs. Then fully quit and reopen Codex and describe the picture you want, for example \"Generate a photorealistic sloth on a rainforest branch.\"",
+        "prompt": "Please turn on Codex's built-in image generation:\n1. Open ~/.codex/config.toml (on Windows: %USERPROFILE%\\.codex\\config.toml) and back it up first.\n2. Find the [model_providers.xxx] section that the top-level model_provider points to (usually [model_providers.custom]) and add this line to that section, unless it is already there:\n{line}\n3. If the section already has http_headers, merge this key into it and keep the existing entries.\n4. Change nothing else, and do not display or print any keys.\n5. When done, tell me which file and section you changed, and remind me to fully quit and reopen Codex.",
+        "copy": "Copy this message",
+        "copied": "Copied. Paste it into Codex and send it.",
+        "note": "Generated images appear in the chat and are saved in ~/.codex/generated_images. Each image is billed separately at your group's image price. If image generation stops working after you switch providers in CC Switch, send this message again."
+      },
       "help": {
         "openQ": "CC Switch did not open after importing?",
         "openA": "Check that CC Switch is installed and running on this computer. Select Import to CCS again and allow your browser to open the external app. If the import window appears despite a website warning that CC Switch is not installed, continue checking the configuration there. If it still does not open, use the manual instructions below. You can read this guide on a phone, but import on the computer where your client is installed.",

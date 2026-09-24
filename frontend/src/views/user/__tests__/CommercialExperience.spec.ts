@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-const mocks = vi.hoisted(() => ({ auth: { isAuthenticated: false, isSimpleMode: false, user: { id: 1, balance: 0 } }, app: { siteName: 'Example', cachedPublicSettings: { api_base_url: 'https://gateway.example.com', custom_endpoints: [], community_links: [] }, fetchPublicSettings: vi.fn() }, keys: vi.fn(), groups: vi.fn(), subscriptions: vi.fn(), stats: vi.fn(), monitors: vi.fn() }))
+const mocks = vi.hoisted(() => ({ auth: { isAuthenticated: false, isSimpleMode: false, user: { id: 1, balance: 0 } }, app: { siteName: 'Example', cachedPublicSettings: { api_base_url: 'https://gateway.example.com', custom_endpoints: [], community_links: [] }, fetchPublicSettings: vi.fn() }, keys: vi.fn(), groups: vi.fn(), subscriptions: vi.fn(), stats: vi.fn(), monitors: vi.fn(), clipboard: vi.fn() }))
 vi.mock('vue-i18n', async (importOriginal) => ({ ...await importOriginal<typeof import('vue-i18n')>(), useI18n: () => ({ t: (key: string) => key, locale: { value: 'zh' } }) }))
 vi.mock('@/stores/auth', () => ({ useAuthStore: () => mocks.auth }))
 vi.mock('@/stores/app', () => ({ useAppStore: () => mocks.app }))
+vi.mock('@/composables/useClipboard', () => ({ useClipboard: () => ({ copied: { value: false }, copyToClipboard: mocks.clipboard }) }))
 vi.mock('@/api/keys', () => ({ list: mocks.keys }))
 vi.mock('@/api/groups', () => ({ getAvailable: mocks.groups }))
 vi.mock('@/api/subscriptions', () => ({ getActiveSubscriptions: mocks.subscriptions }))
@@ -38,6 +39,18 @@ describe('connection and onboarding behavior', () => {
    expect(downloadTabs()[1].attributes('aria-pressed')).toBe('true')
    expect(guide.text()).toContain('https://gateway.example.com')
    expect(mocks.keys).not.toHaveBeenCalled()
+   w.unmount()
+ })
+ it('offers a copyable prompt that lets Codex enable its built-in image generation', async () => {
+   const w = mount(ConnectView, { global })
+   await flushPromises()
+   const images = w.get('#cc-switch-guide').get('#cc-switch-images')
+   expect(images.text()).toContain('commercial.ccSwitch.images.title')
+   expect(images.get('[data-testid="image-prompt"]').text()).toBe('commercial.ccSwitch.images.prompt')
+   expect(w.get('#cc-switch-guide').findAll('ol > li')).toHaveLength(6)
+   await images.get('button').trigger('click')
+   await flushPromises()
+   expect(mocks.clipboard).toHaveBeenCalledWith('commercial.ccSwitch.images.prompt', 'commercial.ccSwitch.images.copied')
    w.unmount()
  })
  it('enlarges an instructional image and restores focus when closed with Escape', async () => {
