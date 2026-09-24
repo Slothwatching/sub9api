@@ -18,7 +18,7 @@
         </div>
         <div class="grid gap-3 sm:grid-cols-2">
           <label class="space-y-1 text-sm"><span>{{ t('commercial.tutorials.admin.os') }}</span>
-            <select v-model="video.os" class="input"><option v-for="system in connectVideoSystems" :key="system" :value="system">{{ connectSystemNames[system] }}</option></select>
+            <select v-model="video.os" class="input"><option v-for="system in connectDownloadSystems" :key="system" :value="system">{{ system === 'all' ? t('commercial.tutorials.allSystems') : connectSystemNames[system] }}</option></select>
           </label>
           <label class="min-w-0 space-y-1 text-sm"><span>{{ t('commercial.tutorials.admin.videoTitle') }}</span><input v-model="video.title" class="input" maxlength="80" /></label>
           <label class="min-w-0 space-y-1 text-sm"><span>{{ t('commercial.tutorials.admin.videoTitleEn') }}</span><input v-model="video.title_en" class="input" maxlength="80" /></label>
@@ -72,7 +72,8 @@ const value = computed(() => ({ ...emptyConnectResources(), ...props.modelValue 
 function update(next: Partial<ConnectResources>) { emit('update:modelValue', { ...value.value, ...next }) }
 function addVideo() {
   const used = new Set(value.value.videos.map(v => v.os))
-  update({ videos: [...value.value.videos, newConnectVideo(connectVideoSystems.find(os => !used.has(os)) ?? 'macos')] })
+  // One shared video is the common case, so the first video defaults to every system.
+  update({ videos: [...value.value.videos, newConnectVideo((['all', ...connectVideoSystems] as const).find(os => !used.has(os)) ?? 'all')] })
 }
 function addDownload() { update({ downloads: [...value.value.downloads, newConnectDownload('macos')] }) }
 function remove(list: 'videos' | 'downloads', index: number) { update({ [list]: value.value[list].filter((_, i) => i !== index) }) }

@@ -49,8 +49,8 @@ const (
 )
 
 var (
-	connectVideoOS    = map[string]bool{"macos": true, "windows": true, "linux": true}
-	connectDownloadOS = map[string]bool{"macos": true, "windows": true, "linux": true, "all": true}
+	// "all" entries (one video or installer for every system) appear under each system tab.
+	connectResourceOS = map[string]bool{"macos": true, "windows": true, "linux": true, "all": true}
 	sha256Hex         = regexp.MustCompile(`^[0-9a-f]{64}$`)
 )
 
@@ -78,7 +78,7 @@ func ValidateConnectResources(resources ConnectResources) error {
 		if err := validateConnectID(video.ID, ids); err != nil {
 			return err
 		}
-		if !connectVideoOS[video.OS] {
+		if !connectResourceOS[video.OS] {
 			return fmt.Errorf("invalid tutorial video system")
 		}
 		if utf8.RuneCountInString(video.Title) > 80 || utf8.RuneCountInString(video.TitleEN) > 80 {
@@ -98,7 +98,7 @@ func ValidateConnectResources(resources ConnectResources) error {
 		if err := validateConnectID(download.ID, ids); err != nil {
 			return err
 		}
-		if !connectDownloadOS[download.OS] {
+		if !connectResourceOS[download.OS] {
 			return fmt.Errorf("invalid download system")
 		}
 		if utf8.RuneCountInString(download.Name) > 80 || utf8.RuneCountInString(download.NameEN) > 80 || utf8.RuneCountInString(download.Version) > 40 ||

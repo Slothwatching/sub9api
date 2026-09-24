@@ -82,7 +82,7 @@ const safeVideos = computed(() => resources.value.videos.filter(v => connectURL(
 const safeDownloads = computed(() => resources.value.downloads.filter(d => connectURL(d.url)))
 const hasContent = computed(() => safeVideos.value.length > 0 || safeDownloads.value.length > 0)
 const systems = computed(() => connectVideoSystems.filter(system => safeVideos.value.some(v => v.os === system) || safeDownloads.value.some(d => d.os === system)))
-const videos = computed(() => safeVideos.value.filter(v => v.os === os.value))
+const videos = computed(() => safeVideos.value.filter(v => v.os === 'all' || v.os === os.value))
 const downloads = computed(() => safeDownloads.value.filter(d => d.os === 'all' || d.os === os.value || !systems.value.length))
 watch(systems, next => { if (next.length && !next.includes(os.value)) os.value = next.includes(preferred) ? preferred : next[0] })
 

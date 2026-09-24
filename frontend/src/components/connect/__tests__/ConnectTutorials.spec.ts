@@ -73,6 +73,26 @@ describe('ConnectTutorials', () => {
     expect(link.attributes('rel')).toBe('noopener noreferrer')
   })
 
+  it('shows one all-systems video under every system tab', async () => {
+    setUA(winUA)
+    auth.isAuthenticated = true
+    getConnectResources.mockResolvedValue({ videos: [video({ id: 'shared', os: 'all', url: 'https://media.example.com/shared.mp4' })], downloads: [download(), download({ id: 'ccs-win', os: 'windows', name: 'CC Switch Windows' })] })
+    const w = mount(ConnectTutorials, options)
+    await flushPromises()
+    expect(w.findAll('video').map(v => v.attributes('src'))).toEqual(['https://media.example.com/shared.mp4'])
+    await w.findAll('button').find(b => b.text() === 'macOS')!.trigger('click')
+    expect(w.findAll('video').map(v => v.attributes('src'))).toEqual(['https://media.example.com/shared.mp4'])
+  })
+
+  it('needs no system tabs when the only content is an all-systems video', async () => {
+    auth.isAuthenticated = true
+    getConnectResources.mockResolvedValue({ videos: [video({ os: 'all' })], downloads: [] })
+    const w = mount(ConnectTutorials, options)
+    await flushPromises()
+    expect(w.find('[role="group"]').exists()).toBe(false)
+    expect(w.get('video').attributes('src')).toBe('https://media.example.com/mac.mp4')
+  })
+
   it('falls back to an available system and uses English text when present', async () => {
     setUA(winUA)
     locale.value = 'en'
@@ -133,12 +153,20 @@ describe('connect resource settings', () => {
     expect(detectConnectOS(macUA)).toBe('macos')
   })
 
+  it('defaults a first video to all systems, then to the next unused system', async () => {
+    const empty = mount(ConnectResourceSettings, { props: { modelValue: { videos: [], downloads: [] } } })
+    await empty.findAll('button').find(b => b.text() === 'commercial.tutorials.admin.addVideo')!.trigger('click')
+    expect((empty.emitted('update:modelValue')![0][0] as ConnectResources).videos.map(v => v.os)).toEqual(['all'])
+    expect(empty.findAll('select').length).toBe(0)
+  })
+
   it('adds a video for the next unused system and reorders downloads', async () => {
-    const value = reactive<ConnectResources>({ videos: [video()], downloads: [download(), download({ id: 'two' })] })
+    const value = reactive<ConnectResources>({ videos: [video({ os: 'all' })], downloads: [download(), download({ id: 'two' })] })
     const w = mount(ConnectResourceSettings, { props: { modelValue: value } })
+    expect(w.get('select').findAll('option').map(o => o.attributes('value'))).toContain('all')
     await w.findAll('button').find(b => b.text() === 'commercial.tutorials.admin.addVideo')!.trigger('click')
     const added = w.emitted('update:modelValue')![0][0] as ConnectResources
-    expect(added.videos.map(v => v.os)).toEqual(['macos', 'windows'])
+    expect(added.videos.map(v => v.os)).toEqual(['all', 'macos'])
     expect(added.videos[1].enabled).toBe(false)
     const up = w.findAll('button').filter(b => b.attributes('aria-label') === 'commercial.community.up')
     await up[up.length - 1].trigger('click')

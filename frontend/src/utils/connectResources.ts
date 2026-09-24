@@ -24,7 +24,7 @@ export function emptyConnectResources(): ConnectResources {
   return { videos: [], downloads: [] }
 }
 
-export function newConnectVideo(os: ConnectVideoOS): ConnectVideo {
+export function newConnectVideo(os: ConnectDownloadOS): ConnectVideo {
   return { id: crypto.randomUUID(), os, title: '', title_en: '', url: '', poster_url: '', enabled: false }
 }
 

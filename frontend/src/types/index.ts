@@ -209,11 +209,12 @@ export interface CommunityLink {
 }
 
 export type ConnectVideoOS = 'macos' | 'windows' | 'linux'
+/** 'all' = one video or installer shown under every system tab. */
 export type ConnectDownloadOS = ConnectVideoOS | 'all'
 
 export interface ConnectVideo {
   id: string
-  os: ConnectVideoOS
+  os: ConnectDownloadOS
   title: string
   title_en: string
   url: string

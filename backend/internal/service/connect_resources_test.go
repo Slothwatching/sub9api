@@ -46,7 +46,6 @@ func TestConnectResourcesValidation(t *testing.T) {
 		"relative download":   func(r *ConnectResources) { r.Downloads[0].URL = "/files/ccs.dmg" },
 		"credentials":         func(r *ConnectResources) { r.Downloads[0].URL = "https://u:p@media.example.com/a.dmg" },
 		"unknown video os":    func(r *ConnectResources) { r.Videos[0].OS = "android" },
-		"all video os":        func(r *ConnectResources) { r.Videos[0].OS = "all" },
 		"unknown download os": func(r *ConnectResources) { r.Downloads[0].OS = "ios" },
 		"uppercase sha":       func(r *ConnectResources) { r.Downloads[0].SHA256 = strings.Repeat("A", 64) },
 		"short sha":           func(r *ConnectResources) { r.Downloads[0].SHA256 = "abc" },
@@ -67,6 +66,10 @@ func TestConnectResourcesValidation(t *testing.T) {
 			require.Error(t, ValidateConnectResources(resources))
 		})
 	}
+
+	shared := validConnectResources()
+	shared.Videos[0].OS = "all"
+	require.NoError(t, ValidateConnectResources(shared), "one video may serve every system")
 
 	draft := validConnectResources()
 	draft.Videos[0].Enabled = false
