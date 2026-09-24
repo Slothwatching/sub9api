@@ -59,6 +59,23 @@ export default {
         "keyUsage": "View key usage",
         "note": "After receiving a reply, check for a matching request or usage change on this site. Test requests are billed under your normal usage rules. Importing a provider, seeing a balance, or reading a step does not confirm a successful model request."
       },
+      "images": {
+        "title": "Generate images",
+        "body": "The Codex desktop app can generate images once you add one line to its configuration. We recommend adding it in CC Switch so it stays in place when you switch providers.",
+        "editorTitle": "Add it in CC Switch (recommended)",
+        "editorStep1": "Open CC Switch, select the Codex tab at the top, and select Edit on the {name} provider to open Edit Provider.",
+        "editorStep2": "In the config.toml (TOML) editor, find the [model_providers.custom] section (use the name set by model_provider at the top) and add this line at the end of that section, unless it is already there:",
+        "copyLine": "Copy this line",
+        "lineCopied": "Copied. Paste it into config.toml in CC Switch.",
+        "editorStep3": "Select Save at the bottom right, and make sure this provider is enabled.",
+        "editorStep4": "Fully quit and reopen Codex, then describe the picture you want, for example \"Generate a photorealistic sloth on a rainforest branch.\"",
+        "codexTitle": "Can't open CC Switch? Let Codex make the change",
+        "codexBody": "Send the message below to Codex and it edits ~/.codex/config.toml directly. This change is not saved in CC Switch, so switching or re-enabling providers in CC Switch may overwrite it. If that happens, send the message again.",
+        "prompt": "Please turn on Codex's built-in image generation:\n1. Open ~/.codex/config.toml (on Windows: %USERPROFILE%\\.codex\\config.toml) and back it up first.\n2. Find the [model_providers.xxx] section that the top-level model_provider points to (usually [model_providers.custom]) and add this line to that section, unless it is already there:\n{line}\n3. If the section already has http_headers, merge this key into it and keep the existing entries.\n4. Change nothing else, and do not display or print any keys.\n5. When done, tell me which file and section you changed, and remind me to fully quit and reopen Codex.",
+        "copy": "Copy this message",
+        "copied": "Copied. Paste it into Codex and send it.",
+        "note": "Generated images appear in the chat and are saved in ~/.codex/generated_images. Each image is billed separately at your group's image price."
+      },
       "help": {
         "openQ": "CC Switch did not open after importing?",
         "openA": "Check that CC Switch is installed and running on this computer. Select Import to CCS again and allow your browser to open the external app. If the import window appears despite a website warning that CC Switch is not installed, continue checking the configuration there. If it still does not open, use the manual instructions below. You can read this guide on a phone, but import on the computer where your client is installed.",
