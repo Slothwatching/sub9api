@@ -208,6 +208,38 @@ export interface CommunityLink {
   enabled: boolean
 }
 
+export type ConnectVideoOS = 'macos' | 'windows' | 'linux'
+/** 'all' = one video or installer shown under every system tab. */
+export type ConnectDownloadOS = ConnectVideoOS | 'all'
+
+export interface ConnectVideo {
+  id: string
+  os: ConnectDownloadOS
+  title: string
+  title_en: string
+  url: string
+  poster_url: string
+  enabled: boolean
+}
+
+export interface ConnectDownload {
+  id: string
+  os: ConnectDownloadOS
+  name: string
+  name_en: string
+  version: string
+  note: string
+  note_en: string
+  url: string
+  sha256: string
+  enabled: boolean
+}
+
+export interface ConnectResources {
+  videos: ConnectVideo[]
+  downloads: ConnectDownload[]
+}
+
 export interface CustomEndpoint {
   name: string
   endpoint: string
@@ -259,6 +291,7 @@ export interface PublicSettings {
   table_page_size_options: number[]
   custom_menu_items: CustomMenuItem[]
   community_links?: CommunityLink[]
+  connect_resources_available?: boolean
   custom_endpoints: CustomEndpoint[]
   linuxdo_oauth_enabled: boolean
   dingtalk_oauth_enabled?: boolean

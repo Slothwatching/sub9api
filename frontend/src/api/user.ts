@@ -17,6 +17,7 @@ import type {
   UserAffiliateDetail,
   AffiliateTransferResponse,
   PlatformQuotasResponse,
+  ConnectResources,
 } from '@/types'
 
 /**
@@ -194,6 +195,14 @@ export async function getMyPlatformQuotas(): Promise<PlatformQuotasResponse> {
   return data
 }
 
+/**
+ * 接入中心视频教程与安装包（仅登录用户可读，已过滤未启用条目）。
+ */
+export async function getConnectResources(): Promise<ConnectResources> {
+  const { data } = await apiClient.get<ConnectResources>('/user/connect-resources')
+  return data
+}
+
 export const userAPI = {
   getProfile,
   updateProfile,
@@ -210,6 +219,7 @@ export const userAPI = {
   getAffiliateDetail,
   transferAffiliateQuota,
   getMyPlatformQuotas,
+  getConnectResources,
 }
 
 export default userAPI

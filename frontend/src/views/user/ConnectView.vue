@@ -4,6 +4,7 @@
     <div class="mx-auto max-w-5xl space-y-6" :class="!auth.isAuthenticated && 'px-4 py-8'">
       <header v-if="!auth.isAuthenticated"><h1 class="text-3xl font-semibold">{{ t('commercial.connect.title') }}</h1></header>
       <p class="text-gray-500 dark:text-dark-300">{{ t('commercial.connect.subtitle') }}</p>
+      <ConnectTutorials />
       <CcSwitchGuide />
       <header id="manual-configuration" class="border-t border-gray-200 pt-8 dark:border-dark-700"><h2 class="text-xl font-semibold">{{ t('commercial.ccSwitch.otherMethods') }}</h2><p class="mt-2 text-sm text-gray-500 dark:text-dark-300">{{ t('commercial.ccSwitch.otherMethodsHint') }}</p></header>
       <div v-if="loadFailed" role="alert" class="card space-y-2 p-4"><p>{{ t('commercial.connect.failed') }}</p><button class="btn btn-secondary" @click="load">{{ t('common.retry') }}</button></div>
@@ -35,6 +36,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import PlazaNavBar from '@/components/modelPlaza/PlazaNavBar.vue'
 import UseKeyContent from '@/components/keys/UseKeyContent.vue'
 import CcSwitchGuide from '@/components/keys/CcSwitchGuide.vue'
+import ConnectTutorials from '@/components/connect/ConnectTutorials.vue'
 import CommunitySection from '@/components/community/CommunitySection.vue'
 import BillingExplanation from '@/components/user/BillingExplanation.vue'
 const { t } = useI18n()

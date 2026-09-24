@@ -39,6 +39,8 @@ func RegisterUserRoutes(
 			user.POST("/auth-identities/bind/start", h.User.StartIdentityBinding)
 			user.GET("/api-keys/:id/usage/daily", panelRateLimiter.Heavy(), h.Usage.GetMyAPIKeyDailyUsage)
 			user.GET("/platform-quotas", h.User.GetMyPlatformQuotas)
+			// 分叉本地改动：接入中心视频教程与安装包，仅登录用户可读
+			user.GET("/connect-resources", h.Setting.GetConnectResources)
 
 			// 通知邮箱管理
 			notifyEmail := user.Group("/notify-email")
