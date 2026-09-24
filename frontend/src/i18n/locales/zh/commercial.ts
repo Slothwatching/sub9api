@@ -61,11 +61,20 @@ export default {
       },
       "images": {
         "title": "生成图片",
-        "body": "Codex 桌面版可以直接生成图片。完成上面的配置后，把下面这段话发给 Codex，它会自动补上生图需要的一行配置。然后完全退出并重新打开 Codex，在对话里描述想要的画面即可，例如「生成一张在雨林树枝上的树懒，写实风格」。",
+        "body": "Codex 桌面版可以直接生成图片，只需要在配置里加一行。推荐在 CC Switch 里添加，以后切换供应商也不会丢。",
+        "editorTitle": "在 CC Switch 中添加（推荐）",
+        "editorStep1": "打开 CC Switch，进入顶部的 Codex 标签，点击 {name} 供应商的「编辑」按钮，打开「编辑供应商」页面。",
+        "editorStep2": "在 config.toml (TOML) 编辑框里找到 [model_providers.custom] 这一节（名称以顶部 model_provider 的值为准），在这一节末尾加入下面这一行，已经有了就不用重复加：",
+        "copyLine": "复制这一行",
+        "lineCopied": "已复制，粘贴到 CC Switch 的 config.toml 里即可",
+        "editorStep3": "点击右下角「保存」，并确认这个供应商处于启用状态。",
+        "editorStep4": "完全退出 Codex 再重新打开，在对话里描述想要的画面即可，例如「生成一张在雨林树枝上的树懒，写实风格」。",
+        "codexTitle": "不方便打开 CC Switch？让 Codex 自己改",
+        "codexBody": "把下面这段话发给 Codex，它会直接修改 ~/.codex/config.toml。这种方式不会保存到 CC Switch，之后在 CC Switch 里切换或重新启用供应商时可能被覆盖，到时再发一次即可。",
         "prompt": "请帮我开启 Codex 内置的图片生成功能：\n1. 打开 ~/.codex/config.toml（Windows 为 %USERPROFILE%\\.codex\\config.toml），修改前先备份。\n2. 找到顶部 model_provider 指向的 [model_providers.xxx] 一节（常见为 [model_providers.custom]），在该节中加入下面这一行，已存在则不重复添加：\n{line}\n3. 如果该节已有 http_headers，请把这个键值合并进去，保留原有内容。\n4. 只修改这一处，不要改动其他配置，也不要显示或输出任何密钥。\n5. 完成后告诉我修改了哪个文件、哪一节，并提醒我完全退出 Codex 后重新打开。",
         "copy": "复制这段话",
         "copied": "已复制，粘贴发送给 Codex 即可",
-        "note": "生成的图片会显示在对话中，并保存在 ~/.codex/generated_images。每张图单独计费，价格以所在分组的图片计费为准。之后如果在 CC Switch 里切换过供应商、又无法生图，再发一次这段话即可。"
+        "note": "生成的图片会显示在对话中，并保存在 ~/.codex/generated_images。每张图单独计费，价格以所在分组的图片计费为准。"
       },
       "help": {
         "openQ": "点击导入后，CC Switch 没有打开？",

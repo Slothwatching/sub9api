@@ -69,8 +69,30 @@
     <section id="cc-switch-images" aria-labelledby="cc-switch-images-title" class="scroll-mt-24 space-y-3 border-t border-gray-200 py-7 dark:border-dark-700 sm:py-8">
       <h3 id="cc-switch-images-title" class="inline-flex items-center gap-2 text-lg font-semibold"><Icon name="sparkles" size="sm" class="text-primary-700 dark:text-primary-300" />{{ t('commercial.ccSwitch.images.title') }}</h3>
       <p class="max-w-3xl text-sm leading-7 text-gray-600 dark:text-dark-300">{{ t('commercial.ccSwitch.images.body') }}</p>
-      <pre data-testid="image-prompt" class="max-w-3xl overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white">{{ imagePrompt }}</pre>
-      <button type="button" class="btn btn-primary gap-2" @click="copyToClipboard(imagePrompt, t('commercial.ccSwitch.images.copied'))"><Icon :name="copied ? 'check' : 'copy'" size="sm" />{{ t('commercial.ccSwitch.images.copy') }}</button>
+
+      <div id="cc-switch-images-editor" class="space-y-3 pt-2">
+        <h4 class="font-medium">{{ t('commercial.ccSwitch.images.editorTitle') }}</h4>
+        <ol class="max-w-3xl list-inside list-decimal space-y-2 text-sm leading-7 text-gray-600 dark:text-dark-300">
+          <li>{{ t('commercial.ccSwitch.images.editorStep1', { name: app.siteName }) }}</li>
+          <li>{{ t('commercial.ccSwitch.images.editorStep2') }}</li>
+        </ol>
+        <pre data-testid="image-line" class="max-w-3xl overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white">{{ imageGenHeaderLine }}</pre>
+        <button type="button" class="btn btn-primary gap-2" @click="copyToClipboard(imageGenHeaderLine, t('commercial.ccSwitch.images.lineCopied'))"><Icon name="copy" size="sm" />{{ t('commercial.ccSwitch.images.copyLine') }}</button>
+        <ol start="3" class="max-w-3xl list-inside list-decimal space-y-2 text-sm leading-7 text-gray-600 dark:text-dark-300">
+          <li>{{ t('commercial.ccSwitch.images.editorStep3') }}</li>
+          <li>{{ t('commercial.ccSwitch.images.editorStep4') }}</li>
+        </ol>
+      </div>
+
+      <details id="cc-switch-images-codex" class="max-w-3xl border-y border-gray-200 py-3 dark:border-dark-700">
+        <summary class="cursor-pointer text-sm font-medium">{{ t('commercial.ccSwitch.images.codexTitle') }}</summary>
+        <div class="mt-3 space-y-3">
+          <p class="text-sm leading-7 text-gray-600 dark:text-dark-300">{{ t('commercial.ccSwitch.images.codexBody') }}</p>
+          <pre data-testid="image-prompt" class="overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white">{{ imagePrompt }}</pre>
+          <button type="button" class="btn btn-secondary gap-2" @click="copyToClipboard(imagePrompt, t('commercial.ccSwitch.images.copied'))"><Icon name="copy" size="sm" />{{ t('commercial.ccSwitch.images.copy') }}</button>
+        </div>
+      </details>
+
       <p class="max-w-3xl text-sm leading-6 text-gray-600 dark:text-dark-300">{{ t('commercial.ccSwitch.images.note') }}</p>
     </section>
 
@@ -121,12 +143,12 @@ const pictures: Partial<Record<Step, { src: string; width: number; height: numbe
   enable: { src: '/guides/cc-switch/enable-provider.webp', width: 1875, height: 312 }
 }
 // Codex only offers its built-in image_gen tool to an API-key provider that sends this header
-// (ModelProviderInfo::uses_openai_actor_authorization). CC Switch's "keep official login" mode
-// writes such a provider, and its import link cannot carry extra config lines, so the guide
-// hands users a prompt that lets Codex add the line itself.
+// (ModelProviderInfo::uses_openai_actor_authorization). CC Switch 3.20.1+ writes Codex providers
+// with requires_openai_auth = false and its import link drops extra config lines, so users add
+// the line in CC Switch's provider editor (kept across switches) or let Codex add it.
 const imageGenHeaderLine = 'http_headers = { "x-openai-actor-authorization" = "local-image-extension" }'
 const imagePrompt = computed(() => t('commercial.ccSwitch.images.prompt', { line: imageGenHeaderLine }))
-const { copied, copyToClipboard } = useClipboard()
+const { copyToClipboard } = useClipboard()
 const enlarged = ref<Step | null>(null)
 function openPicture(step: Step) {
   if (pictures[step]) enlarged.value = step
