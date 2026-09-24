@@ -83,6 +83,9 @@ var requiredCSPDirectiveValues = []struct {
 	{"style-src", AirwallexDemoStaticDomain},
 	{"style-src", AirwallexDemoCheckoutDomain},
 	{"frame-src", AirwallexDemoCheckoutDomain},
+	// 接入中心视频教程托管在管理员配置的外部 HTTPS 存储上（与 img-src 同口径）。
+	{"media-src", "'self'"},
+	{"media-src", "https:"},
 }
 
 // GenerateNonce generates a cryptographically secure random nonce.

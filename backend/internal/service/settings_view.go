@@ -165,6 +165,7 @@ type SystemSettings struct {
 	CustomMenuItems             string // JSON array of custom menu items
 	CustomEndpoints             string // JSON array of custom endpoints
 	CommunityLinks              string // JSON array of custom endpoints
+	ConnectResources            string // JSON object of tutorial videos and downloads
 
 	DefaultConcurrency           int
 	DefaultBalance               float64
@@ -368,6 +369,7 @@ type PublicSettings struct {
 	CustomMenuItems             string // JSON array of custom menu items
 	CustomEndpoints             string // JSON array of custom endpoints
 	CommunityLinks              string // JSON array of custom endpoints
+	ConnectResourcesAvailable   bool   // only whether signed-in users have tutorials/downloads; never the URLs
 
 	LinuxDoOAuthEnabled      bool
 	DingTalkOAuthEnabled     bool

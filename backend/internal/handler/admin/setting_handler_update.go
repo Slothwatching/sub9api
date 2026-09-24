@@ -153,22 +153,23 @@ type UpdateSettingsRequest struct {
 	GoogleOAuthFrontendRedirectURL string `json:"google_oauth_frontend_redirect_url"`
 
 	// OEM设置
-	SiteName                    string                   `json:"site_name"`
-	SiteLogo                    string                   `json:"site_logo"`
-	SiteSubtitle                string                   `json:"site_subtitle"`
-	APIBaseURL                  string                   `json:"api_base_url"`
-	ContactInfo                 string                   `json:"contact_info"`
-	DocURL                      string                   `json:"doc_url"`
-	HomeContent                 string                   `json:"home_content"`
-	CompactHomeEnabled          bool                     `json:"compact_home_enabled"`
-	HideCcsImportButton         bool                     `json:"hide_ccs_import_button"`
-	PurchaseSubscriptionEnabled *bool                    `json:"purchase_subscription_enabled"`
-	PurchaseSubscriptionURL     *string                  `json:"purchase_subscription_url"`
-	TableDefaultPageSize        int                      `json:"table_default_page_size"`
-	TablePageSizeOptions        []int                    `json:"table_page_size_options"`
-	CustomMenuItems             *[]dto.CustomMenuItem    `json:"custom_menu_items"`
-	CustomEndpoints             *[]dto.CustomEndpoint    `json:"custom_endpoints"`
-	CommunityLinks              *[]service.CommunityLink `json:"community_links"`
+	SiteName                    string                    `json:"site_name"`
+	SiteLogo                    string                    `json:"site_logo"`
+	SiteSubtitle                string                    `json:"site_subtitle"`
+	APIBaseURL                  string                    `json:"api_base_url"`
+	ContactInfo                 string                    `json:"contact_info"`
+	DocURL                      string                    `json:"doc_url"`
+	HomeContent                 string                    `json:"home_content"`
+	CompactHomeEnabled          bool                      `json:"compact_home_enabled"`
+	HideCcsImportButton         bool                      `json:"hide_ccs_import_button"`
+	PurchaseSubscriptionEnabled *bool                     `json:"purchase_subscription_enabled"`
+	PurchaseSubscriptionURL     *string                   `json:"purchase_subscription_url"`
+	TableDefaultPageSize        int                       `json:"table_default_page_size"`
+	TablePageSizeOptions        []int                     `json:"table_page_size_options"`
+	CustomMenuItems             *[]dto.CustomMenuItem     `json:"custom_menu_items"`
+	CustomEndpoints             *[]dto.CustomEndpoint     `json:"custom_endpoints"`
+	CommunityLinks              *[]service.CommunityLink  `json:"community_links"`
+	ConnectResources            *service.ConnectResources `json:"connect_resources"`
 
 	// 默认配置
 	DefaultConcurrency                        int                               `json:"default_concurrency"`
@@ -1363,6 +1364,20 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		communityLinksJSON = string(encoded)
 	}
 
+	connectResourcesJSON := previousSettings.ConnectResources
+	if req.ConnectResources != nil {
+		if err := service.ValidateConnectResources(*req.ConnectResources); err != nil {
+			response.BadRequest(c, err.Error())
+			return
+		}
+		encoded, err := json.Marshal(*req.ConnectResources)
+		if err != nil {
+			response.BadRequest(c, "Invalid connect resources")
+			return
+		}
+		connectResourcesJSON = string(encoded)
+	}
+
 	// 自定义端点验证
 	const (
 		maxCustomEndpoints        = 10
@@ -1659,6 +1674,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		CustomMenuItems:                        customMenuJSON,
 		CustomEndpoints:                        customEndpointsJSON,
 		CommunityLinks:                         communityLinksJSON,
+		ConnectResources:                       connectResourcesJSON,
 		DefaultConcurrency:                     req.DefaultConcurrency,
 		DefaultBalance:                         req.DefaultBalance,
 		AffiliateRebateRate:                    affiliateRebateRate,
@@ -2315,6 +2331,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		CustomMenuItems:                                        dto.ParseCustomMenuItems(updatedSettings.CustomMenuItems),
 		CustomEndpoints:                                        dto.ParseCustomEndpoints(updatedSettings.CustomEndpoints),
 		CommunityLinks:                                         service.ParseCommunityLinks(updatedSettings.CommunityLinks),
+		ConnectResources:                                       service.ParseConnectResources(updatedSettings.ConnectResources),
 		DefaultConcurrency:                                     updatedSettings.DefaultConcurrency,
 		DefaultBalance:                                         updatedSettings.DefaultBalance,
 		AffiliateRebateRate:                                    updatedSettings.AffiliateRebateRate,

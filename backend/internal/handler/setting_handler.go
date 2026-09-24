@@ -34,6 +34,17 @@ func (h *SettingHandler) SetNotificationEmailService(notificationEmailService *s
 	h.notificationEmailService = notificationEmailService
 }
 
+// GetConnectResources 返回接入中心已启用的视频教程与安装包，仅登录用户可读
+// GET /api/v1/user/connect-resources
+func (h *SettingHandler) GetConnectResources(c *gin.Context) {
+	resources, err := h.settingService.GetUserConnectResources(c.Request.Context())
+	if err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, resources)
+}
+
 // GetPublicSettings 获取公开设置
 // GET /api/v1/settings/public
 func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
@@ -84,6 +95,7 @@ func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
 		CustomMenuItems:                     dto.ParseUserVisibleMenuItems(settings.CustomMenuItems),
 		CustomEndpoints:                     dto.ParseCustomEndpoints(settings.CustomEndpoints),
 		CommunityLinks:                      service.PublicCommunityLinks(settings.CommunityLinks),
+		ConnectResourcesAvailable:           settings.ConnectResourcesAvailable,
 		DingTalkOAuthEnabled:                settings.DingTalkOAuthEnabled,
 		LinuxDoOAuthEnabled:                 settings.LinuxDoOAuthEnabled,
 		WeChatOAuthEnabled:                  settings.WeChatOAuthEnabled,

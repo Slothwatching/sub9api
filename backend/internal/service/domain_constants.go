@@ -392,6 +392,7 @@ const (
 	SettingKeyCustomMenuItems             = "custom_menu_items"             // 自定义菜单项（JSON 数组）
 	SettingKeyCustomEndpoints             = "custom_endpoints"              // 自定义端点列表（JSON 数组）
 	SettingKeyCommunityLinks              = "community_links"               // 自定义端点列表（JSON 数组）
+	SettingKeyConnectResources            = "connect_resources"             // 接入中心视频教程与安装包（JSON 对象，仅登录用户可读）
 
 	// 默认配置
 	SettingKeyDefaultConcurrency   = "default_concurrency"    // 新用户默认并发量

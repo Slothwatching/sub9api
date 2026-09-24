@@ -6703,6 +6703,8 @@
 
               <CommunitySettings v-model="form.community_links" />
 
+              <ConnectResourceSettings v-model="form.connect_resources" />
+
               <!-- Home Content -->
               <div>
                 <label
@@ -9011,7 +9013,9 @@ import GroupOptionItem from "@/components/common/GroupOptionItem.vue";
 import Toggle from "@/components/common/Toggle.vue";
 import ProxySelector from "@/components/common/ProxySelector.vue";
 import { communityValidationError } from "@/utils/community";
+import { connectResourcesValidationError, emptyConnectResources } from "@/utils/connectResources";
 import CommunitySettings from "@/components/community/CommunitySettings.vue";
+import ConnectResourceSettings from "@/components/connect/ConnectResourceSettings.vue";
 import ImageUpload from "@/components/common/ImageUpload.vue";
 import BackupSettings from "@/views/admin/BackupView.vue";
 import EmailTemplateEditor from "@/views/admin/settings/EmailTemplateEditor.vue";
@@ -9774,6 +9778,7 @@ const form = reactive<SettingsForm>({
   site_name: "Sub2API",
   site_logo: "",
   community_links: [],
+  connect_resources: emptyConnectResources(),
   site_subtitle: "",
   api_base_url: "",
   contact_info: "",
@@ -11261,6 +11266,8 @@ const siteBillingModeHint = computed(() =>
 async function saveSettings() {
   const communityError = communityValidationError(form.community_links ?? []);
   if (communityError) { appStore.showError(t(communityError)); return; }
+  const connectError = connectResourcesValidationError(form.connect_resources ?? emptyConnectResources());
+  if (connectError) { appStore.showError(t(connectError)); return; }
   saving.value = true;
   try {
     const normalizedTableDefaultPageSize = Math.floor(
@@ -11472,6 +11479,7 @@ async function saveSettings() {
       custom_menu_items: form.custom_menu_items,
       custom_endpoints: form.custom_endpoints,
       community_links: form.community_links ?? [],
+      connect_resources: form.connect_resources ?? emptyConnectResources(),
       frontend_url: form.frontend_url,
       smtp_host: form.smtp_host,
       smtp_port: form.smtp_port,
