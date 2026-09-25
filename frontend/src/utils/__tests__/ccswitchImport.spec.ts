@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CC_SWITCH_USAGE_SCRIPT,
   GROK_CC_SWITCH_MODEL,
   OPENAI_CC_SWITCH_CODEX_MODEL,
   buildCcSwitchImportDeeplink
@@ -110,5 +111,36 @@ describe('ccswitchImport utils', () => {
     expect(params.get('app')).toBe('gemini')
     expect(params.get('endpoint')).toBe(`${baseInput.baseUrl}/antigravity`)
     expect(params.has('model')).toBe(false)
+  })
+
+  // Mirrors CC Switch: substitute template variables textually, then evaluate.
+  function usageRequestUrl(baseUrl: string): string {
+    const script = CC_SWITCH_USAGE_SCRIPT
+      .replace('{{apiKey}}', 'sk-test')
+      .replace('{{baseUrl}}', baseUrl)
+    return new Function(`return ${script}`)().request.url
+  }
+
+  it.each([
+    ['https://api.example.com', 'https://api.example.com/v1/usage'],
+    ['https://api.example.com/', 'https://api.example.com/v1/usage'],
+    ['https://api.example.com/v1', 'https://api.example.com/v1/usage'],
+    ['https://api.example.com/v1/', 'https://api.example.com/v1/usage'],
+    ['https://api.example.com/antigravity', 'https://api.example.com/antigravity/v1/usage']
+  ])('queries usage once under /v1 for provider endpoint %s', (baseUrl, expected) => {
+    expect(usageRequestUrl(baseUrl)).toBe(expected)
+  })
+
+  it('queries usage from the exact endpoint written by a Codex import', () => {
+    const params = paramsFromDeeplink(
+      buildCcSwitchImportDeeplink({
+        ...baseInput,
+        usageScript: CC_SWITCH_USAGE_SCRIPT,
+        platform: 'openai',
+        clientType: 'claude'
+      })
+    )
+
+    expect(usageRequestUrl(params.get('endpoint') || '')).toBe('https://api.example.com/v1/usage')
   })
 })
