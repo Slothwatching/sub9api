@@ -34,3 +34,17 @@ describe('GettingStarted service destination', () => {
     wrapper.unmount()
   })
 })
+
+describe('GettingStarted purchase link', () => {
+  it.each([
+    [true, { path: '/purchase', query: { tab: 'subscription' } }],
+    [false, '/purchase'],
+  ] as const)('opens the subscription tab only when subscriptions are enabled (subscription=%s)', async (subscription, destination) => {
+    app.cachedPublicSettings = { available_channels_enabled: false, model_plaza_enabled: false, payment_enabled: true, subscription_enabled: subscription } as typeof app.cachedPublicSettings
+    const wrapper = mount(GettingStarted, { global: { stubs: { RouterLink: RouterLinkStub } } })
+    await flushPromises()
+    const purchase = wrapper.findAllComponents(RouterLinkStub).find(link => link.text() === 'commercial.onboarding.purchase')
+    expect(purchase?.props('to')).toEqual(destination)
+    wrapper.unmount()
+  })
+})
