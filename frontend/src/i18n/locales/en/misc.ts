@@ -118,6 +118,8 @@ export default {
     noActiveSubscriptions: 'No Active Subscriptions',
     noActiveSubscriptionsDesc:
       "You don't have any active subscriptions. Contact administrator to get one.",
+    noActiveSubscriptionsPurchaseDesc: 'Choose a plan and pay online. It activates automatically after payment.',
+    browsePlans: 'Browse plans',
     failedToLoad: 'Failed to load subscriptions',
     status: {
       active: 'Active',
@@ -386,6 +388,7 @@ export default {
     tabTopUp: 'Top Up',
     tabSubscribe: 'Subscribe',
     noPlans: 'No subscription plans available',
+    planQuotaNote: 'Plan quotas are counted in site USD, the same unit as top-ups: 1 {currency} = {usd} USD.',
     notAvailable: 'Top-up is currently unavailable',
     billingUnavailable: 'Neither top-up nor subscriptions are currently available. Please contact the administrator.',
     confirmSubscription: 'Confirm Subscription',

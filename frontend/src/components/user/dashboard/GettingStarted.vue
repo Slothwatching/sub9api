@@ -7,7 +7,7 @@
       <template v-else>
         <p v-if="!groups.length" class="text-sm">{{ t('commercial.onboarding.noGroups') }}</p>
         <p v-else-if="!hasKey" class="text-sm">{{ t('commercial.onboarding.noKeys') }}</p>
-        <p v-if="typeof auth.user?.balance === 'number' && auth.user.balance <= 0 && !subscriptions.length" class="text-sm">{{ t('commercial.onboarding.noFunding') }} <RouterLink v-if="paymentEnabled" to="/purchase" class="underline">{{ t('commercial.onboarding.purchase') }}</RouterLink></p>
+        <p v-if="typeof auth.user?.balance === 'number' && auth.user.balance <= 0 && !subscriptions.length" class="text-sm">{{ t('commercial.onboarding.noFunding') }} <RouterLink v-if="paymentEnabled" :to="purchaseLink" class="underline">{{ t('commercial.onboarding.purchase') }}</RouterLink></p>
         <ol class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><li v-for="(step, index) in steps" :key="step.label" class="rounded-xl border border-gray-200 p-4 dark:border-dark-600"><span class="text-xs text-gray-500 dark:text-dark-300">0{{ index + 1 }} · {{ t(step.done ? 'commercial.onboarding.done' : 'commercial.onboarding.next') }}</span><RouterLink :to="step.to" class="mt-2 block font-medium underline-offset-4 hover:underline">{{ t(`commercial.onboarding.${step.label}`) }}</RouterLink></li></ol>
         <label class="flex items-center gap-2 text-sm"><input v-model="configured" type="checkbox" />{{ t('commercial.onboarding.configured') }}</label><p class="text-xs text-gray-500 dark:text-dark-300">{{ t('commercial.onboarding.hint') }}</p>
       </template>
@@ -31,6 +31,7 @@ const { t } = useI18n(); const auth = useAuthStore(); const app = useAppStore()
 const collapsed = ref(false); const configured = ref(false); const loading = ref(true); const failed = ref(false)
 const groups = ref<Group[]>([]); const subscriptions = ref<UserSubscription[]>([]); const hasKey = ref(false); const hasRequest = ref(false)
 const paymentEnabled = computed(() => !auth.isSimpleMode && isFeatureFlagEnabled(FeatureFlags.payment))
+const purchaseLink = computed(() => isFeatureFlagEnabled(FeatureFlags.subscription) ? { path: '/purchase', query: { tab: 'subscription' } } : '/purchase')
 const hasCommunities = computed(() => app.cachedPublicSettings?.community_links?.some(item => item.enabled))
 const serviceStep = computed(() => {
   if (isFeatureFlagEnabled(FeatureFlags.availableChannels)) return { label: 'channels', to: '/available-channels' }

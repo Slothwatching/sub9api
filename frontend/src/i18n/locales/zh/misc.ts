@@ -115,6 +115,8 @@ export default {
     description: '查看您的订阅计划和用量',
     noActiveSubscriptions: '暂无有效订阅',
     noActiveSubscriptionsDesc: '您没有任何有效订阅。请联系管理员获取订阅。',
+    noActiveSubscriptionsPurchaseDesc: '选择适合的套餐在线购买，付款成功后自动开通。',
+    browsePlans: '查看订阅套餐',
     failedToLoad: '加载订阅失败',
     status: {
       active: '有效',
@@ -410,6 +412,7 @@ export default {
     tabTopUp: '充值',
     tabSubscribe: '订阅',
     noPlans: '暂无可用订阅套餐',
+    planQuotaNote: '套餐额度以站内 USD 计，与充值口径一致：1 {currency} = {usd} USD。',
     notAvailable: '充值功能暂未开放',
     billingUnavailable: '充值与订阅均暂未开放，请联系管理员。',
     confirmSubscription: '确认订阅',

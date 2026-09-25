@@ -20,8 +20,15 @@
           {{ t('userSubscriptions.noActiveSubscriptions') }}
         </h3>
         <p class="text-gray-500 dark:text-dark-400">
-          {{ t('userSubscriptions.noActiveSubscriptionsDesc') }}
+          {{ t(canPurchaseSubscription ? 'userSubscriptions.noActiveSubscriptionsPurchaseDesc' : 'userSubscriptions.noActiveSubscriptionsDesc') }}
         </p>
+        <RouterLink
+          v-if="canPurchaseSubscription"
+          :to="{ path: '/purchase', query: { tab: 'subscription' } }"
+          class="btn btn-primary mt-5 inline-flex"
+        >
+          {{ t('userSubscriptions.browsePlans') }}
+        </RouterLink>
       </div>
 
       <!-- Subscriptions Grid -->
@@ -250,10 +257,12 @@
 
 <script setup lang="ts">
 import BillingExplanation from "@/components/user/BillingExplanation.vue"
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { FeatureFlags, isFeatureFlagEnabled } from '@/utils/featureFlags'
 import subscriptionsAPI from '@/api/subscriptions'
 import type { UserSubscription } from '@/types'
 import AppLayout from '@/components/layout/AppLayout.vue'
@@ -281,6 +290,15 @@ function platformAccentDotClass(p: string): string {
 const { t } = useI18n()
 const router = useRouter()
 const appStore = useAppStore()
+const authStore = useAuthStore()
+
+// Online purchase needs both the payment and subscription features; otherwise keep the
+// original "contact administrator" guidance.
+const canPurchaseSubscription = computed(() =>
+  !authStore.isSimpleMode &&
+  isFeatureFlagEnabled(FeatureFlags.payment) &&
+  isFeatureFlagEnabled(FeatureFlags.subscription)
+)
 
 const subscriptions = ref<UserSubscription[]>([])
 const loading = ref(true)
