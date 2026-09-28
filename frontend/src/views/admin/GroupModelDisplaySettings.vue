@@ -29,7 +29,7 @@ function selectAll() { selectAllModelAllowlistItems(state); save() }
 function invert() { invertModelAllowlistSelection(state); save() }
 function add() {
   const result = addCustomModelAllowlistItem(state, entry.value)
-  error.value = result === 'invalid_wildcard' ? 'invalidWildcard' : result ?? ''
+  error.value = result ?? ''
   if (!result) { entry.value = ''; save() }
 }
 </script>
