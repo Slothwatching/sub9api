@@ -22,4 +22,17 @@ describe('independent model display settings', () => {
     await wrapper.get('[role="switch"]').trigger('click')
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([{ enabled: false, models: ['gpt-5.5'] }])
   })
+
+  it('accepts wildcards anywhere in custom entries and reports duplicates', async () => {
+    const wrapper = mount(GroupModelDisplaySettings, { props: { modelValue: { enabled: true, models: ['gpt-5.5'] }, candidates: ['gpt-5.5'], loading: false } })
+    const entry = wrapper.get('input[aria-label="admin.groups.modelsList.modelId"]')
+    const add = wrapper.findAll('button').find(button => button.text() === 'admin.groups.modelAllowlist.addCustom')!
+    await entry.setValue('gpt-*-codex')
+    await add.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([{ enabled: true, models: ['gpt-5.5', 'gpt-*-codex'] }])
+    expect(wrapper.find('p.text-red-500').exists()).toBe(false)
+    await entry.setValue('GPT-5.5')
+    await add.trigger('click')
+    expect(wrapper.get('p.text-red-500').text()).toBe('admin.groups.modelAllowlist.errors.duplicate')
+  })
 })
