@@ -18,7 +18,7 @@
         <p v-if="auth.isAuthenticated && !loading && !loadFailed && !usableKeys.length" class="text-sm">{{ t('commercial.connect.noKeys') }} <RouterLink to="/keys" class="underline">{{ t('commercial.connect.keys') }}</RouterLink></p>
         <ol class="list-inside list-decimal space-y-2 text-sm text-gray-600 dark:text-dark-300"><li v-for="n in 3" :key="n">{{ t(`commercial.connect.step${n}`) }}</li></ol>
       </div>
-      <div class="card min-w-0 overflow-hidden p-5 sm:p-6"><UseKeyContent :show="true" :api-key="selectedKey?.key || 'YOUR_API_KEY'" :base-url="endpoint" :platform="platform" :allow-messages-dispatch="selectedKey?.group?.allow_messages_dispatch" /></div>
+      <div class="card min-w-0 overflow-hidden p-5 sm:p-6"><UseKeyContent :show="true" :api-key="selectedKey?.key || 'YOUR_API_KEY'" :base-url="endpoint" :platform="platform" :claude-code-only="selectedKey?.group?.claude_code_only || false" :allow-messages-dispatch="selectedKey?.group?.allow_messages_dispatch" /></div>
       <BillingExplanation />
       <section class="space-y-3"><h2 class="text-xl font-semibold">{{ t('commercial.connect.faq') }}</h2><details v-for="topic in ['auth', 'quota', 'model', 'rate']" :key="topic" class="card p-4"><summary class="cursor-pointer font-medium">{{ t(`commercial.connect.${topic}Q`) }}</summary><p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-dark-300">{{ t(`commercial.connect.${topic}A`) }}</p></details></section>
       <CommunitySection />
