@@ -68,3 +68,45 @@ func TestStripeRefundUsesStableAmountSpecificIdempotencyKey(t *testing.T) {
 	require.Equal(t, "re-sub2_order_456-1235", *backend.params[2].IdempotencyKey)
 	require.NotEqual(t, *backend.params[0].IdempotencyKey, *backend.params[2].IdempotencyKey)
 }
+
+type stripePaymentIntentBackend struct {
+	stripeRefundBackend
+	params []*stripe.PaymentIntentCreateParams
+}
+
+func (b *stripePaymentIntentBackend) Call(_ string, _ string, _ string, params stripe.ParamsContainer, v stripe.LastResponseSetter) error {
+	b.params = append(b.params, params.(*stripe.PaymentIntentCreateParams))
+	pi := v.(*stripe.PaymentIntent)
+	pi.ID = "pi_123"
+	pi.ClientSecret = "pi_123_secret"
+	return nil
+}
+
+func TestStripeCreatePaymentSetsReceiptEmailOnlyWhenPayerEmailKnown(t *testing.T) {
+	backend := &stripePaymentIntentBackend{}
+	client := stripe.NewClient("sk_test", stripe.WithBackends(&stripe.Backends{API: backend}))
+	provider := &Stripe{
+		config:      map[string]string{"currency": "CNY"},
+		initialized: true,
+		sc:          client,
+	}
+
+	create := func(orderID, email string) {
+		_, err := provider.CreatePayment(context.Background(), payment.CreatePaymentRequest{
+			OrderID:            orderID,
+			Amount:             "10.00",
+			Subject:            "Sloth Code 10.00",
+			InstanceSubMethods: "card,link",
+			PayerEmail:         email,
+		})
+		require.NoError(t, err)
+	}
+
+	create("sub2_with_email", "  payer@example.com ")
+	create("sub2_without_email", "")
+
+	require.Len(t, backend.params, 2)
+	require.NotNil(t, backend.params[0].ReceiptEmail)
+	require.Equal(t, "payer@example.com", *backend.params[0].ReceiptEmail)
+	require.Nil(t, backend.params[1].ReceiptEmail)
+}

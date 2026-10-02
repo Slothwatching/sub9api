@@ -117,6 +117,10 @@ func (s *Stripe) CreatePayment(ctx context.Context, req payment.CreatePaymentReq
 		Metadata:           map[string]string{"orderId": req.OrderID},
 	}
 
+	if email := strings.TrimSpace(req.PayerEmail); email != "" {
+		params.ReceiptEmail = stripe.String(email)
+	}
+
 	// WeChat Pay requires payment_method_options with client type
 	if hasStripeMethod(methods, "wechat_pay") {
 		params.PaymentMethodOptions = &stripe.PaymentIntentCreatePaymentMethodOptionsParams{

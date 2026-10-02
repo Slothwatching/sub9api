@@ -112,6 +112,9 @@ type CreatePaymentRequest struct {
 	// alipay.trade.precreate instead of alipay.trade.wap.pay.
 	AlipayMobilePrecreate bool
 	InstanceSubMethods    string // Comma-separated sub-methods from instance supported_types (for Stripe)
+	// PayerEmail is the payer's deliverable email for provider receipts
+	// (Stripe receipt_email). Empty when unknown or synthetic.
+	PayerEmail string
 }
 
 // CreatePaymentResultType describes the shape of the create-payment result.
