@@ -68,4 +68,36 @@ describe('UseKeyContent', () => {
     }
     expect(fetchMock).not.toHaveBeenCalled()
   })
+
+  // Fork-local: upstream d1ba57977 added the TypeSafe System One guide to the
+  // monolithic UseKeyModal; this fork renders guides from UseKeyContent, so the
+  // port is covered here.
+  it('offers only the System One curl guide for TypeSafe groups', async () => {
+    const wrapper = mount(UseKeyContent, {
+      props: {
+        show: true,
+        apiKey: 'test-only-key',
+        baseUrl: 'https://gateway.example.com/v1',
+        platform: 'typesafe'
+      },
+      global: {
+        stubs: {
+          Icon: { template: '<span />' }
+        }
+      }
+    })
+    const labels = wrapper.findAll('button').map((button) => button.text().trim())
+    expect(labels).toContain('keys.useKeyModal.cliTabs.systemOne')
+    expect(labels).not.toContain('keys.useKeyModal.cliTabs.claudeCode')
+    expect(labels).not.toContain('keys.useKeyModal.cliTabs.codexCli')
+    expect(labels).not.toContain('keys.useKeyModal.cliTabs.opencode')
+    expect(wrapper.text()).toContain('keys.useKeyModal.typesafe.description')
+
+    const config = () => wrapper.findAll('pre code').map((code) => code.text()).join('\n')
+    expect(config()).toContain('curl -X POST "https://gateway.example.com/v1/systemone"')
+    expect(config()).toContain('"model": "jev-latest"')
+
+    await wrapper.findAll('button').find((button) => button.text().trim() === 'PowerShell')!.trigger('click')
+    expect(config()).toContain('Invoke-RestMethod -Method Post -Uri "https://gateway.example.com/v1/systemone"')
+  })
 })
