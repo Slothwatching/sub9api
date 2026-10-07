@@ -100,4 +100,44 @@ describe('UseKeyContent', () => {
     await wrapper.findAll('button').find((button) => button.text().trim() === 'PowerShell')!.trigger('click')
     expect(config()).toContain('Invoke-RestMethod -Method Post -Uri "https://gateway.example.com/v1/systemone"')
   })
+
+  // Fork-local: upstream bbba01dae enables api_key_model_discovery whenever the
+  // generated Codex config points at the remote model catalog. It changed only
+  // the monolithic UseKeyModal; this fork generates configs in UseKeyContent.
+  it('enables API-key model discovery only with the remote Codex catalog', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    const mountFor = (platform: string) => mount(UseKeyContent, {
+      props: {
+        show: true,
+        apiKey: 'test-only-key',
+        baseUrl: 'https://gateway.example.com',
+        platform
+      },
+      global: {
+        stubs: {
+          Icon: { template: '<span />' }
+        }
+      }
+    })
+    const configText = (wrapper: ReturnType<typeof mountFor>) =>
+      wrapper.findAll('pre code').map((code) => code.text()).join('\n')
+    const selectTab = (wrapper: ReturnType<typeof mountFor>, label: string) =>
+      wrapper.findAll('button').find((button) => button.text().trim() === label)!.trigger('click')
+
+    const openai = mountFor('openai')
+    for (const transport of ['keys.useKeyModal.cliTabs.codexCli', 'keys.useKeyModal.cliTabs.codexCliWs']) {
+      await selectTab(openai, transport)
+      await openai.find('[data-testid="codex-model-catalog-mode"]').setValue('remote')
+      expect(configText(openai), transport).toContain('[features]\napi_key_model_discovery = true\n')
+      await openai.find('[data-testid="codex-model-catalog-mode"]').setValue('file')
+      expect(configText(openai), transport).not.toContain('api_key_model_discovery')
+    }
+
+    for (const platform of ['grok', 'deepseek']) {
+      const wrapper = mountFor(platform)
+      await selectTab(wrapper, 'keys.useKeyModal.cliTabs.codexCli')
+      expect(configText(wrapper), platform).toContain('model_catalog_url = "https://gateway.example.com/v1/models"')
+      expect(configText(wrapper), platform).toContain('[features]\napi_key_model_discovery = true')
+    }
+  })
 })
