@@ -1,8 +1,12 @@
 # Sub9API development continuity
 
+`Slothwatching/sub9api` is the product source repository. `Slothwatching/sub9api-ops` is its private, canonical decision and operations record, not a second product. Treat them as one project with two complementary repositories: product changes must reference current decisions in ops, and ops records must identify the corresponding product branch, PR, commit, release, or explicitly state that no product code changed. See `docs/DECISIONS.md` for the cross-repository workflow.
+
 The canonical private records repository is `Slothwatching/sub9api-ops`, checked out at `/Users/victorwu/Developer/sub9api-ops`. Its `decisions/sub9api-development-log.md` is the source of truth; the existing external log path is a compatibility symlink. Update and commit/push authorized decision/operations records in that private repository; keep secrets out.
 
 Before starting work and before each batch of changes, read the effective decisions and relevant history in `/Users/victorwu/Developer/sub9api-development-log.md`. Append the purpose, affected scope, decision references, validation results, and remaining work after each batch. Preserve superseded decisions as history; do not overwrite their rationale. Never log credentials or private user data.
+
+Without waiting for a reminder, record every product decision or change batch, upstream integration, PR/CI outcome, release/rollback, and material operations finding in the private log. Update the record as status changes; do not present a prepared PR as deployed. Commit and push the authorized ops record as part of delivery, while keeping private details out of this public repository. If the ops repository is unavailable, report the missing history and the unrecorded work; do not create a competing decision log here or claim the record is complete.
 
 The current UI work is a **full-feature visual redesign** using the warm ivory / forest green direction and a coordinated dark theme. Preserve all routes, controls, fields, filters, exports, bulk actions, client integrations, permission checks, feature switches, and Chinese/English localization. Do not reintroduce the superseded plan to hide payments, orders, affiliates, or other features.
 
