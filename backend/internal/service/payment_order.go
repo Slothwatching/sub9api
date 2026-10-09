@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
+	"net/mail"
 	"net/url"
 	"strconv"
 	"strings"
@@ -453,6 +454,7 @@ func (s *PaymentService) invokeProvider(ctx context.Context, order *dbent.Paymen
 		ReturnURL:   providerReturnURL,
 	}, sel, outTradeNo, payAmountStr, subject)
 	providerReq.AlipayMobilePrecreate = shouldUseAlipayMobilePrecreate(req, cfg, sel)
+	providerReq.PayerEmail = paymentReceiptEmail(order.UserEmail)
 	finishProviderCall := servertiming.ObserveDependency(ctx, "payment")
 	pr, err := prov.CreatePayment(ctx, providerReq)
 	finishProviderCall()
@@ -529,6 +531,20 @@ func buildProviderCreatePaymentRequest(req CreateOrderRequest, sel *payment.Inst
 		IsMobile:           req.IsMobile,
 		InstanceSubMethods: selectedInstanceSupportedTypes(sel),
 	}
+}
+
+// paymentReceiptEmail returns an address providers may send payment receipts
+// to, or "" for synthetic OAuth placeholders and malformed values.
+func paymentReceiptEmail(email string) string {
+	email = strings.TrimSpace(email)
+	if email == "" || isReservedEmail(email) {
+		return ""
+	}
+	addr, err := mail.ParseAddress(email)
+	if err != nil || addr.Name != "" || addr.Address != email {
+		return ""
+	}
+	return email
 }
 
 func selectedInstanceSupportedTypes(sel *payment.InstanceSelection) string {
