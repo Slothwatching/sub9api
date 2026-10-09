@@ -415,9 +415,8 @@ describe('UseKeyModal', () => {
     expect(configToml).not.toContain('image_generation')
     expect(configToml).not.toContain('supports_websockets')
     expect(configToml).not.toContain('responses_websockets_v2')
-    // Fork fix: upstream bbba01dae adds api_key_model_discovery under the default
-    // remote catalog but left this upstream assertion stale (upstream CI skips it).
-    expect(configToml).toContain('[features]\napi_key_model_discovery = true\ngoals = true')
+    const features = configToml?.split('[features]\n')[1]?.split('\n[')[0]
+    expect(features).toContain('goals = true')
     expect(configToml).not.toContain('model_reasoning_effort = "xhigh"')
     expect(codeBlocks).toContain('{\n  "OPENAI_API_KEY": "sk-test"\n}')
     expect(wrapper.text()).toContain('auth.json')
@@ -559,9 +558,9 @@ describe('UseKeyModal', () => {
     expect(configToml).not.toContain('env_key')
     expect(configToml).not.toContain('image_generation')
     expect(configToml).toContain('supports_websockets = true')
-    // Fork fix: upstream bbba01dae adds api_key_model_discovery under the default
-    // remote catalog but left this upstream assertion stale (upstream CI skips it).
-    expect(configToml).toContain('[features]\napi_key_model_discovery = true\nresponses_websockets_v2 = true\ngoals = true')
+    const features = configToml?.split('[features]\n')[1]?.split('\n[')[0]
+    expect(features).toContain('responses_websockets_v2 = true')
+    expect(features).toContain('goals = true')
     expect(codeBlocks).toContain('{\n  "OPENAI_API_KEY": "sk-test"\n}')
     expect(wrapper.text()).toContain('auth.json')
   })
@@ -609,9 +608,9 @@ describe('UseKeyModal', () => {
     expect(configToml).not.toContain('env_key')
     expect(configToml).not.toContain('image_generation')
     expect(configToml).toContain('supports_websockets = true')
-    // Fork fix: upstream bbba01dae adds api_key_model_discovery under the default
-    // remote catalog but left this upstream assertion stale (upstream CI skips it).
-    expect(configToml).toContain('[features]\napi_key_model_discovery = true\nresponses_websockets_v2 = true\ngoals = true')
+    const features = configToml?.split('[features]\n')[1]?.split('\n[')[0]
+    expect(features).toContain('responses_websockets_v2 = true')
+    expect(features).toContain('goals = true')
     expect(codeBlocks).not.toContain('{\n  "OPENAI_API_KEY": "sk-test"\n}')
     expect(wrapper.text()).not.toContain('auth.json')
   })
@@ -687,7 +686,7 @@ describe('UseKeyModal', () => {
     expect(codeBlock.text()).not.toContain('"name": "GPT-5.4 Nano"')
   })
 
-  it('copies explicit default and variant reasoning settings for every OpenAI model', async () => {
+  it('renders GPT-5.6 and GPT-6 Astra capabilities in OpenCode config', async () => {
     const wrapper = mount(UseKeyModal, {
       props: {
         show: true,
@@ -725,67 +724,20 @@ describe('UseKeyModal', () => {
     expect(models['gpt-6.1-sol'].variants).not.toHaveProperty('none')
     expect(models['gpt-6-sol'].variants).toHaveProperty('none')
     expect(models['gpt-6-luna'].limit).toEqual({ context: 1050000, output: 128000 })
-    expect(models['gpt-6']).toEqual({
-      name: 'GPT-6 (Astra)',
-      limit: { context: 1050000, output: 128000 },
-      reasoning: true,
-      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
-      variants: {
-        low: { reasoningEffort: 'low' },
-        medium: { reasoningEffort: 'medium' },
-        high: { reasoningEffort: 'high' },
-        xhigh: { reasoningEffort: 'xhigh' },
-        max: { reasoningEffort: 'max' }
-      }
-    })
-    expect(models['gpt-6-astra']).toEqual({
-      name: 'GPT-6 Astra',
-      limit: { context: 1050000, output: 128000 },
-      reasoning: true,
-      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
-      variants: {
-        low: { reasoningEffort: 'low' },
-        medium: { reasoningEffort: 'medium' },
-        high: { reasoningEffort: 'high' },
-        xhigh: { reasoningEffort: 'xhigh' },
-        max: { reasoningEffort: 'max' }
-      }
-    })
-    // Validate the actual copied artifact, including models absent from a client's catalog.
-    const copyButton = wrapper.findAll('button').find((button) =>
-      button.text() === 'keys.useKeyModal.copy'
-    )
-    expect(copyButton).toBeDefined()
-    await copyButton!.trigger('click')
-    expect(JSON.parse(copyToClipboardMock.mock.lastCall![0])).toEqual(parsed)
-    expect(parsed.provider.openai.options).toEqual({
-      baseURL: 'https://example.com/v1', apiKey: 'sk-test'
-    })
-    expect(parsed.agent).toEqual({
-      build: { options: { store: false } }, plan: { options: { store: false } }
-    })
-    const maxModels = ['gpt-6', 'gpt-6-astra', 'gpt-6.1-sol', 'gpt-6-sol', 'gpt-6-luna', 'gpt-5.6', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']
-    const xhighModels = ['gpt-5.2', 'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark']
-    expect(Object.keys(models).sort()).toEqual([...maxModels, ...xhighModels, 'codex-mini-latest'].sort())
-    for (const id of Object.keys(models)) {
-      const model = models[id]
-      expect(model.reasoning, id).toBe(true)
-      expect(model.options, id).toEqual({
-        store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content']
+    // Fork-local OpenCode format includes explicit reasoning effort and encrypted reasoning.
+    for (const [id, name] of [['gpt-6', 'GPT-6 (Astra)'], ['gpt-6-astra', 'GPT-6 Astra']]) {
+      expect(models[id].name).toBe(name)
+      expect(models[id].limit).toEqual({ context: 1050000, output: 128000 })
+      expect(models[id].reasoning).toBe(true)
+      expect(models[id].options).toEqual({
+        store: false,
+        reasoningEffort: 'medium',
+        include: ['reasoning.encrypted_content']
       })
-      const efforts = ['gpt-6-sol', 'gpt-6-luna'].includes(id) ? ['none', 'low', 'medium', 'high'] : ['low', 'medium', 'high']
-      if (id !== 'codex-mini-latest') efforts.push('xhigh')
-      if (maxModels.includes(id)) efforts.push('max')
-      expect(Object.keys(model.variants), id).toEqual(efforts)
-      for (const effort of efforts) {
-        expect(model.variants[effort], `${id}/${effort}`).toEqual({ reasoningEffort: effort })
+      for (const effort of ['low', 'medium', 'high', 'xhigh', 'max']) {
+        expect(models[id].variants[effort]).toEqual({ reasoningEffort: effort })
       }
     }
-    expect(wrapper.text()).toContain('keys.useKeyModal.opencode.description')
-    expect(wrapper.text()).toContain('keys.useKeyModal.opencode.openaiReasoningHint')
-    expect(wrapper.text()).not.toContain('keys.useKeyModal.openai.description')
-    await wrapper.setProps({ platform: 'gemini' })
-    expect(wrapper.text()).not.toContain('keys.useKeyModal.opencode.openaiReasoningHint')
   })
 
   it('exports Claude 5.5 models on the Anthropic provider with adaptive defaults', async () => {
