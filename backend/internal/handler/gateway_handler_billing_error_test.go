@@ -56,8 +56,9 @@ func TestBillingErrorDetails_UnknownErrorFallsBackTo403(t *testing.T) {
 }
 
 func TestExtractQuotaResetSeconds_T19_HappyPath(t *testing.T) {
+	// Fork: retain subsecond precision so truncation cannot shorten this ten-second fixture.
 	err := service.ErrUserPlatformDailyQuotaExhausted.WithMetadata(map[string]string{
-		"window_resets_at": time.Now().Add(10 * time.Second).UTC().Format(time.RFC3339),
+		"window_resets_at": time.Now().Add(10 * time.Second).UTC().Format(time.RFC3339Nano),
 	})
 	got := extractQuotaResetSeconds(err)
 	if got < 10 || got > 11 {
