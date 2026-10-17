@@ -27,7 +27,8 @@ func TestUnmappedResponseModelForwardsPublicName(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				payload := `{"model":"` + upstreamAlias + `","choices":[{"delta":{"content":"keep ` + upstreamAlias + `","tool_calls":[{"function":{"arguments":"{\"model\":\"` + upstreamAlias + `\"}"}}]}}],"usage":{"prompt_tokens":1,"completion_tokens":1}}`
 				if kind == "responses" {
-					payload = `{"type":"response.completed","response":{"id":"resp_1","model":"` + upstreamAlias + `","output":[],"usage":{"input_tokens":1,"output_tokens":1}}}`
+					// Fork: keep this public-model fixture stable; missing created_at is tested separately.
+					payload = `{"type":"response.completed","response":{"id":"resp_1","created_at":1774274151,"model":"` + upstreamAlias + `","output":[],"usage":{"input_tokens":1,"output_tokens":1}}}`
 				}
 				want := strings.Replace(payload, `"model":"`+upstreamAlias+`"`, `"model":"`+publicModel+`"`, 1)
 				contentType := "application/json"
