@@ -1,5 +1,15 @@
 # Sub9API development continuity
 
+## Intent-first collaboration (D74, 2026-10-21)
+
+The canonical record is `../sub9api-ops/decisions/sub9api-development-log.md` when both repositories are sibling checkouts, including on Windows. Resolve the actual ops checkout when using a worktree. The old macOS absolute paths below are historical compatibility paths, not a requirement to create a duplicate log.
+
+Before implementation, record the user's request, why it matters, expected outcome, constraints, and a stable decision ID in that private log. Unknown motivation must be marked pending, not invented. After every meaningful commit, push, PR, or review attempt, append its actual result and relevant branch/commit/PR reference. Record rejected, failed, cancelled, superseded, and unmerged work too. Preserve earlier reasoning and link replacement decisions. Push authorized ops records even when product changes are rejected; an ops commit is not product approval.
+
+Public main changes require a PR: when vwu996 authors it, felixleung828 approves; when Felix authors it, Victor approves. External contributions require both maintainers' approval by team policy (GitHub's one-review/code-owner setting does not enforce both). New changes invalidate stale approvals; retain strict release-ready checks. D74 supersedes the no-human-review automatic merge part of D66 below: daily upstream work also waits for the other maintainer's approval and must not bypass protection. Existing release authorization and technical guardrails still apply.
+
+Public PRs reference only a decision ID and a safe technical summary, never private log contents or credentials. External contributors without ops access explain their intent in the PR; an internal maintainer records it privately before accepting the change. If an internal maintainer lacks ops access, report the missing record rather than inventing a public replacement. This is a documented collaboration workflow, not automatic cross-repository synchronization.
+
 `Slothwatching/sub9api` is the product source repository. `Slothwatching/sub9api-ops` is its private, canonical decision and operations record, not a second product. Treat them as one project with two complementary repositories: product changes must reference current decisions in ops, and ops records must identify the corresponding product branch, PR, commit, release, or explicitly state that no product code changed. See `docs/DECISIONS.md` for the cross-repository workflow.
 
 The canonical private records repository is `Slothwatching/sub9api-ops`, checked out at `/Users/victorwu/Developer/sub9api-ops`. Its `decisions/sub9api-development-log.md` is the source of truth; the existing external log path is a compatibility symlink. Update and commit/push authorized decision/operations records in that private repository; keep secrets out.
