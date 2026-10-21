@@ -9,8 +9,29 @@ on:
 permissions:
   contents: read
 
+# Cancel obsolete PR verification, never interrupt main deployment runs.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      full: ${{ steps.scope.outputs.full }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Verify change selection and merge gate
+        run: python3 -m unittest discover -s tools -p 'test_ci_scope.py' -v
+      - name: Classify the complete change
+        id: scope
+        run: python3 tools/ci_scope.py
+
   shell:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
@@ -25,6 +46,8 @@ jobs:
           python3 -m unittest discover -s deploy/tests -p 'test_*.py'
 
   test:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -40,7 +63,7 @@ jobs:
           cache-dependency-path: backend/go.sum
       - name: Verify Go version
         run: |
-          go version | grep -q 'go1.27.2'
+          go version | grep -q 'go1.27.3'
       - name: Unit tests
         working-directory: backend
         run: make test-unit
@@ -55,6 +78,8 @@ jobs:
           bash -n /tmp/reviewed-migration.sh
 
   frontend:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -87,6 +112,8 @@ jobs:
         run: pnpm test:run
 
   golangci-lint:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -98,10 +125,10 @@ jobs:
           cache-dependency-path: backend/go.sum
       - name: Verify Go version
         run: |
-          go version | grep -q 'go1.27.2'
+          go version | grep -q 'go1.27.3'
       - name: golangci-lint
         run: |
-          # The released binary and its older x/tools cannot read Go 1.27.2 export data.
+          # The released binary and its older x/tools cannot read Go 1.27.3 export data.
           # Build the same pinned linter with the compatible x/tools; keep every lint rule enabled.
           mkdir -p "$RUNNER_TEMP/sub9api-linter"
           cd "$RUNNER_TEMP/sub9api-linter"
@@ -112,6 +139,8 @@ jobs:
           "$RUNNER_TEMP/golangci-lint" run --timeout=30m
 
   release-helpers:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -123,9 +152,13 @@ jobs:
       - run: bash -n .github/release-tools/release-images.sh
 
   security:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     uses: ./.github/workflows/security-scan.yml
 
   image:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -165,24 +198,18 @@ jobs:
 
   release-ready:
     if: always()
-    needs: [shell, test, frontend, golangci-lint, release-helpers, security, image]
+    needs: [changes, shell, test, frontend, golangci-lint, release-helpers, security, image]
     runs-on: ubuntu-latest
     steps:
-      - name: Require every verification job to succeed
+      - uses: actions/checkout@v6
+      - name: Require all selected checks and reject unexpected skips
         env:
           RESULTS: ${{ toJSON(needs) }}
-        run: |
-          python3 - <<'PYCODE'
-          import json, os
-          results = json.loads(os.environ['RESULTS'])
-          failed = [name for name, job in results.items() if job['result'] != 'success']
-          if failed:
-              raise SystemExit('Required checks failed: ' + ', '.join(failed))
-          PYCODE
+        run: python3 tools/ci_scope.py --gate
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [release-ready, image]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.changes.outputs.full == 'true'
+    needs: [changes, release-ready, image]
     permissions:
       contents: read
       actions: read
