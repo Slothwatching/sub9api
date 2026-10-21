@@ -63,7 +63,7 @@ jobs:
           cache-dependency-path: backend/go.sum
       - name: Verify Go version
         run: |
-          go version | grep -q 'go1.27.2'
+          go version | grep -q 'go1.27.3'
       - name: Unit tests
         working-directory: backend
         run: make test-unit
@@ -125,10 +125,10 @@ jobs:
           cache-dependency-path: backend/go.sum
       - name: Verify Go version
         run: |
-          go version | grep -q 'go1.27.2'
+          go version | grep -q 'go1.27.3'
       - name: golangci-lint
         run: |
-          # The released binary and its older x/tools cannot read Go 1.27.2 export data.
+          # The released binary and its older x/tools cannot read Go 1.27.3 export data.
           # Build the same pinned linter with the compatible x/tools; keep every lint rule enabled.
           mkdir -p "$RUNNER_TEMP/sub9api-linter"
           cd "$RUNNER_TEMP/sub9api-linter"
