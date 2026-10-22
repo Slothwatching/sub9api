@@ -32,11 +32,15 @@ jobs:
   shell:
     needs: changes
     if: needs.changes.outputs.full == 'true'
-    runs-on: macos-15
+    # Keep macOS/BSD and Bash 3.2 coverage without the congested ARM runner pool.
+    # Apple container is mocked by the lifecycle fixture; no ARM binary is run.
+    runs-on: macos-15-intel
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
       - name: Check deployment scripts
         run: |
+          /bin/bash -c '[[ ${BASH_VERSINFO[0]} == 3 && ${BASH_VERSINFO[1]} == 2 ]]'
           /bin/bash -n deploy/apple-container.sh
           /bin/bash deploy/tests/apple-container-test.sh
           /bin/sh deploy/tests/docker-compose-security-test.sh

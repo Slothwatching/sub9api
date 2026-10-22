@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Fork-local D85/D87: cover the email login switch and Sloth Code fallback; custom branding remains unchanged.
 func TestAPIContracts(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -720,6 +721,7 @@ func TestAPIContracts(t *testing.T) {
 					"registration_email_domain_quota_enabled": false,
 					"promo_code_enabled": true,
 					"password_reset_enabled": false,
+					"email_code_login_enabled": false,
 						"frontend_url": "",
 						"totp_enabled": false,
 						"totp_encryption_key_configured": false,
@@ -1080,6 +1082,7 @@ func TestAPIContracts(t *testing.T) {
 					"registration_email_domain_quota_enabled": false,
 					"promo_code_enabled": true,
 					"password_reset_enabled": false,
+					"email_code_login_enabled": false,
 					"frontend_url": "",
 						"invitation_code_enabled": false,
 						"totp_enabled": false,
@@ -1174,7 +1177,7 @@ func TestAPIContracts(t *testing.T) {
 					"google_oauth_client_secret_configured": false,
 					"google_oauth_redirect_url": "",
 					"google_oauth_frontend_redirect_url": "/auth/oauth/callback",
-					"site_name": "Sub2API",
+					"site_name": "Sloth Code",
 					"site_logo": "",
 					"site_subtitle": "",
 					"api_base_url": "",

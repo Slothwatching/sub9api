@@ -10,7 +10,7 @@
           <button v-for="tab in tabs" :key="tab.key"
             class="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all"
             :class="activeTab === tab.key ? 'bg-white text-gray-900 shadow dark:bg-dark-700 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
-            @click="activeTab = tab.key">{{ tab.label }}</button>
+            @click="selectTab(tab.key)">{{ tab.label }}</button>
         </div>
         <!-- Payment in progress (shared by recharge and subscription) -->
         <template v-if="paymentPhase === 'paying'">
@@ -548,6 +548,17 @@ const renderedBonusNotice = computed(() => {
 // 订阅功能开关（public settings 的 subscription_enabled，opt-out）。关闭后购买页只保留充值：
 // 不再渲染「订阅」tab，只剩单个 tab 时顶部切换器也随之隐藏。
 const subscriptionEnabled = computed(() => resolveFeatureFlag(appStore.cachedPublicSettings, FeatureFlags.subscription))
+
+// Header links can target this view while it is already mounted on the recharge tab.
+watch(() => route.query.tab, (tab) => {
+  if (tab === 'subscription' && subscriptionEnabled.value) activeTab.value = 'subscription'
+  else if (tab === 'recharge' && !checkout.value.balance_disabled) activeTab.value = 'recharge'
+})
+
+function selectTab(tab: 'recharge' | 'subscription') {
+  activeTab.value = tab
+  void router.replace({ query: { ...route.query, tab } })
+}
 
 const tabs = computed(() => {
   const result: { key: 'recharge' | 'subscription'; label: string }[] = []

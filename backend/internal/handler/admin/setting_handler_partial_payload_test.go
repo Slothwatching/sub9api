@@ -203,3 +203,20 @@ func TestUpdateSettingsSubscriptionEnabledIsWritableAndKeptWhenOmitted(t *testin
 	require.Equal(t, "false", repo.values[service.SettingKeySubscriptionEnabled],
 		"a payload without subscription_enabled must not flip the stored value back to true")
 }
+
+// Fork-local D85: preserve omitted values while allowing explicit enable/disable.
+func TestUpdateSettingsEmailCodeLoginSwitch(t *testing.T) {
+	h, repo := newStepUpSwitchTestHandler(t, map[string]string{service.SettingKeyEmailCodeLoginEnabled: "true"})
+	rec := doUpdateSettings(t, h, map[string]any{"site_name": "Gateway"}, nil)
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, "true", repo.values[service.SettingKeyEmailCodeLoginEnabled])
+	for _, enabled := range []bool{false, true} {
+		rec = doUpdateSettings(t, h, map[string]any{"email_code_login_enabled": enabled}, nil)
+		require.Equal(t, http.StatusOK, rec.Code)
+		expected := "false"
+		if enabled {
+			expected = "true"
+		}
+		require.Equal(t, expected, repo.values[service.SettingKeyEmailCodeLoginEnabled])
+	}
+}

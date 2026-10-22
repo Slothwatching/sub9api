@@ -38,6 +38,9 @@ func RegisterAuthRoutes(
 		auth.POST("/login", rateLimiter.LimitWithOptions("auth-login", 20, time.Minute, middleware.RateLimitOptions{
 			FailureMode: middleware.RateLimitFailClose,
 		}), h.Auth.Login)
+		// Fork-local D85: fail closed at both passwordless authentication entrances.
+		auth.POST("/email-code/send", rateLimiter.LimitWithOptions("auth-email-code-send", 5, time.Minute, middleware.RateLimitOptions{FailureMode: middleware.RateLimitFailClose}), h.Auth.SendEmailLoginCode)
+		auth.POST("/email-code/login", rateLimiter.LimitWithOptions("auth-email-code-login", 20, time.Minute, middleware.RateLimitOptions{FailureMode: middleware.RateLimitFailClose}), h.Auth.LoginWithEmailCode)
 		auth.POST("/login/2fa", rateLimiter.LimitWithOptions("auth-login-2fa", 20, time.Minute, middleware.RateLimitOptions{
 			FailureMode: middleware.RateLimitFailClose,
 		}), h.Auth.Login2FA)

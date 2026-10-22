@@ -10,6 +10,26 @@
           {{ t('auth.signInToAccount') }}
         </p>
       </div>
+      <!-- Fork-local D85: an additional login method, controlled by public settings. -->
+      <div v-if="emailCodeLoginEnabled" class="flex gap-2" role="group" :aria-label="t('auth.loginMethod')">
+        <button
+          type="button"
+          class="btn flex-1"
+          :class="loginMethod === 'password' ? 'btn-primary' : 'btn-secondary'"
+          :disabled="authActionDisabled"
+          :aria-pressed="loginMethod === 'password'"
+          @click="switchLoginMethod('password')"
+        >{{ t('auth.passwordLogin') }}</button>
+        <button
+          type="button"
+          data-testid="email-code-tab"
+          class="btn flex-1"
+          :class="loginMethod === 'code' ? 'btn-primary' : 'btn-secondary'"
+          :disabled="authActionDisabled"
+          :aria-pressed="loginMethod === 'code'"
+          @click="switchLoginMethod('code')"
+        >{{ t('auth.emailCodeLogin') }}</button>
+      </div>
       <!-- Login Form -->
       <form @submit.prevent="handleLogin" class="space-y-5">
         <!-- Email Input -->
@@ -37,7 +57,7 @@
         </div>
 
         <!-- Password Input -->
-        <div>
+        <div v-if="loginMethod === 'password'">
           <label for="password" class="input-label">
             {{ t('auth.passwordLabel') }}
           </label>
@@ -76,6 +96,34 @@
               {{ t('auth.forgotPassword') }}
             </router-link>
           </div>
+        </div>
+
+        <div v-else>
+          <label for="login-code" class="input-label">{{ t('auth.verificationCode') }}</label>
+          <div class="flex gap-2">
+            <input
+              id="login-code"
+              v-model="formData.code"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              autocomplete="one-time-code"
+              required
+              class="input min-w-0 flex-1"
+              :class="{ 'input-error': errors.code }"
+              :disabled="authActionDisabled"
+            />
+            <button
+              type="button"
+              data-testid="send-login-code"
+              class="btn btn-secondary shrink-0"
+              :disabled="authActionDisabled || codeCountdown > 0 || (turnstileEnabled && !turnstileToken)"
+              @click="handleSendLoginCode"
+            >{{ codeCountdown > 0 ? t('auth.emailCodeResend', { seconds: codeCountdown }) : t('auth.sendCode') }}</button>
+          </div>
+          <p class="mt-2 text-sm text-gray-500 dark:text-dark-400">{{ t('auth.emailCodeLoginHint') }}</p>
+          <p v-if="codeSentMessage" role="status" class="mt-2 text-sm text-primary-600 dark:text-primary-400">{{ codeSentMessage }}</p>
         </div>
 
         <!-- Turnstile Widget -->
@@ -222,7 +270,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onMounted, watch } from 'vue'
+import { computed, ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { AuthLayout } from '@/components/layout'
@@ -239,6 +287,7 @@ import { useAuthStore, useAppStore } from '@/stores'
 import {
   buildOAuthLoginStartURL,
   getPublicSettings,
+  sendEmailLoginCode,
   isTotp2FARequired,
   isWeChatWebOAuthEnabled,
   startOAuthLogin,
@@ -288,6 +337,13 @@ const oidcOAuthEnabled = ref<boolean>(false)
 const oidcOAuthProviderName = ref<string>('OIDC')
 const githubOAuthEnabled = ref<boolean>(false)
 const googleOAuthEnabled = ref<boolean>(false)
+const emailCodeLoginEnabled = ref(false)
+const loginMethod = ref<'password' | 'code'>('password')
+const codeCountdown = ref(0)
+const codeSentMessage = ref('')
+let codeCountdownTimer: ReturnType<typeof setInterval> | undefined
+onUnmounted(() => clearInterval(codeCountdownTimer))
+
 const passwordResetEnabled = ref<boolean>(false)
 const passkeyEnabled = ref<boolean>(false)
 const loginAgreementEnabled = ref<boolean>(false)
@@ -327,17 +383,19 @@ const totpModalRef = ref<InstanceType<typeof TotpLoginModal> | null>(null)
 
 const formData = reactive({
   email: '',
-  password: ''
+  password: '',
+  code: ''
 })
 
 const errors = reactive({
   email: '',
   password: '',
+  code: '',
   turnstile: ''
 })
 
 const validationToastMessage = computed(
-  () => errors.email || errors.password || errors.turnstile || ''
+  () => errors.email || errors.password || errors.code || errors.turnstile || ''
 )
 
 const agreementGateActive = computed(
@@ -401,6 +459,7 @@ onMounted(async () => {
     githubOAuthEnabled.value = settings.github_oauth_enabled
     googleOAuthEnabled.value = settings.google_oauth_enabled
     backendModeEnabled.value = settings.backend_mode_enabled
+    emailCodeLoginEnabled.value = settings.email_code_login_enabled === true
     passwordResetEnabled.value = settings.password_reset_enabled
     passkeyEnabled.value = settings.passkey_enabled === true
     applyLoginAgreementSettings(settings)
@@ -515,10 +574,11 @@ async function acquireActionProof(): Promise<boolean> {
 
 // ==================== Validation ====================
 
-function validateForm(): boolean {
+function validateForm(forSendingCode = false): boolean {
   // Reset errors
   errors.email = ''
   errors.password = ''
+  errors.code = ''
   errors.turnstile = ''
 
   let isValid = true
@@ -541,12 +601,18 @@ function validateForm(): boolean {
   }
 
   // Password validation
-  if (!formData.password) {
-    errors.password = t('auth.passwordRequired')
+  if (!forSendingCode && loginMethod.value === 'code' && !/^[0-9]{6}$/.test(formData.code)) {
+    errors.code = t('auth.emailCodeInvalid')
     isValid = false
-  } else if (formData.password.length < 6) {
-    errors.password = t('auth.passwordMinLength')
-    isValid = false
+  }
+  if (!forSendingCode && loginMethod.value === 'password') {
+    if (!formData.password) {
+      errors.password = t('auth.passwordRequired')
+      isValid = false
+    } else if (formData.password.length < 6) {
+      errors.password = t('auth.passwordMinLength')
+      isValid = false
+    }
   }
 
   // Turnstile validation
@@ -560,7 +626,48 @@ function validateForm(): boolean {
 
 // ==================== Form Handlers ====================
 
+function currentCaptchaProof(): ActionCaptchaRequestProof {
+  return {
+    turnstile_token: turnstileEnabled.value || aliyunCaptchaEnabled.value ? turnstileToken.value : undefined,
+    tencent_captcha_ticket: tencentCaptchaEnabled.value ? turnstileToken.value : undefined,
+    tencent_captcha_randstr: tencentCaptchaEnabled.value ? tencentCaptchaRandstr.value : undefined
+  }
+}
+
+function switchLoginMethod(method: 'password' | 'code'): void {
+  loginMethod.value = method
+  formData.password = ''
+  formData.code = ''
+  errors.password = ''
+  errors.code = ''
+  errorMessage.value = ''
+  resetCaptchaProof()
+}
+
+async function handleSendLoginCode(): Promise<void> {
+  if (authActionDisabled.value || codeCountdown.value > 0 || !validateForm(true)) return
+  isLoading.value = true
+  try {
+    if (!(await acquireActionProof())) return
+    await sendEmailLoginCode({ email: formData.email.trim(), ...currentCaptchaProof() })
+    codeSentMessage.value = t('auth.emailCodeSent')
+    codeCountdown.value = 60
+    clearInterval(codeCountdownTimer)
+    codeCountdownTimer = setInterval(() => {
+      codeCountdown.value = Math.max(0, codeCountdown.value - 1)
+      if (codeCountdown.value === 0) clearInterval(codeCountdownTimer)
+    }, 1000)
+  } catch (error: unknown) {
+    errorMessage.value = extractI18nErrorMessage(error, t, 'auth.errors', t('auth.emailCodeSendFailed'))
+    appStore.showError(errorMessage.value)
+  } finally {
+    if (captchaEnabled.value) resetCaptchaProof()
+    isLoading.value = false
+  }
+}
+
 async function handleLogin(): Promise<void> {
+  if (authActionDisabled.value) return
   // Clear previous error
   errorMessage.value = ''
 
@@ -569,24 +676,15 @@ async function handleLogin(): Promise<void> {
     return
   }
 
-  if (!(await acquireActionProof())) {
-    return
-  }
-
   isLoading.value = true
 
   try {
+    if (!(await acquireActionProof())) return
     // Call auth store login（阿里云 captchaVerifyParam 复用 turnstile_token 字段）
-    const response = await authStore.login({
-      email: formData.email,
-      password: formData.password,
-      turnstile_token:
-        turnstileEnabled.value || aliyunCaptchaEnabled.value ? turnstileToken.value : undefined,
-      tencent_captcha_ticket: tencentCaptchaEnabled.value ? turnstileToken.value : undefined,
-      tencent_captcha_randstr: tencentCaptchaEnabled.value
-        ? tencentCaptchaRandstr.value
-        : undefined
-    })
+    const proof = currentCaptchaProof()
+    const response = loginMethod.value === 'code'
+      ? await authStore.loginWithEmailCode({ email: formData.email.trim(), code: formData.code, ...proof })
+      : await authStore.login({ email: formData.email.trim(), password: formData.password, ...proof })
 
     // Check if 2FA is required
     if (isTotp2FARequired(response)) {

@@ -11,12 +11,16 @@ import (
 
 // Task type constants
 const (
+	TaskTypeEmailLogin    = "email_login" // Fork-local D85
 	TaskTypeVerifyCode    = "verify_code"
 	TaskTypePasswordReset = "password_reset"
 )
 
 // EmailTask 邮件发送任务
 type EmailTask struct {
+	LoginCode    string // in-memory only; never log login codes
+	SkipDelivery bool   // identical queue admission for unknown accounts
+
 	Email    string
 	SiteName string
 	TaskType string // "verify_code" or "password_reset"
@@ -82,6 +86,12 @@ func (s *EmailQueueService) processTask(workerID int, task EmailTask) {
 	defer cancel()
 
 	switch task.TaskType {
+	case TaskTypeEmailLogin:
+		if err := s.emailService.sendEmailLoginCode(ctx, task); err != nil {
+			// Do not log recipient, code, SMTP errors or credentials.
+			logger.LegacyPrintf("service.email_queue", "[EmailQueue] Email login delivery failed")
+		}
+
 	case TaskTypeVerifyCode:
 		if err := s.emailService.SendVerifyCode(ctx, task.Email, task.SiteName, task.Locale); err != nil {
 			logger.LegacyPrintf("service.email_queue", "[EmailQueue] Worker %d failed to send verify code to %s: %v", workerID, task.Email, err)
@@ -141,4 +151,13 @@ func (s *EmailQueueService) Stop() {
 	close(s.stopChan)
 	s.wg.Wait()
 	logger.LegacyPrintf("service.email_queue", "%s", "[EmailQueue] All workers stopped")
+}
+
+func (s *EmailQueueService) enqueueEmailLogin(task EmailTask) error {
+	select {
+	case s.taskChan <- task:
+		return nil
+	default:
+		return fmt.Errorf("email queue is full")
+	}
 }

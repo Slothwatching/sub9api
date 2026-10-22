@@ -291,7 +291,7 @@ func parseAuditLogRetentionDays(value string) int {
 func (s *SettingService) GetSiteName(ctx context.Context) string {
 	value, err := s.settingRepo.GetValue(ctx, SettingKeySiteName)
 	if err != nil || value == "" {
-		return "Sub2API"
+		return "Sloth Code"
 	}
 	return value
 }
@@ -1216,4 +1216,11 @@ func mergePlatformQuotaDefaults(dst, src *DefaultPlatformQuotaSetting) {
 	if src.MonthlyLimitUSD != nil {
 		dst.MonthlyLimitUSD = src.MonthlyLimitUSD
 	}
+}
+
+// IsEmailCodeLoginEnabled is deliberately independent of registration verification.
+// Fork-local D85: errors and absent settings disable this additional login method.
+func (s *SettingService) IsEmailCodeLoginEnabled(ctx context.Context) bool {
+	value, err := s.settingRepo.GetValue(ctx, SettingKeyEmailCodeLoginEnabled)
+	return err == nil && value == "true"
 }

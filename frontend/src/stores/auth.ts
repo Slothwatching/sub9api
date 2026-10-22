@@ -263,6 +263,18 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Fork-local D85: keep the same session lifecycle and TOTP handoff as password login.
+  async function loginWithEmailCode(credentials: Parameters<typeof authAPI.loginWithEmailCode>[0]): Promise<LoginResponse> {
+    try {
+      const response = await authAPI.loginWithEmailCode(credentials)
+      if (!isTotp2FARequired(response)) setAuthFromResponse(response)
+      return response
+    } catch (error) {
+      clearAuth({ preservePendingAuthSession: pendingAuthSession.value !== null })
+      throw error
+    }
+  }
+
   /**
    * Complete login with 2FA code
    * @param tempToken - Temporary token from initial login
@@ -503,6 +515,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Actions
     login,
+    loginWithEmailCode,
     loginWithPasskey,
     login2FA,
     register,

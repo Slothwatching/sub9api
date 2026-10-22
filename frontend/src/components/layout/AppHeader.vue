@@ -54,6 +54,18 @@
         <!-- Subscription Progress (for users with active subscriptions; not mounted at all when the feature is off) -->
         <SubscriptionProgressMini v-if="user && subscriptionFeatureEnabled" />
 
+        <!-- Keep plan discovery visible without changing the workspace navigation. -->
+        <router-link
+          v-if="showSubscriptionPurchase"
+          :to="{ path: '/purchase', query: { tab: 'subscription' } }"
+          :title="t('nav.paymentPlans')"
+          :aria-label="t('nav.paymentPlans')"
+          class="flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-600 px-2.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 sm:px-3"
+        >
+          <Icon name="creditCard" size="sm" />
+          <span class="hidden sm:inline">{{ t('nav.paymentPlans') }}</span>
+        </router-link>
+
         <!-- Balance Display -->
         <div
           v-if="user"
@@ -301,6 +313,11 @@ const displayName = computed(() => {
 })
 
 const subscriptionFeatureEnabled = computed(() => isFeatureFlagEnabled(FeatureFlags.subscription))
+const showSubscriptionPurchase = computed(() => Boolean(user.value)
+  && !authStore.isSimpleMode
+  && !appStore.backendModeEnabled
+  && subscriptionFeatureEnabled.value
+  && isFeatureFlagEnabled(FeatureFlags.payment))
 
 function toggleMobileSidebar() {
   appStore.toggleMobileSidebar()
