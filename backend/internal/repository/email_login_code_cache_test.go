@@ -13,7 +13,8 @@ import (
 
 func TestEmailLoginCodeSingleUseConcurrent(t *testing.T) {
 	base, _, _ := newMiniredisEmailCache(t)
-	cache := base.(service.EmailLoginCodeCache)
+	cache, implementsLoginCache := base.(service.EmailLoginCodeCache)
+	require.True(t, implementsLoginCache)
 	ctx := context.Background()
 	ok, err := cache.ReserveEmailLoginCode(ctx, "User@example.com", "digest")
 	require.NoError(t, err)
@@ -39,7 +40,8 @@ func TestEmailLoginCodeSingleUseConcurrent(t *testing.T) {
 
 func TestEmailLoginCodeAttemptExpiryAndIsolation(t *testing.T) {
 	base, mr, _ := newMiniredisEmailCache(t)
-	cache := base.(service.EmailLoginCodeCache)
+	cache, implementsLoginCache := base.(service.EmailLoginCodeCache)
+	require.True(t, implementsLoginCache)
 	ctx := context.Background()
 	require.NoError(t, base.SetVerificationCode(ctx, "user@example.com", &service.VerificationCodeData{Code: "123456"}, time.Hour))
 	ok, err := cache.ConsumeEmailLoginCode(ctx, "user@example.com", "123456")
@@ -71,7 +73,8 @@ func TestEmailLoginCodeAttemptExpiryAndIsolation(t *testing.T) {
 
 func TestEmailLoginCodeHourlyLimitAndConcurrentSends(t *testing.T) {
 	base, mr, _ := newMiniredisEmailCache(t)
-	cache := base.(service.EmailLoginCodeCache)
+	cache, implementsLoginCache := base.(service.EmailLoginCodeCache)
+	require.True(t, implementsLoginCache)
 	ctx := context.Background()
 	for round := 0; round < 5; round++ {
 		var wins atomic.Int32
@@ -101,7 +104,8 @@ func TestEmailLoginCodeHourlyLimitAndConcurrentSends(t *testing.T) {
 
 func TestEmailLoginCodeCacheFailure(t *testing.T) {
 	base, mr, _ := newMiniredisEmailCache(t)
-	cache := base.(service.EmailLoginCodeCache)
+	cache, implementsLoginCache := base.(service.EmailLoginCodeCache)
+	require.True(t, implementsLoginCache)
 	mr.Close()
 	_, err := cache.ReserveEmailLoginCode(context.Background(), "u@example.com", "digest")
 	require.Error(t, err)

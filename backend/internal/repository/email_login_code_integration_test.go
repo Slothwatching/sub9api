@@ -16,7 +16,8 @@ import (
 
 // Fork-local D85: exercise authentication Lua against the harness's real Redis.
 func TestEmailLoginCodeRealRedis(t *testing.T) {
-	cache := NewEmailCache(integrationRedis).(service.EmailLoginCodeCache)
+	cache, implementsLoginCache := NewEmailCache(integrationRedis).(service.EmailLoginCodeCache)
+	require.True(t, implementsLoginCache)
 	ctx := context.Background()
 	email := fmt.Sprintf("login-%d@example.com", time.Now().UnixNano())
 	ok, err := cache.ReserveEmailLoginCode(ctx, email, "digest")
