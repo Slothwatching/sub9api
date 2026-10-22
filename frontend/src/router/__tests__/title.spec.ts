@@ -13,8 +13,8 @@ describe('resolveDocumentTitle', () => {
   })
 
   it('站点名为空时，回退默认站点名', () => {
-    expect(resolveDocumentTitle('Dashboard', '')).toBe('Dashboard - Sub2API')
-    expect(resolveDocumentTitle(undefined, '   ')).toBe('Sub2API')
+    expect(resolveDocumentTitle('Dashboard', '')).toBe('Dashboard - Sloth Code')
+    expect(resolveDocumentTitle(undefined, '   ')).toBe('Sloth Code')
   })
 
   it('站点名变更时仅影响后续路由标题计算', () => {
