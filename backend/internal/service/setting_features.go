@@ -1217,3 +1217,10 @@ func mergePlatformQuotaDefaults(dst, src *DefaultPlatformQuotaSetting) {
 		dst.MonthlyLimitUSD = src.MonthlyLimitUSD
 	}
 }
+
+// IsEmailCodeLoginEnabled is deliberately independent of registration verification.
+// Fork-local D85: errors and absent settings disable this additional login method.
+func (s *SettingService) IsEmailCodeLoginEnabled(ctx context.Context) bool {
+	value, err := s.settingRepo.GetValue(ctx, SettingKeyEmailCodeLoginEnabled)
+	return err == nil && value == "true"
+}

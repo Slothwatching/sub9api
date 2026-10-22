@@ -260,6 +260,7 @@ export interface PublicSettings {
   registration_email_domain_quota_enabled?: boolean
   promo_code_enabled: boolean
   password_reset_enabled: boolean
+  email_code_login_enabled?: boolean
   invitation_code_enabled: boolean
   login_agreement_enabled?: boolean
   login_agreement_mode?: 'modal' | 'checkbox' | string

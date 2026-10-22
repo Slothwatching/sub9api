@@ -155,3 +155,27 @@ func TestSettingHandler_GetPublicSettings_ExposesWeChatOAuthModeCapabilities(t *
 	require.True(t, resp.Data.WeChatOAuthOpenEnabled)
 	require.True(t, resp.Data.WeChatOAuthMPEnabled)
 }
+
+// Fork-local D85: the login method is independent of registration verification.
+func TestSettingHandler_GetPublicSettings_EmailCodeLoginSwitch(t *testing.T) {
+	for _, value := range []string{"", "false", "true"} {
+		t.Run(value, func(t *testing.T) {
+			repo := &settingHandlerPublicRepoStub{values: map[string]string{service.SettingKeyEmailCodeLoginEnabled: value}}
+			h := NewSettingHandler(service.NewSettingService(repo, &config.Config{}), "test")
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = httptest.NewRequest(http.MethodGet, "/api/v1/settings/public", nil)
+			h.GetPublicSettings(c)
+			require.Equal(t, http.StatusOK, w.Code)
+			var resp struct {
+				Data struct {
+					Enabled       bool `json:"email_code_login_enabled"`
+					VerifyEnabled bool `json:"email_verify_enabled"`
+				} `json:"data"`
+			}
+			require.NoError(t, json.Unmarshal(w.Body.Bytes(), &resp))
+			require.Equal(t, value == "true", resp.Data.Enabled)
+			require.False(t, resp.Data.VerifyEnabled)
+		})
+	}
+}

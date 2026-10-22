@@ -412,6 +412,7 @@ export interface SystemSettings {
   registration_email_domain_quota_enabled: boolean;
   promo_code_enabled: boolean;
   password_reset_enabled: boolean;
+  email_code_login_enabled: boolean;
   frontend_url: string;
   invitation_code_enabled: boolean;
   totp_enabled: boolean; // TOTP 双因素认证
@@ -772,6 +773,7 @@ export interface UpdateSettingsRequest {
   registration_email_domain_quota_enabled?: boolean;
   promo_code_enabled?: boolean;
   password_reset_enabled?: boolean;
+  email_code_login_enabled?: boolean;
   frontend_url?: string;
   invitation_code_enabled?: boolean;
   totp_enabled?: boolean; // TOTP 双因素认证

@@ -225,6 +225,7 @@ const (
 	SettingKeyRegistrationEmailDomainQuotaEnabled = "registration_email_domain_quota_enabled"
 	SettingKeyPromoCodeEnabled                    = "promo_code_enabled"               // 是否启用优惠码功能
 	SettingKeyPasswordResetEnabled                = "password_reset_enabled"           // 是否启用忘记密码功能（需要先开启邮件验证）
+	SettingKeyEmailCodeLoginEnabled               = "email_code_login_enabled"         // 是否启用邮箱验证码登录（独立于注册邮箱验证）
 	SettingKeyFrontendURL                         = "frontend_url"                     // 前端基础URL，用于生成邮件中的重置密码链接
 	SettingKeyInvitationCodeEnabled               = "invitation_code_enabled"          // 是否启用邀请码注册
 	SettingKeyAffiliateEnabled                    = "affiliate_enabled"                // 邀请返利功能总开关

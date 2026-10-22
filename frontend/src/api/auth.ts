@@ -146,6 +146,22 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   return data
 }
 
+// Fork-local D85: use dedicated login endpoints; registration codes are never accepted.
+export interface EmailCodeLoginRequest extends ActionCaptchaRequestProof {
+  email: string
+  code: string
+}
+
+export async function sendEmailLoginCode(request: ActionCaptchaRequestProof & { email: string }): Promise<SendVerifyCodeResponse> {
+  const { data } = await apiClient.post<SendVerifyCodeResponse>('/auth/email-code/send', request)
+  return data
+}
+
+export async function loginWithEmailCode(request: EmailCodeLoginRequest): Promise<LoginResponse> {
+  const { data } = await apiClient.post<LoginResponse>('/auth/email-code/login', request)
+  return data
+}
+
 /**
  * Complete login with 2FA code
  * @param request - Temp token and TOTP code
@@ -680,6 +696,7 @@ export async function exchangePendingOAuthCompletion(
 
 export const authAPI = {
   login,
+  loginWithEmailCode,
   login2FA,
   isTotp2FARequired,
   register,

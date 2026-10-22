@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Fork-local D85: settings contracts include the default-off email login switch.
 func TestAPIContracts(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -720,6 +721,7 @@ func TestAPIContracts(t *testing.T) {
 					"registration_email_domain_quota_enabled": false,
 					"promo_code_enabled": true,
 					"password_reset_enabled": false,
+					"email_code_login_enabled": false,
 						"frontend_url": "",
 						"totp_enabled": false,
 						"totp_encryption_key_configured": false,
@@ -1080,6 +1082,7 @@ func TestAPIContracts(t *testing.T) {
 					"registration_email_domain_quota_enabled": false,
 					"promo_code_enabled": true,
 					"password_reset_enabled": false,
+					"email_code_login_enabled": false,
 					"frontend_url": "",
 						"invitation_code_enabled": false,
 						"totp_enabled": false,

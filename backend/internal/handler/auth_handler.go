@@ -256,11 +256,20 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 	_ = token // token 由 authService.Login 返回但此处由 respondWithTokenPair 重新生成
 
-	if err := h.ensureBackendModeAllowsUser(c.Request.Context(), user); err != nil {
+	h.completePrimaryLogin(c, user)
+}
+
+// Fork-local D85: password and email-code login share all post-auth gates.
+func (h *AuthHandler) completePrimaryLogin(c *gin.Context, user *service.User) {
+	if err := ensureLoginUserActive(user); err != nil {
 		response.ErrorFrom(c, err)
 		return
 	}
 
+	if err := h.ensureBackendModeAllowsUser(c.Request.Context(), user); err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
 	// Check if TOTP 2FA is enabled for this user
 	if h.totpService != nil && h.settingSvc.IsTotpEnabled(c.Request.Context()) && user.TotpEnabled {
 		// Create a temporary login session for 2FA

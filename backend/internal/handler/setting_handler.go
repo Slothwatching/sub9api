@@ -62,6 +62,7 @@ func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
 		RegistrationEmailDomainQuotaEnabled: settings.RegistrationEmailDomainQuotaEnabled,
 		PromoCodeEnabled:                    settings.PromoCodeEnabled,
 		PasswordResetEnabled:                settings.PasswordResetEnabled,
+		EmailCodeLoginEnabled:               settings.EmailCodeLoginEnabled,
 		InvitationCodeEnabled:               settings.InvitationCodeEnabled,
 		TotpEnabled:                         settings.TotpEnabled,
 		PasskeyEnabled:                      settings.PasskeyEnabled,

@@ -29,6 +29,7 @@ type UpdateSettingsRequest struct {
 	RegistrationEmailDomainQuotaEnabled *bool                        `json:"registration_email_domain_quota_enabled"` // 非白名单域名限量注册开关（省略=保持现值）
 	PromoCodeEnabled                    bool                         `json:"promo_code_enabled"`
 	PasswordResetEnabled                bool                         `json:"password_reset_enabled"`
+	EmailCodeLoginEnabled               *bool                        `json:"email_code_login_enabled"`
 	FrontendURL                         string                       `json:"frontend_url"`
 	InvitationCodeEnabled               bool                         `json:"invitation_code_enabled"`
 	TotpEnabled                         bool                         `json:"totp_enabled"`             // TOTP 双因素认证
@@ -526,6 +527,11 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 	stepUpEnabled := previousSettings.StepUpEnabled
 	if req.StepUpEnabled != nil {
 		stepUpEnabled = *req.StepUpEnabled
+	}
+	// Fork-local D85: old clients omitting the new field preserve its value.
+	emailCodeLoginEnabled := previousSettings.EmailCodeLoginEnabled
+	if req.EmailCodeLoginEnabled != nil {
+		emailCodeLoginEnabled = *req.EmailCodeLoginEnabled
 	}
 	passkeyEnabled := previousSettings.PasskeyEnabled
 	if req.PasskeyEnabled != nil {
@@ -1563,6 +1569,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		RegistrationEmailDomainQuotaEnabled: registrationEmailDomainQuotaEnabled,
 		PromoCodeEnabled:                    req.PromoCodeEnabled,
 		PasswordResetEnabled:                req.PasswordResetEnabled,
+		EmailCodeLoginEnabled:               emailCodeLoginEnabled,
 		FrontendURL:                         req.FrontendURL,
 		InvitationCodeEnabled:               req.InvitationCodeEnabled,
 		TotpEnabled:                         req.TotpEnabled,
@@ -2230,6 +2237,7 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		RegistrationEmailDomainQuotaEnabled:                    updatedSettings.RegistrationEmailDomainQuotaEnabled,
 		PromoCodeEnabled:                                       updatedSettings.PromoCodeEnabled,
 		PasswordResetEnabled:                                   updatedSettings.PasswordResetEnabled,
+		EmailCodeLoginEnabled:                                  updatedSettings.EmailCodeLoginEnabled,
 		FrontendURL:                                            updatedSettings.FrontendURL,
 		InvitationCodeEnabled:                                  updatedSettings.InvitationCodeEnabled,
 		TotpEnabled:                                            updatedSettings.TotpEnabled,

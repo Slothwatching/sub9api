@@ -1466,6 +1466,15 @@
                 <Toggle v-model="form.email_verify_enabled" />
               </div>
 
+              <!-- Fork-local D85: independent passwordless login setting. -->
+              <div class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-dark-700">
+                <div>
+                  <label class="font-medium text-gray-900 dark:text-white">{{ t('admin.settings.registration.emailCodeLogin') }}</label>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{{ t('admin.settings.registration.emailCodeLoginHint') }}</p>
+                </div>
+                <Toggle v-model="form.email_code_login_enabled" />
+              </div>
+
               <!-- Email Suffix Whitelist -->
               <div class="border-t border-gray-100 pt-4 dark:border-dark-700">
                 <label class="font-medium text-gray-900 dark:text-white">{{
@@ -8481,7 +8490,7 @@
 
         <div v-show="activeTab === 'email'" class="space-y-6">
           <!-- Email disabled hint - show when email_verify_enabled is off -->
-          <div v-if="!form.email_verify_enabled" class="card">
+          <div v-if="!form.email_verify_enabled && !form.email_code_login_enabled" class="card">
             <div class="p-6">
               <div class="flex items-start gap-3">
                 <Icon
@@ -8502,7 +8511,7 @@
           </div>
 
           <!-- SMTP Settings - Only show when email verification is enabled -->
-          <div v-if="form.email_verify_enabled" class="card">
+          <div v-if="form.email_verify_enabled || form.email_code_login_enabled" class="card">
             <div
               class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -8665,7 +8674,7 @@
           </div>
 
           <!-- Send Test Email - Only show when email verification is enabled -->
-          <div v-if="form.email_verify_enabled" class="card">
+          <div v-if="form.email_verify_enabled || form.email_code_login_enabled" class="card">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -9789,6 +9798,7 @@ const form = reactive<SettingsForm>({
   promo_code_enabled: true,
   invitation_code_enabled: false,
   password_reset_enabled: false,
+  email_code_login_enabled: false,
   totp_enabled: false,
   totp_encryption_key_configured: false,
   passkey_enabled: false,
@@ -11501,6 +11511,7 @@ async function saveSettings() {
       promo_code_enabled: form.promo_code_enabled,
       invitation_code_enabled: form.invitation_code_enabled,
       password_reset_enabled: form.password_reset_enabled,
+      email_code_login_enabled: form.email_code_login_enabled,
       totp_enabled: form.totp_enabled,
       passkey_enabled: form.passkey_enabled,
       session_binding_enabled: form.session_binding_enabled,
