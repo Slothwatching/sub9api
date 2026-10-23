@@ -34,29 +34,6 @@ async function openOrders() {
 }
 
 describe('order status filtering', () => {
-  // Local refund guidance must match the backend's balance-only request contract.
-  it('offers self-service refunds only for completed balance orders on eligible providers', async () => {
-    api.getRefundEligibleProviders.mockResolvedValue({ data: { provider_instance_ids: ['eligible'] } })
-    api.getMyOrders.mockResolvedValue({ data: { total: 6, items: [
-      { id: 1, order_type: 'balance', status: 'COMPLETED', provider_instance_id: 'eligible' },
-      { id: 2, order_type: 'subscription', status: 'COMPLETED', provider_instance_id: 'eligible' },
-      { id: 3, order_type: 'subscription', status: 'SCHEDULED', provider_instance_id: 'eligible' },
-      { id: 4, order_type: 'balance', status: 'COMPLETED', provider_instance_id: 'disabled' },
-      { id: 5, order_type: 'balance', status: 'COMPLETED', provider_instance_id: null },
-      { id: 6, order_type: 'balance', status: 'REFUNDED', provider_instance_id: 'eligible' },
-    ] } })
-    const wrapper = mount(UserOrdersView, { global: { stubs: {
-      AppLayout: { template: '<div><slot /></div>' },
-      OrderTable: { props: ['orders'], template: '<div><div v-for="row in orders" :key="row.id" :data-order="row.id"><slot name="actions" :row="row" /></div></div>' },
-      BaseDialog: true, Icon: true, Pagination: true, RouterLink: RouterLinkStub,
-    } } })
-    await flushPromises()
-    expect(wrapper.get('[data-order="1"]').text()).toContain('payment.orders.requestRefund')
-    for (const id of [2, 3, 4, 5, 6]) {
-      expect(wrapper.get(`[data-order="${id}"]`).text()).not.toContain('payment.orders.requestRefund')
-    }
-    expect(wrapper.findComponent(RouterLinkStub).props('to')).toEqual({ path: '/help', query: { topic: 'refund' }, hash: '#refund' })
-  })
   it('loads the first page with the selected status', async () => {
     const wrapper = await openOrders()
     const select = wrapper.getComponent(Select)

@@ -3,12 +3,11 @@ export default {
     "links": "Explore the service",
     "paymentPolicy": {
       "title": "Payment and refund information",
-      "recharge": "Balance top-ups are separate from subscriptions: they do not increase subscription quota or automatically buy or upgrade a plan. Completed balance orders allow refund requests only when the original payment provider enables them and sufficient available balance remains.",
-      "subscription": "Renewing an active subscription in the same group extends its expiry without immediately resetting quota usage. Contact an administrator for subscription refunds; they must check whether the original payment provider supports and enables refunds.",
-      "purchase": "Buying a different tier currently does not automatically credit the old plan or switch your Key. Orders covered by legacy succession activate at the time shown. Immediate upgrades, next-cycle downgrades and quota add-ons are not available yet.",
+      "recharge": "Choose a top-up amount and payment method, check the payment total and credited balance, then complete payment. Check the result in Orders. Balance top-ups are separate from subscriptions and do not add subscription quota. See the refund conditions below.",
+      "subscription": "Check the plan, duration, quota and activation time, then choose a payment method and complete your purchase. For subscription refunds, contact an administrator with the order number. Processing depends on the original provider’s refund capabilities and settings.",
       "orders": "Self-service refund requests are limited to completed balance top-ups with sufficient available balance and an eligible original payment provider. For subscription refunds, contact an administrator with the order number. Processing depends on the original provider’s refund capabilities and settings.",
       "refundLink": "Read the full refund rules",
-      "changesLink": "Upcoming plan changes and quota add-ons"
+      "rechargeLink": "How to top up or buy a subscription"
     },
     "plans": {
       "title": "Choose a plan",
@@ -253,12 +252,12 @@ export default {
         "step2": "Paid succession orders that have not activated support full refunds only, with no partial refunds. Refunding such an order does not deduct benefits from the legacy plan you are currently using.",
         "step3": "For an active subscription refund that also deducts benefits, the deduction uses the original order’s purchased days and may expire the subscription. It is not automatically prorated by remaining days or by a partial refund amount. Have an administrator confirm both the refund amount and benefit changes first. This process is not an upgrade credit mechanism."
       },
-      "planChanges": {
-        "title": "Upgrades, downgrades and quota add-ons: planned, not yet available",
-        "lead": "Renewing an active subscription in the same group currently extends its expiry without resetting usage. Immediate upgrade credits, next-cycle downgrades and separate quota add-ons are not available yet. Buying a different tier does not automatically credit or replace the old plan or migrate Keys. Legacy succession orders still follow their scheduled activation.",
-        "step1": "Planned immediate upgrades credit remaining benefits toward a new tier and start a fresh 30-day term, switching the original Key on success. Credit is the original paid service principal multiplied by the smaller of the remaining time fraction and remaining monthly quota fraction, rounded down to cents. It applies only to that upgrade, with no automatic cash refund.",
-        "step2": "Planned downgrades preserve purchased benefits until expiry, then activate the lower tier in the next subscription term. Same-tier renewals continue to extend time only, with usage resetting on the existing quota windows.",
-        "step3": "Temporary extra quota will be offered separately; prices, quota amounts and expiry are to be announced. Balance top-ups currently do not add subscription quota, and repeated renewals do not immediately refill it."
+      "recharge": {
+        "title": "How do I top up my balance or buy a subscription?",
+        "lead": "Balance top-ups and subscription purchases are separate. Choose the available option that meets your needs. Adding balance does not automatically buy a subscription or increase its quota.",
+        "step1": "To top up: open the payment page, choose an amount and available payment method, check the payment total, fees and credited balance, then create an order and follow the payment instructions.",
+        "step2": "To subscribe: select a plan, check its price, duration, quota and expected activation time, then choose a payment method and pay. Renewing an active subscription in the same group extends time without immediately resetting usage. Orders covered by legacy succession activate at the time shown.",
+        "step3": "After payment, check Orders and confirm the balance or subscription has been credited. If a paid order has not updated, refresh it first. For unresolved issues, contact an administrator with the order number and avoid paying again. Follow the refund instructions for refund requests."
       }
     }
   }

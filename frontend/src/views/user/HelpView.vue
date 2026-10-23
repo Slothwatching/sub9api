@@ -54,7 +54,7 @@ const articles = [
   { id: 'cache', category: 'billing', to: '/billing', action: 'estimate' },
   { id: 'renewal', category: 'billing', to: '/orders', action: 'orders' },
   { id: 'refund', category: 'billing', to: '/orders', action: 'orders' },
-  { id: 'planChanges', category: 'billing', to: '/subscriptions', action: 'subscriptions' },
+  { id: 'recharge', category: 'billing', to: '/orders', action: 'orders' },
 ]
 const filtered = computed(() => articles.filter(a => (category.value === 'all' || a.category === category.value) &&
   (!search.value.trim() || ['title', 'lead', 'step1', 'step2', 'step3'].some(field => t(`experience.articles.${a.id}.${field}`).toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())))))
