@@ -44,8 +44,9 @@ async function load() {
     // Public price access must not make an authenticated payment API request.
     if (current === version && auth.isAuthenticated && !auth.isSimpleMode && resolveFeatureFlag(app.cachedPublicSettings, FeatureFlags.subscription) && resolveFeatureFlag(app.cachedPublicSettings, FeatureFlags.payment)) {
       try {
-        const offered = await paymentAPI.getPlans()
-        if (current === version) subscriptionPlans.value = offered.data.filter(p => p.for_sale !== false)
+        // The plain /plans response omits quota fields; checkout-info includes them.
+        const offered = await paymentAPI.getCheckoutInfo()
+        if (current === version) subscriptionPlans.value = offered.data.plans.filter(p => p.for_sale !== false)
       } catch { /* Model cost estimates remain available without plan projections. */ }
     }
   } catch { if (current === version) failed.value = true }

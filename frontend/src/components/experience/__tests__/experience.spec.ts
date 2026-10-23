@@ -18,7 +18,7 @@ vi.mock('@/stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('@/stores/app', () => ({ useAppStore: () => app }))
 vi.mock('@/api/channelMonitor', () => ({ list: mocks.list }))
 vi.mock('@/api/modelPlaza', () => ({ getModelPlaza: mocks.plaza }))
-vi.mock('@/api/payment', () => ({ paymentAPI: { getPlans: mocks.plans } }))
+vi.mock('@/api/payment', () => ({ paymentAPI: { getCheckoutInfo: mocks.plans } }))
 vi.mock('vue-router', async () => ({ ...await vi.importActual('vue-router'), useRoute: () => ({ query: { topic: 'auth' } }) }))
 const groups = [{ id: 1, name: 'GPT', rate_multiplier: 1, models: [{ name: 'configured-gpt', platform: 'openai', catalog_capabilities: { supports_vision: false }, pricing: { billing_mode: 'token', input_price: 1e-6, output_price: 2e-6, cache_read_price: 0.1e-6, cache_write_price: null, intervals: [] } }] }] as ModelPlazaGroup[]
 // The test runtime omits the i18n string compiler. Supply message functions
@@ -42,8 +42,18 @@ describe('GPT customer experience', () => {
     const wrapper = mount(BillingGuideView, options()); await flushPromises()
     expect(mocks.plans).toHaveBeenCalledTimes(1)
     auth.isAuthenticated = false; await flushPromises()
-    resolvePlans({ data: [{ id: 1, group_id: 1, monthly_limit_usd: 165 }] }); await flushPromises()
+    resolvePlans({ data: { plans: [{ id: 1, group_id: 1, monthly_limit_usd: 165 }] } }); await flushPromises()
     expect(wrapper.findComponent(CostCalculator).props('subscriptionPlans')).toEqual([])
+    wrapper.unmount()
+  })
+  it('uses the checkout-info quota contract to display a real signed-in plan forecast', async () => {
+    auth.isAuthenticated = true
+    mocks.plaza.mockResolvedValue({ groups })
+    mocks.plans.mockResolvedValue({ data: { plans: [{ id: 16, group_id: 1, name: 'Current Starter', for_sale: true, weekly_limit_usd: 49.5, monthly_limit_usd: 165 }] } })
+    const wrapper = mount(BillingGuideView, options()); await flushPromises()
+    expect(wrapper.find('[data-testid=quota-forecast]').text()).toContain('$49.5')
+    expect(wrapper.find('[data-testid=quota-forecast]').text()).toContain('$165')
+    expect(wrapper.findComponent(CostCalculator).props('subscriptionPlans')[0].id).toBe(16)
     wrapper.unmount()
   })
   it.each(['zh', 'en'])('uses monthly and busiest-week estimates to select a real product in %s', async locale => {
