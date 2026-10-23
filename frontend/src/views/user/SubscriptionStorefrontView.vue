@@ -24,6 +24,7 @@
       </div>
       <template v-else>
         <SubscriptionRenewalNotice :info="renewalInfo" />
+        <BillingPolicyNotice context="subscription" />
         <PlanGuide v-if="plans.length" :plans="plans" @select="choosePlan" />
         <nav :aria-label="t('storefront.choose')" class="flex flex-wrap gap-2">
           <button v-for="item in filters" :key="item.key" type="button" :aria-pressed="filter === item.key"
@@ -76,6 +77,7 @@ import { useSubscriptionStore } from '@/stores/subscriptions'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import PlanGuide from '@/components/experience/PlanGuide.vue'
 import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
+import BillingPolicyNotice from '@/components/payment/BillingPolicyNotice.vue'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import { planValiditySuffix } from '@/components/payment/validity'
 import { currencySymbol } from '@/components/payment/currency'

@@ -1,6 +1,15 @@
 export default {
   "experience": {
     "links": "Explore the service",
+    "paymentPolicy": {
+      "title": "Payment and refund information",
+      "recharge": "Balance top-ups are separate from subscriptions: they do not increase subscription quota or automatically buy or upgrade a plan. Completed balance orders allow refund requests only when the original payment provider enables them and sufficient available balance remains.",
+      "subscription": "Renewing an active subscription in the same group extends its expiry without immediately resetting quota usage. Contact an administrator for subscription refunds; they must check whether the original payment provider supports and enables refunds.",
+      "purchase": "Buying a different tier currently does not automatically credit the old plan or switch your Key. Orders covered by legacy succession activate at the time shown. Immediate upgrades, next-cycle downgrades and quota add-ons are not available yet.",
+      "orders": "Self-service refund requests are limited to completed balance top-ups with sufficient available balance and an eligible original payment provider. For subscription refunds, contact an administrator with the order number. Processing depends on the original provider’s refund capabilities and settings.",
+      "refundLink": "Read the full refund rules",
+      "changesLink": "Upcoming plan changes and quota add-ons"
+    },
     "plans": {
       "title": "Choose a plan",
       "intro": "Choose a quota window for your usage pattern, then compare prices. All figures below come from products currently on sale.",
@@ -234,8 +243,22 @@ export default {
         "title": "Legacy renewals, scheduled activation and quota resets",
         "lead": "Existing legacy benefits remain usable. New purchases and renewals use current products. Deferred renewal and immediate upgrade are different rules.",
         "step1": "When prepaying, check the activation time. Orders subject to legacy succession show paid and scheduled, and do not immediately replace existing benefits.",
-        "step2": "The purchased duration starts on actual activation. If multiple legacy plans remain protected, follow the activation arrangement shown in the UI.",
+        "step2": "The purchased duration starts on actual activation. If multiple legacy plans remain protected, follow the activation arrangement shown in the UI. Renewing an active subscription in the same group only extends its expiry; it does not immediately reset quota usage.",
         "step3": "Weekly/monthly plans have no daily cap, and weekly usage counts toward the monthly cap. Premium has only a monthly cap. Windows span 7/30 days; see subscriptions for reset times. Unused quota does not increase the next window cap. Check order status after payment before purchasing again."
+      },
+      "refund": {
+        "title": "Refunds for balance top-ups and subscriptions",
+        "lead": "Submitting a refund request does not mean a refund is complete. Processing depends on the original payment provider’s capabilities, settings and order status. For subscription refunds, contact an administrator with the order number.",
+        "step1": "The user-facing refund request supports completed balance top-up orders only. The original provider must allow user requests, and sufficient available balance must remain. Administrators handle subscription refunds.",
+        "step2": "Paid succession orders that have not activated support full refunds only, with no partial refunds. Refunding such an order does not deduct benefits from the legacy plan you are currently using.",
+        "step3": "For an active subscription refund that also deducts benefits, the deduction uses the original order’s purchased days and may expire the subscription. It is not automatically prorated by remaining days or by a partial refund amount. Have an administrator confirm both the refund amount and benefit changes first. This process is not an upgrade credit mechanism."
+      },
+      "planChanges": {
+        "title": "Upgrades, downgrades and quota add-ons: planned, not yet available",
+        "lead": "Renewing an active subscription in the same group currently extends its expiry without resetting usage. Immediate upgrade credits, next-cycle downgrades and separate quota add-ons are not available yet. Buying a different tier does not automatically credit or replace the old plan or migrate Keys. Legacy succession orders still follow their scheduled activation.",
+        "step1": "Planned immediate upgrades credit remaining benefits toward a new tier and start a fresh 30-day term, switching the original Key on success. Credit is the original paid service principal multiplied by the smaller of the remaining time fraction and remaining monthly quota fraction, rounded down to cents. It applies only to that upgrade, with no automatic cash refund.",
+        "step2": "Planned downgrades preserve purchased benefits until expiry, then activate the lower tier in the next subscription term. Same-tier renewals continue to extend time only, with usage resetting on the existing quota windows.",
+        "step3": "Temporary extra quota will be offered separately; prices, quota amounts and expiry are to be announced. Balance top-ups currently do not add subscription quota, and repeated renewals do not immediately refill it."
       }
     }
   }
