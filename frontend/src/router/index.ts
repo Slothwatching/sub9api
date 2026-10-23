@@ -31,6 +31,10 @@ const routes: RouteRecordRaw[] = [
 
   { path: "/connect", name: "Connect", component: () => import("@/views/user/ConnectView.vue"), meta: { requiresAuth: false, title: "Connection center", titleKey: "commercial.connect.title" } },
 
+  // D95: public help and non-mutating estimates share existing feature-gated data.
+  { path: '/help', name: 'Help', component: () => import('@/views/user/HelpView.vue'), meta: { requiresAuth: false, title: 'GPT / Codex help', titleKey: 'experience.help.title' } },
+  { path: '/billing', name: 'BillingGuide', component: () => import('@/views/user/BillingGuideView.vue'), meta: { requiresAuth: false, title: 'Billing guide', titleKey: 'experience.billing.title' } },
+
   // ==================== Public Routes ====================
   {
     path: '/home',

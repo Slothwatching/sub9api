@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import PlazaNavBar from '@/components/modelPlaza/PlazaNavBar.vue'
@@ -34,15 +34,22 @@ const data = ref<ModelPlazaResponse | null>(null)
 const loading = ref(true)
 const loadFailed = ref(false)
 
-onMounted(async () => {
-  // 独立形态导航条需要站点名/Logo;有 __APP_CONFIG__ 注入时同步命中缓存。
+// D95: discard user-specific prices/groups when authentication changes.
+let version = 0
+async function load() {
+  const current = ++version
+  data.value = null; loading.value = true; loadFailed.value = false
   void appStore.fetchPublicSettings()
   try {
-    data.value = await getModelPlaza()
+    const result = await getModelPlaza()
+    if (current === version) data.value = result
   } catch {
-    loadFailed.value = true
+    if (current === version) loadFailed.value = true
   } finally {
-    loading.value = false
+    if (current === version) loading.value = false
   }
-})
+}
+watch([() => authStore.isAuthenticated, () => authStore.user?.id], load)
+onMounted(load)
+onBeforeUnmount(() => { version++; data.value = null })
 </script>

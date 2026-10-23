@@ -207,9 +207,19 @@ var (
 	}
 )
 
+// ModelCatalogCapabilities contains display-only catalog facts. Missing fields stay
+// unknown; these declarations never enable gateway features or model access (D95).
+type ModelCatalogCapabilities struct {
+	MaxInputTokens          *int  `json:"max_input_tokens,omitempty"`
+	MaxOutputTokens         *int  `json:"max_output_tokens,omitempty"`
+	SupportsVision          *bool `json:"supports_vision,omitempty"`
+	SupportsFunctionCalling *bool `json:"supports_function_calling,omitempty"`
+}
+
 // LiteLLMModelPricing LiteLLM价格数据结构
 // 只保留我们需要的字段，使用指针来处理可能缺失的值
 type LiteLLMModelPricing struct {
+	ModelCatalogCapabilities
 	CacheCreationInputTokenCostExplicit bool    `json:"-"`
 	InputCostPerToken                   float64 `json:"input_cost_per_token"`
 	InputCostPerTokenPriority           float64 `json:"input_cost_per_token_priority"`
@@ -249,6 +259,7 @@ type PricingRemoteClient interface {
 
 // LiteLLMRawEntry 用于解析原始JSON数据
 type LiteLLMRawEntry struct {
+	ModelCatalogCapabilities
 	InputCostPerToken                   *float64 `json:"input_cost_per_token"`
 	InputCostPerTokenPriority           *float64 `json:"input_cost_per_token_priority"`
 	OutputCostPerToken                  *float64 `json:"output_cost_per_token"`
@@ -686,11 +697,12 @@ func (s *PricingService) parsePricingData(body []byte) (map[string]*LiteLLMModel
 		}
 
 		pricing := &LiteLLMModelPricing{
-			LiteLLMProvider:       entry.LiteLLMProvider,
-			Mode:                  entry.Mode,
-			SupportsPromptCaching: entry.SupportsPromptCaching,
-			SupportsServiceTier:   entry.SupportsServiceTier,
-			TokenPricingAbsent:    entry.InputCostPerToken == nil && entry.OutputCostPerToken == nil,
+			ModelCatalogCapabilities: entry.ModelCatalogCapabilities,
+			LiteLLMProvider:          entry.LiteLLMProvider,
+			Mode:                     entry.Mode,
+			SupportsPromptCaching:    entry.SupportsPromptCaching,
+			SupportsServiceTier:      entry.SupportsServiceTier,
+			TokenPricingAbsent:       entry.InputCostPerToken == nil && entry.OutputCostPerToken == nil,
 		}
 
 		if entry.InputCostPerToken != nil {

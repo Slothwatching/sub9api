@@ -12,7 +12,7 @@ vi.mock('@/api/usage', () => ({ usageAPI: { getDashboardStats: mocks.stats } }))
 vi.mock('@/utils/featureFlags', () => ({ FeatureFlags: { payment: 'payment', modelPlaza: 'model' }, isFeatureFlagEnabled: () => false }))
 import ConnectView from '../ConnectView.vue'
 import GettingStarted from '@/components/user/dashboard/GettingStarted.vue'
-const global = { stubs: { AppLayout: { template: '<main><slot /></main>' }, PlazaNavBar: true, UseKeyContent: { props: ['apiKey', 'platform', 'baseUrl', 'claudeCodeOnly'], template: '<div data-testid="guide">{{ apiKey }}|{{ platform }}|{{ baseUrl }}|{{ claudeCodeOnly }}</div>' }, CommunitySection: true, BillingExplanation: true, RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } }
+const global = { stubs: { AppLayout: { template: '<main><slot /></main>' }, PlazaNavBar: true, UseKeyContent: { props: ['apiKey', 'platform', 'baseUrl', 'claudeCodeOnly'], template: '<div data-testid="guide">{{ apiKey }}|{{ platform }}|{{ baseUrl }}|{{ claudeCodeOnly }}</div>' }, CommunitySection: true, ExperienceLinks: true, BillingExplanation: true, RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } }
 beforeEach(() => { vi.clearAllMocks(); mocks.auth.isAuthenticated = false; mocks.keys.mockResolvedValue({ items: [], total: 0 }); mocks.groups.mockResolvedValue([]); mocks.subscriptions.mockResolvedValue([]); mocks.stats.mockResolvedValue({ total_requests: 0 }) })
 describe('connection and onboarding behavior', () => {
  it('offers the six-step guide with official ChatGPT and CC Switch downloads and existing key actions', async () => {

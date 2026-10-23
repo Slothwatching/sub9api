@@ -4,6 +4,8 @@
     <div class="mx-auto max-w-5xl space-y-6" :class="!auth.isAuthenticated && 'px-4 py-8'">
       <header v-if="!auth.isAuthenticated"><h1 class="text-3xl font-semibold">{{ t('commercial.connect.title') }}</h1></header>
       <p class="text-gray-500 dark:text-dark-300">{{ t('commercial.connect.subtitle') }}</p>
+      <ExperienceLinks />
+      <RouterLink to="/help" class="card block p-5 text-sm leading-6"><strong>{{ t('experience.help.title') }} →</strong><p class="mt-2 text-gray-500 dark:text-dark-300">{{ t('experience.help.subtitle') }}</p></RouterLink>
       <ConnectTutorials />
       <CcSwitchGuide />
       <header id="manual-configuration" class="border-t border-gray-200 pt-8 dark:border-dark-700"><h2 class="text-xl font-semibold">{{ t('commercial.ccSwitch.otherMethods') }}</h2><p class="mt-2 text-sm text-gray-500 dark:text-dark-300">{{ t('commercial.ccSwitch.otherMethodsHint') }}</p></header>
@@ -39,6 +41,7 @@ import CcSwitchGuide from '@/components/keys/CcSwitchGuide.vue'
 import ConnectTutorials from '@/components/connect/ConnectTutorials.vue'
 import CommunitySection from '@/components/community/CommunitySection.vue'
 import BillingExplanation from '@/components/user/BillingExplanation.vue'
+import ExperienceLinks from '@/components/experience/ExperienceLinks.vue'
 const { t } = useI18n()
 const auth = useAuthStore(); const app = useAppStore()
 const keys = ref<ApiKey[]>([]); const keyID = ref(''); const genericPlatform = ref<GroupPlatform>('openai')

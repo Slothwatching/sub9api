@@ -24,6 +24,7 @@
       </div>
       <template v-else>
         <SubscriptionRenewalNotice :info="renewalInfo" />
+        <PlanGuide v-if="plans.length" :plans="plans" @select="choosePlan" />
         <nav :aria-label="t('storefront.choose')" class="flex flex-wrap gap-2">
           <button v-for="item in filters" :key="item.key" type="button" :aria-pressed="filter === item.key"
             class="rounded-xl px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500"
@@ -73,6 +74,7 @@ import { paymentAPI } from '@/api/payment'
 import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscriptions'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import PlanGuide from '@/components/experience/PlanGuide.vue'
 import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import { planValiditySuffix } from '@/components/payment/validity'
@@ -126,8 +128,13 @@ const selectedGroup = computed(() => groups.value.find(group => group.id === sel
 function planPrice(plan: SubscriptionPlan) {
   return `${currencySymbol(plan.currency)}${plan.price.toFixed(2)}${plan.currency ? ` ${plan.currency}` : ''}`
 }
-async function chooseGroup(groupId: number) {
-  selectedId.value = groups.value.find(group => group.id === groupId)?.plans[0]?.id ?? null
+function chooseGroup(groupId: number) {
+  const id = groups.value.find(group => group.id === groupId)?.plans[0]?.id
+  if (id != null) void choosePlan(id)
+}
+async function choosePlan(planId: number) {
+  if (!plans.value.some(plan => plan.id === planId)) return
+  selectedId.value = planId
   await nextTick()
   summary.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   summary.value?.focus({ preventScroll: true })

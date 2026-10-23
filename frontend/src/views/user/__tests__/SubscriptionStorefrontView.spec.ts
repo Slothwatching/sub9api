@@ -18,7 +18,7 @@ function plan(id: number, overrides: Partial<SubscriptionPlan> = {}): Subscripti
 }
 function render() {
   return mount(SubscriptionStorefrontView, { global: {
-    stubs: { AppLayout: { template: '<div><slot /></div>' }, SubscriptionPlanCard: card, RouterLink: RouterLinkStub },
+    stubs: { AppLayout: { template: '<div><slot /></div>' }, SubscriptionPlanCard: card, PlanGuide: true, RouterLink: RouterLinkStub },
   } })
 }
 beforeEach(() => {
@@ -71,4 +71,14 @@ it('accepts the production checkout contract without for_sale and displays queue
   expect(wrapper.findAll('[data-plan-group]')).toHaveLength(1)
   expect(wrapper.find('[role="note"]').text()).toContain('renewal.notice')
   expect(wrapper.find('[role="note"]').text()).toContain('renewal.waiting')
+})
+
+it('keeps the exact product and duration selected by the comparison guide', async () => {
+  getCheckoutInfo.mockResolvedValue({ data: { plans: [plan(1), plan(2, { group_id: 1, validity_days: 3, validity_unit: 'months', price: 170.1 })] } })
+  const wrapper = render(); await flushPromises()
+  wrapper.findComponent({ name: 'PlanGuide' }).vm.$emit('select', 2)
+  await flushPromises()
+  const summary = wrapper.find('section[tabindex]')
+  expect(summary.findComponent(RouterLinkStub).props('to')).toEqual({ path: '/purchase', query: { tab: 'subscription', plan_id: '2' } })
+  expect(summary.text()).toContain('¥170.10 CNY')
 })

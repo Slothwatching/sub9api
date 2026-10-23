@@ -754,6 +754,8 @@ function buildSelfNavItems(withDashboard: boolean): NavItem[] {
   }
   items.push(
     { path: '/connect', label: t('commercial.connect.title'), icon: KeyIcon },
+    { path: '/help', label: t('experience.help.title'), icon: KeyIcon },
+    { path: '/billing', label: t('experience.billing.title'), icon: ChartIcon },
     { path: '/keys', label: t('nav.apiKeys'), icon: KeyIcon },
     { path: '/batch-image', label: t('nav.batchImage'), icon: BatchImageIcon, hideInSimpleMode: true, featureFlag: flagBatchImageAccess },
     { path: '/usage', label: t('nav.usage'), icon: ChartIcon, hideInSimpleMode: true },
