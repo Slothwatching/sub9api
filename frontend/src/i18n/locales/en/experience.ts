@@ -80,6 +80,7 @@ export default {
       "audit4": "Use the actual recorded charge as the source of truth. If it differs from your expectation, share the time, model, request ID (if present) and redacted error through the site support entry. Never share a full Key."
     },
     "calculator": {
+      "loginRequired": "The administrator requires sign-in to view model prices. Sign in to estimate costs; the billing guide remains readable.",
       "inputCost": "Uncached input cost", "outputCost": "Output cost", "cacheReadCost": "Cache-read cost", "cacheWriteCost": "Cache-write cost", "rateHint": "Effective group / user billing multiplier: ×{rate}.",
 
       "title": "GPT text request cost estimator",

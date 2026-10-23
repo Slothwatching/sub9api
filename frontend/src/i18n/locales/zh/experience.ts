@@ -80,6 +80,7 @@ export default {
       "audit4": "以记录中的实际费用为准。对不上时保留请求时间、模型、请求 ID（如有）和脱敏错误信息，通过本站支持入口咨询，勿发送完整 Key。"
     },
     "calculator": {
+      "loginRequired": "管理员要求登录后查看模型价卡。请先登录使用试算；费用说明仍可阅读。",
       "inputCost": "普通输入费用", "outputCost": "输出费用", "cacheReadCost": "缓存读取费用", "cacheWriteCost": "缓存写入费用", "rateHint": "当前分组 / 专属计费倍率：×{rate}。",
 
       "title": "GPT 文本请求费用试算",

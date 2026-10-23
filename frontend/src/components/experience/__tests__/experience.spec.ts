@@ -10,8 +10,8 @@ import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import zh from '@/i18n/locales/zh'
 import en from '@/i18n/locales/en'
 const mocks = vi.hoisted(() => ({ list: vi.fn(), plaza: vi.fn(), settings: vi.fn() }))
-const auth = reactive({ isAuthenticated: false })
-const app = reactive({ cachedPublicSettings: { model_plaza_enabled: true, channel_monitor_enabled: true, payment_enabled: true, subscription_enabled: true }, fetchPublicSettings: mocks.settings })
+const auth = reactive({ isAuthenticated: false, isSimpleMode: false })
+const app = reactive({ cachedPublicSettings: { model_plaza_enabled: true, model_plaza_require_auth: false, channel_monitor_enabled: true, payment_enabled: true, subscription_enabled: true }, fetchPublicSettings: mocks.settings })
 vi.mock('@/stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('@/stores/app', () => ({ useAppStore: () => app }))
 vi.mock('@/api/channelMonitor', () => ({ list: mocks.list }))
@@ -26,7 +26,7 @@ function compiledMessages(value: Record<string, unknown>): Record<string, unknow
     : compiledMessages(item as Record<string, unknown>)]))
 }
 function options(locale = 'zh') { return { global: { plugins: [createI18n({ legacy: false, locale, messages: { zh: compiledMessages(zh), en: compiledMessages(en) } })], stubs: { RouterLink: RouterLinkStub, PlazaNavBar: true, AppLayout: { template: '<div><slot /></div>' } } } } }
-beforeEach(() => { vi.clearAllMocks(); auth.isAuthenticated = false; app.cachedPublicSettings.model_plaza_enabled = true; mocks.settings.mockResolvedValue(undefined); mocks.list.mockResolvedValue({ items: [] }) })
+beforeEach(() => { vi.clearAllMocks(); auth.isAuthenticated = false; app.cachedPublicSettings.model_plaza_enabled = true; app.cachedPublicSettings.model_plaza_require_auth = false; auth.isSimpleMode = false; mocks.settings.mockResolvedValue(undefined); mocks.list.mockResolvedValue({ items: [] }) })
 describe('GPT customer experience', () => {
   it('keeps unknown capabilities distinct from explicitly unsupported and makes no anonymous monitor request', async () => {
     const wrapper = mount(ModelGuide, { props: { groups }, ...options() }); await flushPromises()
@@ -63,6 +63,7 @@ describe('GPT customer experience', () => {
   })
   it('does not fetch or expose price data while the model directory feature is disabled', async () => {
     app.cachedPublicSettings.model_plaza_enabled = false
+    app.cachedPublicSettings.model_plaza_require_auth = true
     const wrapper = mount(BillingGuideView, options()); await flushPromises()
     expect(mocks.plaza).not.toHaveBeenCalled()
     expect(wrapper.text()).toContain('暂无可用于试算')
@@ -78,4 +79,23 @@ describe('GPT customer experience', () => {
     expect(wrapper.findComponent(CostCalculator).props('groups')).toEqual([])
     wrapper.unmount()
   })
+})
+
+it('keeps public billing guidance readable when prices require authentication', async () => {
+  app.cachedPublicSettings.model_plaza_require_auth = true
+  const wrapper = mount(BillingGuideView, options()); await flushPromises()
+  expect(mocks.plaza).not.toHaveBeenCalled()
+  expect(wrapper.text()).toContain('费用说明仍可阅读')
+  expect(wrapper.findAllComponents(RouterLinkStub).some(link => JSON.stringify(link.props('to')) === JSON.stringify({ path: '/login', query: { redirect: '/billing' } }))).toBe(true)
+  wrapper.unmount()
+})
+it('retains the existing simple-mode usage destination and hides purchase discovery', async () => {
+  auth.isSimpleMode = true
+  mocks.plaza.mockResolvedValue({ groups: [] })
+  const wrapper = mount(BillingGuideView, options()); await flushPromises()
+  const targets = wrapper.findAllComponents(RouterLinkStub).map(link => link.props('to'))
+  expect(targets).toContain('/keys')
+  expect(targets).not.toContain('/usage')
+  expect(targets).not.toContain('/subscribe')
+  wrapper.unmount()
 })
