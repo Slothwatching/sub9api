@@ -222,7 +222,11 @@ func (s *PaymentService) PrepareRefund(ctx context.Context, oid int64, amt float
 	}
 	// REFUND_PENDING 只能通过 QueryAndFinalizeRefund 收敛：重新发起会重复扣减并向网关重复退款。
 	ok := []string{OrderStatusCompleted, OrderStatusRefundRequested, OrderStatusRefundFailed}
-	if !psSliceContains(ok, o.Status) && !(unassignedRenewal && (o.Status == OrderStatusScheduled || o.Status == OrderStatusPaid || o.Status == OrderStatusFailed)) {
+	allowedStatus := psSliceContains(ok, o.Status)
+	if unassignedRenewal && (o.Status == OrderStatusScheduled || o.Status == OrderStatusPaid || o.Status == OrderStatusFailed) {
+		allowedStatus = true
+	}
+	if !allowedStatus {
 		return nil, nil, infraerrors.BadRequest("INVALID_STATUS", "order status does not allow refund")
 	}
 	// Check provider instance allows admin refund
