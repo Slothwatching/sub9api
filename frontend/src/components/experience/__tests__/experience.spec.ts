@@ -110,7 +110,7 @@ describe('GPT customer experience', () => {
   })
   it.each(['zh', 'en'])('searches translated help content and supports deep-linked articles in %s', async locale => {
     const wrapper = mount(HelpView, options(locale)); await flushPromises()
-    expect(wrapper.findAll('details')).toHaveLength(12)
+    expect(wrapper.findAll('details')).toHaveLength(14)
     expect(wrapper.find('#auth').attributes()).toHaveProperty('open')
     await wrapper.find('input[type=search]').setValue('429')
     expect(wrapper.findAll('details')).toHaveLength(1)

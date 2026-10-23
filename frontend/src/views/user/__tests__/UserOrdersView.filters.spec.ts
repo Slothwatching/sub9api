@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
+import { enableAutoUnmount, flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import UserOrdersView from '../UserOrdersView.vue'
 import Select from '@/components/common/Select.vue'
 import Pagination from '@/components/common/Pagination.vue'
@@ -7,7 +7,7 @@ import Pagination from '@/components/common/Pagination.vue'
 const api = vi.hoisted(() => ({ getMyOrders: vi.fn(), getRefundEligibleProviders: vi.fn() }))
 vi.mock('@/api/payment', () => ({ paymentAPI: api }))
 vi.mock('@/stores', () => ({ useAppStore: () => ({ showError: vi.fn() }) }))
-vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+vi.mock('vue-router', async () => ({ ...await vi.importActual('vue-router'), useRouter: () => ({ push: vi.fn() }) }))
 vi.mock('vue-i18n', async (importOriginal) => ({
   ...await importOriginal<typeof import('vue-i18n')>(),
   useI18n: () => ({ t: (key: string) => key })
@@ -24,7 +24,7 @@ async function openOrders() {
   const wrapper = mount(UserOrdersView, {
     global: { stubs: {
       AppLayout: { template: '<div><slot /></div>' },
-      OrderTable: true, BaseDialog: true, Icon: true, Pagination: true, teleport: true
+      OrderTable: true, BaseDialog: true, Icon: true, Pagination: true, teleport: true, RouterLink: RouterLinkStub
     } }
   })
   await flushPromises()

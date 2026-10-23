@@ -39,6 +39,7 @@
           </div>
           <!-- Top-up Tab -->
           <template v-else-if="activeTab === 'recharge'">
+            <BillingPolicyNotice context="recharge" />
             <!-- Recharge Account Card -->
             <div class="card p-5">
               <p class="text-xs font-medium text-gray-400 dark:text-gray-500">{{ t('payment.rechargeAccount') }}</p>
@@ -119,6 +120,7 @@
           <!-- Subscribe Tab -->
           <template v-else-if="activeTab === 'subscription'">
             <SubscriptionRenewalNotice :info="checkout.subscription_renewal" />
+            <BillingPolicyNotice context="subscription" />
             <!-- Subscription confirm (inline, replaces plan list) -->
             <template v-if="selectedPlan">
               <div class="card p-5">
@@ -280,6 +282,7 @@
 </template>
 
 <script setup lang="ts">
+import BillingPolicyNotice from '@/components/payment/BillingPolicyNotice.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { marked } from 'marked'

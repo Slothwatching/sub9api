@@ -1,6 +1,7 @@
 <template>
   <AppLayout>
     <div class="space-y-4">
+      <BillingPolicyNotice context="orders" />
       <!-- Filters -->
       <div class="card p-4">
         <div class="flex flex-wrap items-center gap-3">
@@ -94,6 +95,7 @@ import BaseDialog from '@/components/common/BaseDialog.vue'
 import Select from '@/components/common/Select.vue'
 import Icon from '@/components/icons/Icon.vue'
 import OrderTable from '@/components/payment/OrderTable.vue'
+import BillingPolicyNotice from '@/components/payment/BillingPolicyNotice.vue'
 
 const { t } = useI18n()
 const router = useRouter()
