@@ -31,6 +31,9 @@ const routes: RouteRecordRaw[] = [
 
   { path: "/connect", name: "Connect", component: () => import("@/views/user/ConnectView.vue"), meta: { requiresAuth: false, title: "Connection center", titleKey: "commercial.connect.title" } },
 
+  // D98: load the original interactive guide only when explicitly opened.
+  { path: '/use-cases/thesis', name: 'ThesisGuide', component: () => import('@/views/user/ThesisGuideView.vue'), meta: { requiresAuth: false, title: 'Codex thesis guide', titleKey: 'thesis.title' } },
+
   // D95: public help and non-mutating estimates share existing feature-gated data.
   { path: '/help', name: 'Help', component: () => import('@/views/user/HelpView.vue'), meta: { requiresAuth: false, title: 'GPT / Codex help', titleKey: 'experience.help.title' } },
   { path: '/billing', name: 'BillingGuide', component: () => import('@/views/user/BillingGuideView.vue'), meta: { requiresAuth: false, title: 'Billing guide', titleKey: 'experience.billing.title' } },

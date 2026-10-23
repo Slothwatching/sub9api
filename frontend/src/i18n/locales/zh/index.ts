@@ -1,3 +1,4 @@
+import thesis from './thesis'
 import experience from './experience'
 import storefront from './storefront'
 import commercial from './commercial'
@@ -10,6 +11,7 @@ import admin from './admin'
 import misc from './misc'
 
 export default {
+  ...thesis,
   ...experience,
   ...storefront,
   ...commercial,
