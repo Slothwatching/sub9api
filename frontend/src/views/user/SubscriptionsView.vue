@@ -2,6 +2,7 @@
   <AppLayout>
     <div class="space-y-6">
       <BillingExplanation />
+      <SubscriptionRenewalNotice :info="renewalInfo" />
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center py-12">
         <div
@@ -249,6 +250,10 @@
 </template>
 
 <script setup lang="ts">
+import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
+import { paymentAPI } from '@/api/payment'
+import type { SubscriptionRenewalInfo } from '@/types/payment'
+
 import BillingExplanation from "@/components/user/BillingExplanation.vue"
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -390,7 +395,11 @@ function formatResetTime(windowStart: string | null, windowHours: number): strin
   return parts ? formatDurationParts(parts) : t('userSubscriptions.windowNotActive')
 }
 
+const renewalInfo = ref<SubscriptionRenewalInfo>()
 onMounted(() => {
+  if (appStore.cachedPublicSettings?.payment_enabled) {
+    paymentAPI.getCheckoutInfo().then(res => { renewalInfo.value = res.data.subscription_renewal }).catch(() => {})
+  }
   loadSubscriptions()
 })
 </script>

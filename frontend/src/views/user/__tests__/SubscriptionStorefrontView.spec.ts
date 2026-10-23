@@ -6,7 +6,7 @@ import type { SubscriptionPlan } from '@/types/payment'
 
 vi.mock('vue-i18n', async () => ({
   ...await vi.importActual<typeof import('vue-i18n')>('vue-i18n'),
-  useI18n: () => ({ t: (key: string) => key }),
+  useI18n: () => ({ t: (key: string) => key, locale: {value: 'zh'} }),
 }))
 const getCheckoutInfo = vi.hoisted(() => vi.fn())
 vi.mock('@/api/payment', () => ({ paymentAPI: { getCheckoutInfo } }))
@@ -59,4 +59,16 @@ describe('subscription storefront', () => {
     expect(wrapper.find('[role="alert"]').exists()).toBe(false)
     expect(wrapper.text()).toContain('storefront.empty')
   })
+})
+
+// Older checkout responses omit for_sale; they are already filtered server-side.
+it('accepts the production checkout contract without for_sale and displays queued renewals', async () => {
+  const product = plan(9)
+  const offered = { ...product } as Partial<SubscriptionPlan>
+  delete offered.for_sale
+  getCheckoutInfo.mockResolvedValue({ data: { plans: [offered], subscription_renewal: { activation_at: '2026-11-23T00:00:00Z', legacy_group_ids: [7], scheduled: [{ order_id: 12, plan_id: 9, activation_at: '2026-11-23T00:00:00Z' }] } } })
+  const wrapper = render(); await flushPromises()
+  expect(wrapper.findAll('[data-plan-group]')).toHaveLength(1)
+  expect(wrapper.find('[role="note"]').text()).toContain('renewal.notice')
+  expect(wrapper.find('[role="note"]').text()).toContain('renewal.waiting')
 })

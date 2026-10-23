@@ -343,6 +343,7 @@ export default {
     status: {
       pending: '待支付',
       paid: '已支付',
+      scheduled: '已支付，待生效',
       recharging: '充值中',
       completed: '已完成',
       expired: '已过期',

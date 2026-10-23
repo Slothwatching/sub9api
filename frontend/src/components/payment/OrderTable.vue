@@ -29,8 +29,9 @@
     <template #cell-payment_type="{ value }">
       <span class="text-sm text-gray-700 dark:text-gray-300">{{ t('payment.methods.' + value, value) }}</span>
     </template>
-    <template #cell-status="{ value }">
-      <OrderStatusBadge :status="value" />
+    <template #cell-status="{ value, row }">
+      <div v-if="(value === 'SCHEDULED' || value === 'PAID') && row.scheduled_activation_at" class="text-xs leading-5 text-primary-700 dark:text-primary-300">{{ t('renewal.scheduled') }}<br />{{ formatDate(row.scheduled_activation_at) }}</div>
+      <OrderStatusBadge v-else :status="value" />
     </template>
     <template #cell-created_at="{ value }">
       <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(value) }}</span>

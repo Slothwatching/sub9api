@@ -1,4 +1,18 @@
 export default {
+  renewal: {
+    title: 'Grandfathered plan renewals',
+    enabled: 'Renew only on current plans after the legacy term ends',
+    legacy: 'Legacy plans (keep purchased entitlements; stop new sales and renewals)',
+    replacement: 'Current plans (all new purchases and renewals)',
+    hint: 'Existing subscriptions remain valid until expiry. Replacement purchases wait for the old term to end; existing API keys then move to the new quota group. Select products using separate old and new groups. Each product retains its own pricing and entitlements.',
+    notice: 'Your legacy entitlement remains valid until {date}. Any replacement purchase takes effect afterwards; your existing API keys will then move to the selected new plan group.',
+    scheduled: 'Payment received · renewal scheduled',
+    activation: 'Expected activation',
+    waiting: 'Order #{id}: the replacement plan will take effect on {date}.',
+    choose: 'Renew with a current plan',
+    saved: 'Renewal transition policy saved',
+    retired: 'This legacy plan is no longer sold. Please choose a current plan.',
+  },
   storefront: {
     price: 'Plan price',
     title: 'Activate your plan',

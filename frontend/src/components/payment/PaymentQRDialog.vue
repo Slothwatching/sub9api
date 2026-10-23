@@ -200,7 +200,7 @@ async function pollStatus() {
   let order = await paymentStore.pollOrderStatus(props.orderId)
   if (!order) return
   order = await tryRecoverPendingOrder(order)
-  if (order.status === 'COMPLETED' || order.status === 'PAID') {
+  if (order.status === 'SCHEDULED' || order.status === 'COMPLETED' || order.status === 'PAID') {
     cleanup()
     paidOrder.value = order
     success.value = true

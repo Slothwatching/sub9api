@@ -49,7 +49,7 @@
               <Icon name="refresh" size="sm" :class="refundQueryingIds.has(row.id) ? 'animate-spin' : ''" />
               {{ t('payment.admin.queryRefundStatus') }}
             </button>
-            <button v-else-if="row.status === 'COMPLETED' || row.status === 'PARTIALLY_REFUNDED'" @click="openRefundDialog(row)" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+            <button v-else-if="row.status === 'COMPLETED' || row.status === 'PARTIALLY_REFUNDED' || ((row.status === 'SCHEDULED' || row.status === 'PAID') && row.scheduled_activation_at)" @click="openRefundDialog(row)" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
               <Icon name="dollar" size="sm" />
               {{ t('payment.admin.refund') }}
             </button>
@@ -191,6 +191,7 @@ const statusFilterOptions = computed(() => [
   { value: '', label: t('payment.admin.allStatuses') },
   { value: 'PENDING', label: t('payment.status.pending') },
   { value: 'PAID', label: t('payment.status.paid') },
+  { value: 'SCHEDULED', label: t('renewal.scheduled') },
   { value: 'COMPLETED', label: t('payment.status.completed') },
   { value: 'EXPIRED', label: t('payment.status.expired') },
   { value: 'CANCELLED', label: t('payment.status.cancelled') },

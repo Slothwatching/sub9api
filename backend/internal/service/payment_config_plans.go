@@ -133,7 +133,18 @@ func (s *PaymentConfigService) ListPlans(ctx context.Context) ([]*dbent.Subscrip
 }
 
 func (s *PaymentConfigService) ListPlansForSale(ctx context.Context) ([]*dbent.SubscriptionPlan, error) {
-	return s.entClient.SubscriptionPlan.Query().Where(subscriptionplan.ForSaleEQ(true)).Order(subscriptionplan.BySortOrder()).All(ctx)
+	cfg, err := s.GetPaymentConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+	q := s.entClient.SubscriptionPlan.Query().Where(subscriptionplan.ForSaleEQ(true))
+	if policy := cfg.SubscriptionRenewalPolicy; policy != nil && policy.Enabled {
+		if err := validateSubscriptionRenewalPolicy(policy); err != nil {
+			return nil, err
+		}
+		q = q.Where(subscriptionplan.IDIn(policy.ReplacementPlanIDs...))
+	}
+	return q.Order(subscriptionplan.BySortOrder()).All(ctx)
 }
 
 func (s *PaymentConfigService) CreatePlan(ctx context.Context, req CreatePlanRequest) (*dbent.SubscriptionPlan, error) {

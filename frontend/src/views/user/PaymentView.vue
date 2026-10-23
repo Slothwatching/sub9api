@@ -118,6 +118,7 @@
           </template>
           <!-- Subscribe Tab -->
           <template v-else-if="activeTab === 'subscription'">
+            <SubscriptionRenewalNotice :info="checkout.subscription_renewal" />
             <!-- Subscription confirm (inline, replaces plan list) -->
             <template v-if="selectedPlan">
               <div class="card p-5">
@@ -312,6 +313,7 @@ import {
   writePaymentRecoverySnapshot,
 } from '@/components/payment/paymentFlow'
 import { platformAccentBarClass, platformBadgeLightClass, platformBadgeClass, platformTextClass, platformLabel } from '@/utils/platformColors'
+import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import PaymentStatusPanel from '@/components/payment/PaymentStatusPanel.vue'
 import Icon from '@/components/icons/Icon.vue'

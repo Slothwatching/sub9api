@@ -4,7 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import AdminPaymentPlansView from '../AdminPaymentPlansView.vue'
 
-const { getPlans, getConfig, getGroups } = vi.hoisted(() => ({
+const { getPlans, getConfig, getGroups, updateConfig } = vi.hoisted(() => ({
+  updateConfig: vi.fn(),
   getPlans: vi.fn(),
   getConfig: vi.fn(),
   getGroups: vi.fn(),
@@ -14,6 +15,7 @@ vi.mock('@/api/admin/payment', () => ({
   adminPaymentAPI: {
     getPlans,
     getConfig,
+    updateConfig,
   },
 }))
 
@@ -103,4 +105,23 @@ describe('AdminPaymentPlansView', () => {
     expect(wrapper.text()).toContain('¥599.00')
     expect(wrapper.text()).toContain('$10.00')
   })
+})
+
+
+it('saves an explicit legacy/current policy without changing plan prices or entitlements', async () => {
+  getGroups.mockResolvedValue([])
+  getConfig.mockResolvedValue({data:{}})
+  getPlans.mockResolvedValue({data:[{id:1,name:'Old',group_id:7,price:60,validity_days:30,features:[]},{id:9,name:'New',group_id:16,price:63,validity_days:30,features:[]}]})
+  updateConfig.mockResolvedValue({data:{}})
+  const wrapper = mount(AdminPaymentPlansView, {global:{plugins:[createPinia()],stubs:{AppLayout:{template:'<div><slot /></div>'},DataTable:DataTableStub,ConfirmDialog:true,GroupBadge:true,Icon:true,PlanEditDialog:true,BaseDialog:{props:['show'],template:'<div v-if="show"><slot /><slot name="footer" /></div>'}}}})
+  await flushPromises()
+  await wrapper.findAll('button').find(button => button.text() === 'renewal.title')!.trigger('click')
+  const inputs = wrapper.findAll('input[type="checkbox"]')
+  await inputs[0]!.setValue(true)
+  await inputs[1]!.setValue(true)
+  await inputs[4]!.setValue(true)
+  await wrapper.find('#renewal-policy-form').trigger('submit')
+  await flushPromises()
+  expect(updateConfig).toHaveBeenCalledWith({subscription_renewal_policy:{enabled:true,legacy_plan_ids:[1],replacement_plan_ids:[9]}})
+  wrapper.unmount()
 })

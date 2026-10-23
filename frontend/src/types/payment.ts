@@ -5,6 +5,7 @@
 // ==================== Enums / Union Types ====================
 
 export type OrderStatus =
+  | 'SCHEDULED'
   | 'PENDING'
   | 'PAID'
   | 'RECHARGING'
@@ -67,7 +68,19 @@ export interface MethodLimitsResponse {
 }
 
 /** Response from /payment/checkout-info API — single call for the payment page */
+export interface SubscriptionRenewalPolicy {
+  enabled: boolean
+  legacy_plan_ids: number[]
+  replacement_plan_ids: number[]
+}
+export interface SubscriptionRenewalInfo {
+  activation_at?: string
+  legacy_group_ids: number[]
+  scheduled: {order_id: number; plan_id: number; activation_at: string}[]
+}
+
 export interface CheckoutInfoResponse {
+  subscription_renewal?: SubscriptionRenewalInfo
   methods: Record<string, MethodLimit>
   global_min: number
   global_max: number
@@ -95,6 +108,7 @@ export interface CheckoutInfoResponse {
 // ==================== Orders ====================
 
 export interface PaymentOrder {
+  scheduled_activation_at?: string
   id: number
   user_id: number
   amount: number

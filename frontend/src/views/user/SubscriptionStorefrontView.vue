@@ -23,6 +23,7 @@
         <button class="btn btn-primary" @click="loadPlans">{{ t('storefront.retry') }}</button>
       </div>
       <template v-else>
+        <SubscriptionRenewalNotice :info="renewalInfo" />
         <nav :aria-label="t('storefront.choose')" class="flex flex-wrap gap-2">
           <button v-for="item in filters" :key="item.key" type="button" :aria-pressed="filter === item.key"
             class="rounded-xl px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500"
@@ -72,14 +73,16 @@ import { paymentAPI } from '@/api/payment'
 import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscriptions'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import { planValiditySuffix } from '@/components/payment/validity'
 import { currencySymbol } from '@/components/payment/currency'
-import type { SubscriptionPlan } from '@/types/payment'
+import type { SubscriptionPlan, SubscriptionRenewalInfo } from '@/types/payment'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 const subscriptionStore = useSubscriptionStore()
+const renewalInfo = ref<SubscriptionRenewalInfo>()
 const loading = ref(true)
 const failed = ref(false)
 const plans = ref<SubscriptionPlan[]>([])
@@ -134,7 +137,8 @@ async function loadPlans() {
   failed.value = false
   try {
     const response = await paymentAPI.getCheckoutInfo()
-    plans.value = response.data.plans.filter(plan => plan.for_sale)
+    renewalInfo.value = response.data.subscription_renewal
+    plans.value = response.data.plans.filter(plan => plan.for_sale !== false)
     selectedId.value = null
   } catch {
     failed.value = true

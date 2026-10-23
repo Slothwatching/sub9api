@@ -188,7 +188,7 @@ func (lb *DefaultLoadBalancer) attachDailyUsage(
 		Where(
 			paymentorder.ProviderInstanceIDIn(ids...),
 			paymentorder.StatusIn(
-				OrderStatusPending, OrderStatusPaid,
+				OrderStatusPending, OrderStatusScheduled, OrderStatusPaid,
 				OrderStatusCompleted, OrderStatusRecharging,
 			),
 			paymentorder.CreatedAtGTE(todayStart),
@@ -356,7 +356,7 @@ func (lb *DefaultLoadBalancer) GetInstanceDailyAmount(ctx context.Context, insta
 	err := lb.db.PaymentOrder.Query().
 		Where(
 			paymentorder.ProviderInstanceID(instanceID),
-			paymentorder.StatusIn(OrderStatusCompleted, OrderStatusPaid, OrderStatusRecharging),
+			paymentorder.StatusIn(OrderStatusCompleted, OrderStatusScheduled, OrderStatusPaid, OrderStatusRecharging),
 			paymentorder.PaidAtGTE(todayStart),
 		).
 		Aggregate(dbent.Sum(paymentorder.FieldPayAmount)).
