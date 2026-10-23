@@ -323,6 +323,30 @@ func TestFetchOpenAIModelsListRejectsUnexpectedCold304(t *testing.T) {
 	require.Equal(t, http.StatusBadGateway, infraerrors.Code(err))
 }
 
+// Fork-local regression: a caller can observe a miss before another refresh finishes,
+// then enter singleflight after that completed refresh has left the group.
+func TestRefreshOpenAIModelsRechecksCacheAfterConcurrentFill(t *testing.T) {
+	s := &OpenAIGatewayService{}
+	request := openAIModelsRequest{url: "https://models.example/v1/models", accountID: 7}
+	cacheKey := buildOpenAIModelsCacheKey(request)
+	_, state := s.openAIModelsCache.get(cacheKey, time.Now())
+	require.NotEqual(t, openAIModelsCacheFresh, state)
+	var calls atomic.Int32
+	fetch := func(context.Context, string) (*OpenAIModelsResponse, error) {
+		calls.Add(1)
+		return &OpenAIModelsResponse{Body: []byte(`{"models":[{"slug":"shared"}]}`)}, nil
+	}
+	first, err := s.fetchCachedOpenAIModels(context.Background(), request, fetch, "")
+	require.NoError(t, err)
+	// Resume the caller holding the earlier miss only after the first refresh completes.
+	result := <-s.refreshCachedOpenAIModels(cacheKey, request, fetch)
+	require.NoError(t, result.Err)
+	response, ok := result.Val.(*OpenAIModelsResponse)
+	require.True(t, ok)
+	require.Equal(t, string(first.Body), string(response.Body))
+	require.EqualValues(t, 1, calls.Load())
+}
+
 func TestOpenAIModelsCacheSeparatesRepresentationsForIdenticalRequests(t *testing.T) {
 	s := &OpenAIGatewayService{}
 	request := openAIModelsRequest{url: "https://models.example/v1/models", accountID: 7}
