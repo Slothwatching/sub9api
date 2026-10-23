@@ -210,9 +210,23 @@ func (s *PaymentService) PrepareRefund(ctx context.Context, oid int64, amt float
 	if err != nil {
 		return nil, nil, infraerrors.NotFound("NOT_FOUND", "order not found")
 	}
+	unassignedRenewal := false
+	if snap, snapErr := readSubscriptionRenewal(o); snapErr != nil {
+		return nil, nil, snapErr
+	} else if snap != nil {
+		assigned, lookupErr := hasPaymentSubscriptionAssignmentAudit(ctx, s.entClient, o.ID)
+		if lookupErr != nil {
+			return nil, nil, lookupErr
+		}
+		unassignedRenewal = !assigned && o.PaidAt != nil
+	}
 	// REFUND_PENDING 只能通过 QueryAndFinalizeRefund 收敛：重新发起会重复扣减并向网关重复退款。
 	ok := []string{OrderStatusCompleted, OrderStatusRefundRequested, OrderStatusRefundFailed}
-	if !psSliceContains(ok, o.Status) {
+	allowedStatus := psSliceContains(ok, o.Status)
+	if unassignedRenewal && (o.Status == OrderStatusScheduled || o.Status == OrderStatusPaid || o.Status == OrderStatusFailed) {
+		allowedStatus = true
+	}
+	if !allowedStatus {
 		return nil, nil, infraerrors.BadRequest("INVALID_STATUS", "order status does not allow refund")
 	}
 	// Check provider instance allows admin refund
@@ -238,6 +252,9 @@ func (s *PaymentService) PrepareRefund(ctx context.Context, oid int64, amt float
 	if amt-o.Amount > paymentAmountToleranceForCurrency(orderCurrency) {
 		return nil, nil, infraerrors.BadRequest("REFUND_AMOUNT_EXCEEDED", "refund amount exceeds recharge")
 	}
+	if unassignedRenewal && math.Abs(amt-o.Amount) > paymentAmountToleranceForCurrency(orderCurrency) {
+		return nil, nil, infraerrors.BadRequest("INVALID_AMOUNT", "a scheduled renewal can only be refunded in full before activation")
+	}
 	ga := calculateGatewayRefundAmount(o.Amount, o.PayAmount, amt, orderCurrency)
 	rr := strings.TrimSpace(reason)
 	if rr == "" && o.RefundRequestReason != nil {
@@ -246,8 +263,8 @@ func (s *PaymentService) PrepareRefund(ctx context.Context, oid int64, amt float
 	if rr == "" {
 		rr = fmt.Sprintf("refund order:%d", o.ID)
 	}
-	p := &RefundPlan{OrderID: oid, Order: o, RefundAmount: amt, GatewayAmount: ga, Reason: rr, Force: force, DeductBalance: deduct, DeductionType: payment.DeductionTypeNone}
-	if deduct {
+	p := &RefundPlan{OrderID: oid, Order: o, RefundAmount: amt, GatewayAmount: ga, Reason: rr, Force: force, DeductBalance: deduct, DeductionType: payment.DeductionTypeNone, ScheduledRenewal: unassignedRenewal}
+	if deduct && !unassignedRenewal {
 		if er := s.prepDeduct(ctx, o, p, force); er != nil {
 			return nil, er, nil
 		}
@@ -305,7 +322,11 @@ func (s *PaymentService) invalidateRefundBalanceCache(ctx context.Context, userI
 }
 
 func (s *PaymentService) ExecuteRefund(ctx context.Context, p *RefundPlan) (*RefundResult, error) {
-	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(p.OrderID), paymentorder.StatusIn(OrderStatusCompleted, OrderStatusRefundRequested, OrderStatusRefundFailed)).SetStatus(OrderStatusRefunding).Save(ctx)
+	statuses := []string{OrderStatusCompleted, OrderStatusRefundRequested, OrderStatusRefundFailed}
+	if p.ScheduledRenewal {
+		statuses = []string{OrderStatusScheduled, OrderStatusPaid, OrderStatusFailed, OrderStatusRefundFailed}
+	}
+	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(p.OrderID), paymentorder.StatusIn(statuses...)).SetStatus(OrderStatusRefunding).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("lock: %w", err)
 	}

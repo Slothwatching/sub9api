@@ -319,6 +319,7 @@ export default {
     status: {
       pending: 'Pending',
       paid: 'Paid',
+      scheduled: 'Paid · awaiting activation',
       recharging: 'Recharging',
       completed: 'Completed',
       expired: 'Expired',

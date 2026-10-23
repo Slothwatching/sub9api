@@ -112,6 +112,7 @@ const pagination = reactive({ page: 1, page_size: 20, total: 0 })
 const statusFilters = computed(() => [
   { value: '', label: t('common.all') },
   { value: 'PENDING', label: t('payment.status.pending') },
+  { value: 'SCHEDULED', label: t('renewal.scheduled') },
   { value: 'COMPLETED', label: t('payment.status.completed') },
   { value: 'FAILED', label: t('payment.status.failed') },
   { value: 'REFUNDED', label: t('payment.status.refunded') },

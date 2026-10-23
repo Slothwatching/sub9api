@@ -5,6 +5,7 @@
 
 import { apiClient } from '../client'
 import type {
+  SubscriptionRenewalPolicy,
   DashboardStats,
   PaymentOrder,
   PaymentChannel,
@@ -15,6 +16,7 @@ import type { BasePaginationResponse } from '@/types'
 
 /** Admin-facing payment config returned by GET /admin/payment/config */
 export interface AdminPaymentConfig {
+  subscription_renewal_policy?: SubscriptionRenewalPolicy
   enabled: boolean
   min_amount: number
   max_amount: number
@@ -35,6 +37,7 @@ export interface AdminPaymentConfig {
 
 /** Fields accepted by PUT /admin/payment/config (all optional via pointer semantics) */
 export interface UpdatePaymentConfigRequest {
+  subscription_renewal_policy?: SubscriptionRenewalPolicy
   enabled?: boolean
   min_amount?: number
   max_amount?: number

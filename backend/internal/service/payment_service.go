@@ -22,6 +22,7 @@ import (
 
 const (
 	OrderStatusPending           = payment.OrderStatusPending
+	OrderStatusScheduled         = payment.OrderStatusScheduled
 	OrderStatusPaid              = payment.OrderStatusPaid
 	OrderStatusRecharging        = payment.OrderStatusRecharging
 	OrderStatusCompleted         = payment.OrderStatusCompleted
@@ -123,17 +124,18 @@ type OrderListParams struct {
 }
 
 type RefundPlan struct {
-	OrderID         int64
-	Order           *dbent.PaymentOrder
-	RefundAmount    float64
-	GatewayAmount   float64
-	Reason          string
-	Force           bool
-	DeductBalance   bool
-	DeductionType   string
-	BalanceToDeduct float64
-	SubDaysToDeduct int
-	SubscriptionID  int64
+	ScheduledRenewal bool
+	OrderID          int64
+	Order            *dbent.PaymentOrder
+	RefundAmount     float64
+	GatewayAmount    float64
+	Reason           string
+	Force            bool
+	DeductBalance    bool
+	DeductionType    string
+	BalanceToDeduct  float64
+	SubDaysToDeduct  int
+	SubscriptionID   int64
 	// deductionHeld 表示扣减已在进入 REFUND_PENDING 前执行并保留，终态收敛时不再重复扣减。
 	deductionHeld bool
 }

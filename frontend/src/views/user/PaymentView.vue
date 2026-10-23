@@ -118,6 +118,7 @@
           </template>
           <!-- Subscribe Tab -->
           <template v-else-if="activeTab === 'subscription'">
+            <SubscriptionRenewalNotice :info="checkout.subscription_renewal" />
             <!-- Subscription confirm (inline, replaces plan list) -->
             <template v-if="selectedPlan">
               <div class="card p-5">
@@ -312,6 +313,7 @@ import {
   writePaymentRecoverySnapshot,
 } from '@/components/payment/paymentFlow'
 import { platformAccentBarClass, platformBadgeLightClass, platformBadgeClass, platformTextClass, platformLabel } from '@/utils/platformColors'
+import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import PaymentStatusPanel from '@/components/payment/PaymentStatusPanel.vue'
 import Icon from '@/components/icons/Icon.vue'
@@ -1216,7 +1218,14 @@ onMounted(async () => {
     // Handle renewal navigation: ?tab=subscription&group=123 (ignored when subscriptions are disabled)
     if (route.query.tab === 'subscription' && subscriptionEnabled.value) {
       activeTab.value = 'subscription'
-      if (route.query.group) {
+      // D92: a catalog link selects a currently offered plan, never creates an order.
+      // WeChat resume owns its query and payment recovery state independently.
+      const catalogPlanId = typeof route.query.plan_id === 'string' && /^\d+$/.test(route.query.plan_id)
+        ? Number(route.query.plan_id) : 0
+      const catalogPlan = checkout.value.plans.find(plan => plan.id === catalogPlanId)
+      if (catalogPlan && !hasWechatResumeQuery(route.query) && paymentPhase.value === 'select') {
+        selectPlan(catalogPlan)
+      } else if (route.query.group) {
         const groupId = Number(route.query.group)
         const groupPlans = checkout.value.plans.filter(p => p.group_id === groupId)
         if (groupPlans.length === 1) {

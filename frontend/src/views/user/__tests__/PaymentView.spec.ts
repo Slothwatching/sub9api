@@ -256,10 +256,10 @@ async function mountSubscriptionConfirm(options: Parameters<typeof checkoutInfoW
   return wrapper
 }
 
-async function mountSubscriptionPlanList(planCount: number) {
+async function mountSubscriptionPlanList(planCount: number, query: Record<string, unknown> = {}) {
   vi.useRealTimers()
   routeState.path = '/purchase'
-  routeState.query = { tab: 'subscription' }
+  routeState.query = { tab: 'subscription', ...query }
   routerReplace.mockReset().mockResolvedValue(undefined)
   routerPush.mockReset().mockResolvedValue(undefined)
   routerResolve.mockClear()
@@ -884,6 +884,23 @@ describe('PaymentView subscription feature flag', () => {
     expect(wrapper.text()).not.toContain('payment.billingUnavailable')
     expect(wrapper.text()).not.toContain('payment.rechargeAccount')
     expect(wrapper.findAllComponents(SubscriptionPlanCard).length).toBeGreaterThan(0)
+    wrapper.unmount()
+  })
+})
+
+// D92: catalog deep links only select server-returned products for explicit checkout.
+describe('PaymentView catalog links', () => {
+  it('selects the requested available plan without placing an order', async () => {
+    const wrapper = await mountSubscriptionPlanList(3, { plan_id: '2' })
+    expect(wrapper.findAllComponents(SubscriptionPlanCard)).toHaveLength(0)
+    expect(wrapper.text()).toContain('Plan 2')
+    expect(createOrder).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+  it.each(['999', '2.5', 'oops', ['2']])('keeps the plan list for an unavailable or malformed plan ID %s', async (id) => {
+    const wrapper = await mountSubscriptionPlanList(3, { plan_id: id })
+    expect(wrapper.findAllComponents(SubscriptionPlanCard)).toHaveLength(3)
+    expect(createOrder).not.toHaveBeenCalled()
     wrapper.unmount()
   })
 })

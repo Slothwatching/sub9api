@@ -143,7 +143,7 @@ async function pollStatus() {
     if (!order) return
     // 定时器已被 cleanup 清除时不再执行终态跳转（响应可能在 cleanup 后才回来）。
     if (!pollTimer) return
-    if (order.status === 'COMPLETED' || order.status === 'PAID') {
+    if (order.status === 'SCHEDULED' || order.status === 'COMPLETED' || order.status === 'PAID') {
       cleanup()
       router.push({ path: '/payment/result', query: { order_id: String(orderId.value), status: 'success' } })
     } else if (order.status === 'EXPIRED' || order.status === 'CANCELLED' || order.status === 'FAILED') {

@@ -6,6 +6,7 @@
         <button @click="loadPlans" :disabled="plansLoading" class="btn btn-secondary" :title="t('common.refresh')">
           <Icon name="refresh" size="md" :class="plansLoading ? 'animate-spin' : ''" />
         </button>
+        <button class="btn btn-secondary" @click="openRenewalPolicy">{{ t('renewal.title') }}</button>
         <button @click="openPlanEdit(null)" class="btn btn-primary">{{ t('payment.admin.createPlan') }}</button>
       </div>
 
@@ -67,6 +68,22 @@
       </DataTable>
     </div>
 
+    <BaseDialog :show="showRenewalPolicy" :title="t('renewal.title')" width="wide" @close="showRenewalPolicy = false">
+      <form id="renewal-policy-form" class="space-y-5" @submit.prevent="saveRenewalPolicy">
+        <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">{{ t('renewal.hint') }}</p>
+        <label class="flex items-center gap-2 text-sm"><input v-model="renewalPolicy.enabled" type="checkbox" />{{ t('renewal.enabled') }}</label>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <fieldset class="space-y-2"><legend class="mb-3 text-sm font-semibold">{{ t('renewal.legacy') }}</legend>
+            <label v-for="plan in plans" :key="plan.id" class="flex items-start gap-2 text-sm"><input v-model="renewalPolicy.legacy_plan_ids" :value="plan.id" type="checkbox" class="mt-1" />#{{ plan.id }} {{ plan.name }}</label>
+          </fieldset>
+          <fieldset class="space-y-2"><legend class="mb-3 text-sm font-semibold">{{ t('renewal.replacement') }}</legend>
+            <label v-for="plan in plans" :key="plan.id" class="flex items-start gap-2 text-sm"><input v-model="renewalPolicy.replacement_plan_ids" :value="plan.id" type="checkbox" class="mt-1" />#{{ plan.id }} {{ plan.name }}</label>
+          </fieldset>
+        </div>
+      </form>
+      <template #footer><button class="btn btn-secondary" @click="showRenewalPolicy = false">{{ t('common.cancel') }}</button><button class="btn btn-primary" type="submit" form="renewal-policy-form" :disabled="savingRenewalPolicy">{{ t('common.save') }}</button></template>
+    </BaseDialog>
+
     <!-- Plan Edit Dialog -->
     <PlanEditDialog :show="showPlanDialog" :plan="editingPlan" :groups="groups" :payment-config="paymentConfig" @close="showPlanDialog = false" @saved="loadPlans" />
 
@@ -90,6 +107,8 @@ import DataTable from '@/components/common/DataTable.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import Icon from '@/components/icons/Icon.vue'
 import GroupBadge from '@/components/common/GroupBadge.vue'
+import BaseDialog from '@/components/common/BaseDialog.vue'
+import type { SubscriptionRenewalPolicy } from '@/types/payment'
 import PlanEditDialog from './PlanEditDialog.vue'
 import { currencySymbol } from '@/components/payment/currency'
 import { platformTextClass } from '@/utils/platformColors'
@@ -99,6 +118,25 @@ const appStore = useAppStore()
 
 function planCurrencySymbol(currency?: string): string {
   return currencySymbol(currency || 'USD')
+}
+
+const showRenewalPolicy = ref(false)
+const savingRenewalPolicy = ref(false)
+const renewalPolicy = ref<SubscriptionRenewalPolicy>({enabled: false, legacy_plan_ids: [], replacement_plan_ids: []})
+function openRenewalPolicy() {
+  const policy = paymentConfig.value?.subscription_renewal_policy
+  renewalPolicy.value = policy ? { ...policy, legacy_plan_ids: [...(policy.legacy_plan_ids ?? [])], replacement_plan_ids: [...(policy.replacement_plan_ids ?? [])] } : {enabled: false, legacy_plan_ids: [], replacement_plan_ids: []}
+  showRenewalPolicy.value = true
+}
+async function saveRenewalPolicy() {
+  savingRenewalPolicy.value = true
+  try {
+    await adminPaymentAPI.updateConfig({subscription_renewal_policy: renewalPolicy.value})
+    await loadPaymentConfig()
+    appStore.showSuccess(t('renewal.saved'))
+    showRenewalPolicy.value = false
+  } catch(err) { appStore.showError(extractI18nErrorMessage(err, t, 'payment.errors', t('common.error'))) }
+  finally { savingRenewalPolicy.value = false }
 }
 
 // ==================== Groups ====================

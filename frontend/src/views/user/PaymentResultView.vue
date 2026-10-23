@@ -90,6 +90,7 @@
             </div>
           </div>
         </div>
+        <p v-if="(order?.status === 'SCHEDULED' || order?.status === 'PAID') && scheduledActivation" class="card p-4 text-sm">{{ t('renewal.scheduled') }} · {{ t('renewal.activation') }}: {{ new Date(scheduledActivation).toLocaleString() }}</p>
         <!-- Actions -->
         <div class="flex gap-3">
           <button class="btn btn-secondary flex-1" @click="router.push('/purchase')">{{ t('payment.result.backToRecharge') }}</button>
@@ -139,7 +140,7 @@ interface ReturnInfo {
 }
 const returnInfo = ref<ReturnInfo | null>(null)
 
-const SUCCESS_STATUSES = new Set(['COMPLETED', 'PAID', 'RECHARGING'])
+const SUCCESS_STATUSES = new Set(['SCHEDULED', 'COMPLETED', 'PAID', 'RECHARGING'])
 const PENDING_STATUSES = new Set(['PENDING', 'CREATED', 'WAITING', 'PROCESSING'])
 const STATUS_REFRESH_INTERVAL_MS = 2000
 const STATUS_REFRESH_MAX_ATTEMPTS = 15
@@ -181,7 +182,9 @@ const isPending = computed(() => {
   return isPendingStatus(order.value?.status)
 })
 
+const scheduledActivation = computed(() => order.value && 'scheduled_activation_at' in order.value ? order.value.scheduled_activation_at : undefined)
 const statusTitle = computed(() => {
+  if (order.value?.status === 'SCHEDULED' || (order.value?.status === 'PAID' && scheduledActivation.value)) return t('renewal.scheduled')
   if (isSuccess.value) {
     return t('payment.result.success')
   }

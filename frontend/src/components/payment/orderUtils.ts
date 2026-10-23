@@ -5,6 +5,7 @@
 
 const STATUS_BADGE_MAP: Record<string, string> = {
   PENDING: 'badge-warning',
+  SCHEDULED: 'badge-info',
   PAID: 'badge-info',
   RECHARGING: 'badge-info',
   COMPLETED: 'badge-success',
@@ -19,7 +20,7 @@ const STATUS_BADGE_MAP: Record<string, string> = {
   REFUND_FAILED: 'badge-danger',
 }
 
-const REFUNDABLE_STATUSES = ['COMPLETED', 'PARTIALLY_REFUNDED', 'REFUND_REQUESTED', 'REFUND_FAILED']
+const REFUNDABLE_STATUSES = ['SCHEDULED', 'COMPLETED', 'PARTIALLY_REFUNDED', 'REFUND_REQUESTED', 'REFUND_FAILED']
 
 export function statusBadgeClass(status: string): string {
   return STATUS_BADGE_MAP[status] || 'badge-secondary'

@@ -36,6 +36,14 @@ func (s *PaymentService) CreateOrder(ctx context.Context, req CreateOrderRequest
 	if !cfg.Enabled {
 		return nil, infraerrors.Forbidden("PAYMENT_DISABLED", "payment system is disabled")
 	}
+	if req.OrderType == payment.OrderTypeSubscription && cfg.SubscriptionRenewalPolicy != nil && cfg.SubscriptionRenewalPolicy.Enabled {
+		if err := validateSubscriptionRenewalPolicy(cfg.SubscriptionRenewalPolicy); err != nil {
+			return nil, err
+		}
+		if !containsPlan(cfg.SubscriptionRenewalPolicy.ReplacementPlanIDs, req.PlanID) {
+			return nil, infraerrors.BadRequest("PLAN_RETIRED", "select a current subscription plan for renewal")
+		}
+	}
 	plan, err := s.validateOrderInput(ctx, req, cfg)
 	if err != nil {
 		return nil, err
@@ -181,6 +189,10 @@ func (s *PaymentService) createOrderInTx(ctx context.Context, req CreateOrderReq
 		return nil, err
 	}
 	providerSnapshot := buildPaymentOrderProviderSnapshot(sel, req)
+	providerSnapshot, err = s.attachSubscriptionRenewal(ctx, tx, req, cfg, providerSnapshot)
+	if err != nil {
+		return nil, err
+	}
 	selectedInstanceID := ""
 	selectedProviderKey := ""
 	if sel != nil {
@@ -338,7 +350,7 @@ func (s *PaymentService) checkDailyLimit(ctx context.Context, tx *dbent.Tx, user
 		return nil
 	}
 	ts := psStartOfDayUTC(time.Now())
-	orders, err := tx.PaymentOrder.Query().Where(paymentorder.UserIDEQ(userID), paymentorder.StatusIn(OrderStatusPaid, OrderStatusRecharging, OrderStatusCompleted), paymentorder.PaidAtGTE(ts)).All(ctx)
+	orders, err := tx.PaymentOrder.Query().Where(paymentorder.UserIDEQ(userID), paymentorder.StatusIn(OrderStatusScheduled, OrderStatusPaid, OrderStatusRecharging, OrderStatusCompleted), paymentorder.PaidAtGTE(ts)).All(ctx)
 	if err != nil {
 		return fmt.Errorf("query daily usage: %w", err)
 	}

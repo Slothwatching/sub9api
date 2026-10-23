@@ -1,3 +1,4 @@
+import storefront from './storefront'
 import commercial from './commercial'
 import landing from './landing'
 import common from './common'
@@ -8,6 +9,7 @@ import admin from './admin'
 import misc from './misc'
 
 export default {
+  ...storefront,
   ...commercial,
   ...landing,
   ...common,

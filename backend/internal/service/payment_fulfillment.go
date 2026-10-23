@@ -178,6 +178,16 @@ func expectedNotificationProviderKey(registry *payment.Registry, orderPaymentTyp
 func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, tradeNo string, paid float64, pk string) error {
 	previousStatus := o.Status
 	now := time.Now()
+	paidStatus := OrderStatusPaid
+	if o.OrderType == payment.OrderTypeSubscription {
+		snapshot, snapshotErr := readSubscriptionRenewal(o)
+		if snapshotErr != nil {
+			return snapshotErr
+		}
+		if snapshot != nil && snapshot.ActivationMillis > now.UnixMilli() {
+			paidStatus = OrderStatusScheduled
+		}
+	}
 	grace := now.Add(-paymentGraceMinutes * time.Minute)
 	c, err := s.entClient.PaymentOrder.Update().Where(
 		paymentorder.IDEQ(o.ID),
@@ -189,7 +199,7 @@ func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, trad
 				paymentorder.UpdatedAtGTE(grace),
 			),
 		),
-	).SetStatus(OrderStatusPaid).SetPayAmount(paid).SetPaymentTradeNo(tradeNo).SetPaidAt(now).ClearFailedAt().ClearFailedReason().Save(ctx)
+	).SetStatus(paidStatus).SetPayAmount(paid).SetPaymentTradeNo(tradeNo).SetPaidAt(now).ClearFailedAt().ClearFailedReason().Save(ctx)
 	if err != nil {
 		return fmt.Errorf("update to PAID: %w", err)
 	}
@@ -222,7 +232,7 @@ func (s *PaymentService) alreadyProcessed(ctx context.Context, o *dbent.PaymentO
 	switch cur.Status {
 	case OrderStatusCompleted, OrderStatusRefunded:
 		return nil
-	case OrderStatusFailed, OrderStatusPaid, OrderStatusRecharging:
+	case OrderStatusScheduled, OrderStatusFailed, OrderStatusPaid, OrderStatusRecharging:
 		return s.executeFulfillment(ctx, o.ID)
 	case OrderStatusExpired:
 		slog.Warn("webhook payment success for expired order beyond grace period",
@@ -322,7 +332,7 @@ func (s *PaymentService) acquirePaymentFulfillmentLease(ctx context.Context, o *
 		Where(
 			paymentorder.IDEQ(o.ID),
 			paymentorder.Or(
-				paymentorder.StatusIn(OrderStatusPaid, OrderStatusFailed),
+				paymentorder.StatusIn(OrderStatusPaid, OrderStatusScheduled, OrderStatusFailed),
 				paymentorder.And(
 					paymentorder.StatusEQ(OrderStatusRecharging),
 					paymentorder.UpdatedAtLTE(staleBefore),
@@ -576,11 +586,16 @@ func (s *PaymentService) ExecuteSubscriptionFulfillment(ctx context.Context, oid
 	if psIsRefundStatus(o.Status) {
 		return infraerrors.BadRequest("INVALID_STATUS", "refund-related order cannot fulfill")
 	}
-	if o.Status != OrderStatusPaid && o.Status != OrderStatusFailed && o.Status != OrderStatusRecharging {
+	if o.Status != OrderStatusScheduled && o.Status != OrderStatusPaid && o.Status != OrderStatusFailed && o.Status != OrderStatusRecharging {
 		return infraerrors.BadRequest("INVALID_STATUS", "order cannot fulfill in status "+o.Status)
 	}
 	if o.SubscriptionGroupID == nil || o.SubscriptionDays == nil {
 		return infraerrors.BadRequest("INVALID_STATUS", "missing subscription info")
+	}
+	if deferred, err := s.deferSubscriptionRenewal(ctx, o); err != nil {
+		return err
+	} else if deferred {
+		return nil
 	}
 	lease, err := s.acquirePaymentFulfillmentLease(ctx, o)
 	if err != nil {
@@ -590,6 +605,10 @@ func (s *PaymentService) ExecuteSubscriptionFulfillment(ctx context.Context, oid
 		return nil
 	}
 	if err := s.doSub(ctx, o, lease); err != nil {
+		if errors.Is(err, errSubscriptionRenewalDeferred) {
+			_, resetErr := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(oid), paymentorder.StatusEQ(OrderStatusRecharging), paymentorder.UpdatedAtEQ(lease.version)).SetStatus(OrderStatusScheduled).Save(ctx)
+			return resetErr
+		}
 		s.markFailed(ctx, oid, lease, err)
 		return err
 	}
@@ -632,6 +651,9 @@ func (s *PaymentService) ensurePaymentSubscriptionAssigned(ctx context.Context, 
 
 	recoveredFromNote := false
 	if !alreadyAssigned {
+		if err := s.lockRenewalSource(txCtx, txClient, o); err != nil {
+			return err
+		}
 		orderNote := paymentSubscriptionOrderNote(o.ID)
 		existing, lookupErr := s.subscriptionSvc.userSubRepo.GetByUserIDAndGroupID(txCtx, o.UserID, groupID)
 		switch {
@@ -651,6 +673,9 @@ func (s *PaymentService) ensurePaymentSubscriptionAssigned(ctx context.Context, 
 			}
 		}
 
+		if err := s.moveLegacySubscriptionKeys(txCtx, txClient, o, groupID); err != nil {
+			return fmt.Errorf("move legacy keys: %w", err)
+		}
 		detail, _ := json.Marshal(map[string]any{
 			"groupID":           groupID,
 			"validityDays":      days,
@@ -678,6 +703,7 @@ func (s *PaymentService) ensurePaymentSubscriptionAssigned(ctx context.Context, 
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("commit subscription fulfillment tx: %w", err)
 	}
+	s.invalidateRenewalKeys(ctx, o.UserID)
 	// Assignment cache invalidation is deferred while this transaction is open,
 	// then performed synchronously against the committed subscription.
 	if err := s.subscriptionSvc.invalidateSubscriptionCaches(o.UserID, groupID); err != nil {
@@ -941,7 +967,7 @@ func (s *PaymentService) RetryFulfillment(ctx context.Context, oid int64) error 
 	if o.Status == OrderStatusCompleted {
 		return infraerrors.BadRequest("INVALID_STATUS", "order already completed")
 	}
-	if o.Status != OrderStatusFailed && o.Status != OrderStatusPaid && o.Status != OrderStatusRecharging {
+	if o.Status != OrderStatusScheduled && o.Status != OrderStatusFailed && o.Status != OrderStatusPaid && o.Status != OrderStatusRecharging {
 		return infraerrors.BadRequest("INVALID_STATUS", "only paid, failed, and recoverable recharging orders can retry")
 	}
 	if !isSupportedPaymentOrderType(o.OrderType) {

@@ -99,6 +99,7 @@ func (s *PaymentConfigService) decryptAndMaskConfig(providerKey, encrypted strin
 // pendingOrderStatuses are order statuses considered "in progress".
 var pendingOrderStatuses = []string{
 	payment.OrderStatusPending,
+	payment.OrderStatusScheduled,
 	payment.OrderStatusPaid,
 	payment.OrderStatusRecharging,
 }

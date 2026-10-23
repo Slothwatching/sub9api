@@ -26,6 +26,7 @@ const (
 // Order status constants shared across payment and service layers.
 const (
 	OrderStatusPending           = "PENDING"
+	OrderStatusScheduled         = "SCHEDULED" // D93: paid, awaiting the grandfathered term to end.
 	OrderStatusPaid              = "PAID"
 	OrderStatusRecharging        = "RECHARGING"
 	OrderStatusCompleted         = "COMPLETED"

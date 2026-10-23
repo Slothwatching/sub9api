@@ -97,6 +97,11 @@ func (s *PaymentOrderExpiryService) runOnce() {
 	}
 	defer release()
 
+	activationCtx, activationCancel := context.WithTimeout(context.Background(), expiryCheckTimeout)
+	if _, err := s.paymentSvc.ActivateDueSubscriptionRenewals(activationCtx); err != nil {
+		slog.Error("subscription renewal activation failed", "error", err)
+	}
+	activationCancel()
 	reconcileCtx, cancel := context.WithTimeout(context.Background(), expiryCheckTimeout)
 	recovered, err := s.paymentSvc.ReconcilePendingPaymentOrders(reconcileCtx)
 	cancel()
