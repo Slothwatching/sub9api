@@ -91,11 +91,12 @@ const plans = ref<SubscriptionPlan[]>([])
 const selectedId = ref<number | null>(null)
 const summary = ref<HTMLElement>()
 const filter = ref('all')
-const filters = [
+const filterOptions = [
   { key: 'all', label: 'storefront.all' },
   { key: 'daily', label: 'storefront.daily' },
   { key: 'monthly', label: 'storefront.monthly' },
   { key: 'combined', label: 'storefront.combined' },
+  { key: 'weekly', label: 'storefront.weekly' },
 ]
 
 // D92: group configured products by their actual quota group. Durations and prices
@@ -116,13 +117,17 @@ const groups = computed(() => {
     plans: items.sort((a, b) => durationDays(a) - durationDays(b) || a.sort_order - b.sort_order || a.id - b.id),
   }))
 })
-const visibleGroups = computed(() => groups.value.filter(group => {
+function matchesFilter(group: typeof groups.value[number], key: string) {
   const plan = group.plans[0]!
-  if (filter.value === 'daily') return plan.daily_limit_usd != null && plan.weekly_limit_usd == null && plan.monthly_limit_usd == null
-  if (filter.value === 'monthly') return plan.monthly_limit_usd != null && plan.daily_limit_usd == null && plan.weekly_limit_usd == null
-  if (filter.value === 'combined') return [plan.daily_limit_usd, plan.weekly_limit_usd, plan.monthly_limit_usd].filter(value => value != null).length > 1
+  if (key === 'daily') return plan.daily_limit_usd != null && plan.weekly_limit_usd == null && plan.monthly_limit_usd == null
+  if (key === 'monthly') return plan.monthly_limit_usd != null && plan.daily_limit_usd == null && plan.weekly_limit_usd == null
+  if (key === 'weekly') return plan.weekly_limit_usd != null && plan.daily_limit_usd == null && plan.monthly_limit_usd == null
+  if (key === 'combined') return [plan.daily_limit_usd, plan.weekly_limit_usd, plan.monthly_limit_usd].filter(value => value != null).length > 1
   return true
-}))
+}
+// D103: retain support for every quota type, but do not offer empty daily tabs.
+const filters = computed(() => filterOptions.filter(item => item.key === 'all' || groups.value.some(g => matchesFilter(g, item.key))))
+const visibleGroups = computed(() => groups.value.filter(group => matchesFilter(group, filter.value)))
 const selected = computed(() => plans.value.find(plan => plan.id === selectedId.value))
 const selectedGroup = computed(() => groups.value.find(group => group.id === selected.value?.group_id))
 function planPrice(plan: SubscriptionPlan) {

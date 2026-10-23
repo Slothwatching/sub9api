@@ -6,9 +6,10 @@
     </div>
     <div v-if="currencies.length" class="space-y-4 rounded-xl border border-primary-200 p-4 dark:border-primary-800">
       <h3 class="font-medium">{{ t('experience.plans.find') }}</h3>
-      <div class="grid gap-3 sm:grid-cols-3">
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label class="space-y-1 text-sm"><span>{{ t('experience.plans.pattern') }}</span><select v-model="kind" class="input"><option value="daily">{{ t('experience.plans.steady') }}</option><option value="monthly">{{ t('experience.plans.bursty') }}</option></select></label>
         <label class="space-y-1 text-sm"><span>{{ t(kind === 'daily' ? 'experience.plans.dailySpend' : 'experience.plans.monthlySpend') }}</span><input v-model.number="spend" type="number" min="0.01" step="1" class="input" /></label>
+        <label v-if="kind === 'monthly'" class="space-y-1 text-sm"><span>{{ t('experience.plans.weeklySpend') }}</span><input v-model.number="weeklySpend" type="number" min="0.01" step="0.5" class="input" /></label>
         <label class="space-y-1 text-sm"><span>{{ t('experience.plans.currency') }}</span><select v-model="currency" class="input"><option v-for="item in currencies" :key="item" :value="item">{{ item || t('experience.plans.unlabelled') }}</option></select></label>
       </div>
       <div v-if="recommended" class="flex flex-wrap items-center justify-between gap-3" aria-live="polite"><p class="text-sm">{{ t('experience.plans.result', { name: recommended.name }) }} <span class="font-semibold">{{ formatPrice(recommended) }} / {{ planValiditySuffix(recommended, t) }}</span></p><button type="button" class="btn btn-primary" @click="$emit('select', recommended.id)">{{ t('storefront.choose') }}</button></div>
@@ -39,9 +40,9 @@ import { hasPeakRate, formatPeakRateWindow, serverTimezoneLabel } from '@/utils/
 const props = defineProps<{ plans: SubscriptionPlan[] }>()
 defineEmits<{ select: [planId: number] }>()
 const { t } = useI18n(); const app = useAppStore()
-const kind = ref<'daily' | 'monthly'>('daily'); const spend = ref(5); const currency = ref('')
+const kind = ref<'daily' | 'monthly'>('monthly'); const spend = ref(165); const weeklySpend = ref(49.5); const currency = ref('')
 const currencies = computed(() => [...new Set(props.plans.filter(p => p.group_platform === 'openai').map(p => p.currency || ''))])
 watch(currencies, next => { if (!next.includes(currency.value)) currency.value = next[0] ?? '' }, { immediate: true })
-const recommended = computed(() => recommendPlan(props.plans, kind.value, spend.value, currency.value))
+const recommended = computed(() => recommendPlan(props.plans, kind.value, spend.value, currency.value, weeklySpend.value))
 const formatPrice = (p: SubscriptionPlan) => `${currencySymbol(p.currency)}${p.price.toFixed(2)} ${p.currency || ''}`
 </script>

@@ -7,20 +7,21 @@ export default {
       "startTitle": "Connecting for the first time",
       "startText": "Check your client, model and connection method first. Start with a smaller tier that meets your needs, rather than assuming a fixed number of calls.",
       "dailyTitle": "Steady daily use",
-      "dailyText": "Compare daily quotas alongside any weekly and monthly limits. Unused daily quota follows the plan rules; do not assume it rolls over.",
+      "dailyText": "Project daily spend over 7 and 30 days, then check every configured cap. Plans without a daily cap still enforce their weekly and monthly limits.",
       "flexibleTitle": "Work comes in bursts",
-      "flexibleText": "Consider a monthly-only quota pool for uneven usage. Plan validity, Key limits and service capacity still apply.",
+      "flexibleText": "Weekly/monthly plans have no daily cap, but weekly usage counts toward the monthly allowance. Premium has only a monthly cap. Key limits, validity and service capacity still apply.",
       "find": "Find a plan for your estimated spend",
       "pattern": "Usage pattern",
       "steady": "Steady daily use",
       "bursty": "Bursts within a month",
       "dailySpend": "Estimated daily metered spend (USD)",
+      "weeklySpend": "Estimated busiest-week metered spend (USD)",
       "monthlySpend": "Estimated monthly metered spend (USD)",
       "currency": "Plan payment currency",
       "unlabelled": "Currency not specified",
       "result": "Consider {name}.",
       "noMatch": "No GPT plan meets this estimate. Adjust it or review the comparison below.",
-      "method": "Matches GPT products within one currency, then compares price per service day. Daily estimates assume 7 days per week and 30 days per month. Metered spend includes applicable billing multipliers; check usage records. A recommendation is not a capacity guarantee.",
+      "method": "Compares qualifying GPT plans in one currency by price per service day. For bursts, enter both the monthly total and busiest week (no greater than the monthly total). Steady use projects daily spend over 7 and 30 days. Monthly quota is not weekly quota times four, and cannot all be spent in one week when a weekly cap applies. Spend includes billing multipliers; capacity is not guaranteed.",
       "compare": "Compare all plans on sale",
       "columns": {
         "name": "Plan",
@@ -32,7 +33,7 @@ export default {
         "rate": "Billing multiplier",
         "action": "Select"
       },
-      "tableNote": "A dash means no limit is configured for that dimension, not an absence of other limits. Daily quota × 30 is not a freely pooled monthly allowance. All configured windows apply together. Check the model directory and connection guide for supported models.",
+      "tableNote": "A dash means no cap for that dimension; other limits still apply. Weekly usage counts toward the monthly cap, and four weekly caps do not increase the monthly total. Unused quota does not increase the next window cap. Weekly/monthly windows span 7/30 days, not calendar weeks/months; see subscriptions for actual reset times. Legacy daily quota times 30 is not a monthly pool.",
       "renewal": "Existing legacy plans retain purchased benefits until expiry. When the deferred renewal policy applies, a prepaid replacement waits for legacy benefits to end. Check the activation time shown when purchasing.",
       "rules": "Renewal and quota rules"
     },
@@ -70,7 +71,7 @@ export default {
       "tokensTitle": "API usage",
       "tokensText": "Input, output and caching use separate prices. One client task can make many requests; reasoning and tool use may add usage.",
       "quotaTitle": "Plan quota",
-      "quotaText": "Quota is a metered spending limit, not cash balance. Daily, weekly and monthly windows constrain usage separately, alongside Key limits and expiry.",
+      "quotaText": "Quota caps metered spend; it is not cash. Weekly/monthly plans have no daily cap, and weekly usage counts toward the monthly cap; either can pause usage. Premium has only a monthly cap. Windows span 7/30 days; check subscriptions for reset times. Key limits and validity still apply.",
       "paymentTitle": "Payment amount",
       "paymentText": "A plan price does not buy the same numeric amount of API quota. Currency conversion, fees and final payment appear at checkout.",
       "auditTitle": "Check a charge step by step",
@@ -80,6 +81,14 @@ export default {
       "audit4": "Use the actual recorded charge as the source of truth. If it differs from your expectation, share the time, model, request ID (if present) and redacted error through the site support entry. Never share a full Key."
     },
     "calculator": {
+      "forecastTitle": "Plan usage projection",
+      "forecastIntro": "Choose an on-sale plan in the same billing group. One batch is the total usage entered above; estimates show how many identical batches each window permits.",
+      "forecastPlan": "Plan to project",
+      "forecastCount": "About {count} batches / {window}",
+      "forecastDaily": "daily window",
+      "forecastWeekly": "7-day window",
+      "forecastMonthly": "30-day window",
+      "forecastNote": "Uses full-window quota, not your remaining allowance. All windows apply together; do not add these estimates. Unused quota does not increase the next window cap. Recalculate if content, caching, model or multipliers change. This does not guarantee completed tasks.",
       "loginRequired": "The administrator requires sign-in to view model prices. Sign in to estimate costs; the billing guide remains readable.",
       "inputCost": "Uncached input cost", "outputCost": "Output cost", "cacheReadCost": "Cache-read cost", "cacheWriteCost": "Cache-write cost", "rateHint": "Effective group / user billing multiplier: ×{rate}.",
 
@@ -226,7 +235,7 @@ export default {
         "lead": "Existing legacy benefits remain usable. New purchases and renewals use current products. Deferred renewal and immediate upgrade are different rules.",
         "step1": "When prepaying, check the activation time. Orders subject to legacy succession show paid and scheduled, and do not immediately replace existing benefits.",
         "step2": "The purchased duration starts on actual activation. If multiple legacy plans remain protected, follow the activation arrangement shown in the UI.",
-        "step3": "Daily/weekly/monthly resets are separate from subscription expiry. Daily quota multiplied by days is not a freely spendable pool. Check order status after payment before purchasing again."
+        "step3": "Weekly/monthly plans have no daily cap, and weekly usage counts toward the monthly cap. Premium has only a monthly cap. Windows span 7/30 days; see subscriptions for reset times. Unused quota does not increase the next window cap. Check order status after payment before purchasing again."
       }
     }
   }

@@ -17,6 +17,13 @@
         <p v-if="!result || 'error' in result" class="text-sm">{{ t(`experience.calculator.errors.${result && 'error' in result ? result.error : 'unsupported'}`) }}</p>
         <template v-else><p class="text-sm text-primary-800 dark:text-primary-200">{{ t('experience.calculator.estimated') }}</p><p class="mt-2 break-all text-3xl font-semibold tabular-nums text-primary-800 dark:text-primary-100">${{ result.total.toFixed(8) }}</p><dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2"><div v-for="field in costFields" :key="field" class="flex justify-between gap-2"><dt>{{ t(`experience.calculator.${field}Cost`) }}</dt><dd class="font-mono">${{ result[field].toFixed(8) }}</dd></div><div class="flex justify-between gap-2"><dt>{{ t('experience.calculator.multiplier') }}</dt><dd>×{{ Number(result.multiplier.toPrecision(10)) }}</dd></div><div class="flex justify-between gap-2"><dt>{{ t('experience.calculator.requests') }}</dt><dd>{{ values.requests }}</dd></div></dl><p v-if="result.tier" class="mt-4 text-sm">{{ t('experience.calculator.tier', { tier: result.tier }) }}</p><p class="mt-3 text-xs leading-5">{{ t('experience.calculator.formula') }}</p></template>
       </div>
+      <section v-if="projections.length" class="space-y-3 rounded-xl border border-primary-200 p-4 dark:border-primary-800" data-testid="quota-forecast">
+        <h3 class="font-medium">{{ t('experience.calculator.forecastTitle') }}</h3>
+        <p class="text-sm leading-6">{{ t('experience.calculator.forecastIntro') }}</p>
+        <label class="block space-y-2 text-sm"><span>{{ t('experience.calculator.forecastPlan') }}</span><select v-model.number="planId" class="input"><option v-for="plan in matchingPlans" :key="plan.id" :value="plan.id">{{ plan.name }}</option></select></label>
+        <ul class="grid gap-3 sm:grid-cols-2"><li v-for="item in projections" :key="item.window" class="rounded-lg bg-gray-50 p-3 text-sm dark:bg-dark-900"><span class="font-semibold">${{ item.cap }} · </span>{{ t('experience.calculator.forecastCount', { count: item.count.toLocaleString(), window: t(`experience.calculator.forecast${item.window[0]!.toUpperCase()}${item.window.slice(1)}`) }) }}</li></ul>
+        <p class="text-xs leading-6 text-gray-500 dark:text-dark-400">{{ t('experience.calculator.forecastNote') }}</p>
+      </section>
       <p class="text-xs leading-6 text-gray-500 dark:text-dark-400">{{ t('experience.calculator.limitations') }}</p>
     </template>
   </section>
@@ -28,7 +35,9 @@ import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import { estimateCost, type EstimateInput } from '@/utils/costEstimate'
 import { hasPeakRate, formatPeakRateWindow, serverTimezoneLabel } from '@/utils/peak-rate'
 import { useAppStore } from '@/stores/app'
-const props = defineProps<{ groups: ModelPlazaGroup[] }>()
+import type { SubscriptionPlan } from '@/types/payment'
+import { quotaBatches } from '@/utils/planGuide'
+const props = defineProps<{ groups: ModelPlazaGroup[]; subscriptionPlans?: SubscriptionPlan[] }>()
 const { t } = useI18n(); const app = useAppStore()
 const groupId = ref<number>(); const modelName = ref('')
 const group = computed(() => props.groups.find(g => g.id === groupId.value))
@@ -42,4 +51,11 @@ watch(models, next => { if (!next.some(m => m.name === modelName.value)) modelNa
 watch([groupId, modelName], () => { values.period = -1; values.effort = ''; values.peak = false })
 const efforts = computed(() => Object.keys(model.value?.pricing?.reasoning_effort_multipliers ?? {}))
 const result = computed(() => group.value && model.value ? estimateCost(group.value, model.value, values) : null)
+const planId = ref<number>()
+const matchingPlans = computed(() => (props.subscriptionPlans ?? []).filter(p => p.for_sale !== false && p.group_id === groupId.value))
+watch(matchingPlans, next => { if (!next.some(p => p.id === planId.value)) planId.value = next[0]?.id }, { immediate: true })
+const projections = computed(() => {
+  const plan = matchingPlans.value.find(p => p.id === planId.value)
+  return plan && result.value && !('error' in result.value) ? quotaBatches(plan, result.value.total) : []
+})
 </script>
