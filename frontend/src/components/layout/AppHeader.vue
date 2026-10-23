@@ -57,7 +57,7 @@
         <!-- Keep plan discovery visible without changing the workspace navigation. -->
         <router-link
           v-if="showSubscriptionPurchase"
-          :to="{ path: '/purchase', query: { tab: 'subscription' } }"
+          to="/subscribe"
           :title="t('nav.paymentPlans')"
           :aria-label="t('nav.paymentPlans')"
           class="flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-600 px-2.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 sm:px-3"

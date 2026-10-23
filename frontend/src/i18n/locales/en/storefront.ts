@@ -1,0 +1,22 @@
+export default {
+  storefront: {
+    price: 'Plan price',
+    title: 'Activate your plan',
+    subtitle: 'Choose a GPT / Codex subscription with clear quotas and validity.',
+    all: 'All plans',
+    daily: 'Daily quota',
+    monthly: 'Monthly quota',
+    combined: 'Combined quotas',
+    choose: 'Choose a plan',
+    selected: 'Selected plan',
+    duration: 'Subscription duration',
+    continue: 'Continue to checkout',
+    notice: 'Usage consumes quota at site model prices and the plan multiplier. Each quota follows its configured window.',
+    checkoutNote: 'Confirm payment methods, fees and the final amount in the next step.',
+    loadError: 'Unable to load plans. Please try again.',
+    retry: 'Reload plans',
+    back: 'Back to top-up / subscriptions',
+    empty: 'No matching plans available',
+    periods: 'Only available durations are shown. Validity is the service period included in one purchase.',
+  },
+}

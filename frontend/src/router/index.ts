@@ -305,6 +305,20 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/subscribe',
+    name: 'SubscriptionStorefront',
+    component: () => import('@/views/user/SubscriptionStorefrontView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      requiresPayment: true,
+      requiresSubscription: true,
+      title: 'Activate your plan',
+      titleKey: 'storefront.title',
+      descriptionKey: 'storefront.subtitle',
+    }
+  },
+  {
     path: '/purchase',
     name: 'PurchaseSubscription',
     component: () => import('@/views/user/PaymentView.vue'),
@@ -955,6 +969,7 @@ router.beforeEach(async (to, _from, next) => {
       '/admin/subscriptions',
       '/admin/redeem',
       '/subscriptions',
+      '/subscribe',
       '/redeem'
     ]
 

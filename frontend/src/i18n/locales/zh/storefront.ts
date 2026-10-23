@@ -1,0 +1,22 @@
+export default {
+  storefront: {
+    price: '套餐金额',
+    title: '开通服务',
+    subtitle: '选择适合你的 GPT / Codex 订阅，额度与有效期一目了然。',
+    all: '全部套餐',
+    daily: '日额度',
+    monthly: '月额度',
+    combined: '综合额度',
+    choose: '选择套餐',
+    selected: '已选套餐',
+    duration: '订阅时长',
+    continue: '继续开通',
+    notice: '额度按本站模型价格及套餐倍率消耗；各额度窗口以套餐规则为准。',
+    checkoutNote: '支付方式、手续费及最终应付金额将在下一步确认。',
+    loadError: '套餐加载失败，请重试。',
+    retry: '重新加载',
+    back: '返回充值 / 订阅',
+    empty: '暂无符合条件的套餐',
+    periods: '仅展示当前在售时长；有效期为一次购买所获得的服务期限。',
+  },
+}
