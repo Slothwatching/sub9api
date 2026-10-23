@@ -92,6 +92,8 @@
           <span>{{ siteName }}</span>
         </div>
         <div class="home-nav-actions">
+          <!-- D98: optional standalone guide; no animation or guide payload on the home page. -->
+          <router-link to="/use-cases/thesis" class="btn btn-ghost gap-1.5"><Icon name="book" size="sm" />{{ t('thesis.entry') }}</router-link>
           <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">{{ t('home.docs') }}</a>
           <router-link v-if="showModelPlazaEntry" to="/model-plaza" class="btn btn-ghost">{{ t('nav.modelPlaza') }}</router-link>
           <LocaleSwitcher />

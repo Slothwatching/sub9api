@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codex 论文通关</title>
+<style>
+:root{
+  --bg:#07080f; --bg2:#0d1020; --panel:rgba(20,24,44,.72); --panel-solid:#141830;
+  --line:rgba(140,160,255,.16); --ink:#eef0ff; --muted:#9aa0c3; --dim:#646a8f;
+  --cyan:#3ee6ff; --violet:#9b6bff; --pink:#ff5fa8; --lime:#7dff9b; --amber:#ffc35a; --red:#ff6b6b;
+  --grad:linear-gradient(110deg,var(--cyan),var(--violet) 50%,var(--pink));
+  --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden;
+  font:16px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+#net{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;width:620px;height:620px;border-radius:50%;filter:blur(120px);opacity:.28;z-index:0;pointer-events:none}
+.glow.a{background:var(--violet);top:-200px;left:-160px}
+.glow.b{background:var(--cyan);bottom:-260px;right:-200px;opacity:.18}
+main{position:relative;z-index:1}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+a{color:var(--cyan)}
+code{font-family:var(--mono);font-size:.88em;background:rgba(62,230,255,.1);color:var(--cyan);padding:1px 6px;border-radius:4px}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px 22px;cursor:pointer;color:#07080f;background:var(--grad);box-shadow:0 8px 30px rgba(155,107,255,.35);transition:transform .15s,box-shadow .15s;text-decoration:none}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(155,107,255,.5)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.sm{padding:6px 14px;font-size:14px;border-radius:9px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+section.block{padding:90px 0 20px}
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
+h2{font-size:clamp(26px,4vw,38px);line-height:1.25;margin:8px 0 10px}
+.sub{color:var(--muted);max-width:720px;margin:0 0 28px}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:60px 0}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.badge{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:rgba(255,255,255,.03)}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.hero h1{font-size:clamp(38px,6.6vw,74px);line-height:1.08;margin:18px 0 18px;letter-spacing:-.01em}
+.typed{font-family:var(--mono);color:var(--muted);min-height:3.4em;font-size:clamp(15px,2vw,18px)}
+.typed .cur{display:inline-block;width:9px;height:1.1em;background:var(--cyan);vertical-align:-3px;margin-left:2px;animation:pulse 1s steps(1) infinite}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 30px}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font-size:30px;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted)}
+.mini-win{padding:0;overflow:hidden;transform:perspective(1200px) rotateY(-8deg) rotateX(4deg);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(155,107,255,.2);animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:perspective(1200px) rotateY(-6deg) rotateX(2deg) translateY(-10px)}}
+@media (max-width:900px){.mini-win{transform:none;animation:none}}
+.win-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.25);font-size:12px;color:var(--dim)}
+.win-bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.win-bar i:nth-child(1){background:#ff5f57}.win-bar i:nth-child(2){background:#febc2e}.win-bar i:nth-child(3){background:#28c840}
+.win-bar span{margin-left:8px}
+.hero-log{font-family:var(--mono);font-size:13px;padding:16px;min-height:300px;line-height:1.75}
+.hero-log div{opacity:0;transform:translateY(6px);animation:in .4s forwards}
+@keyframes in{to{opacity:1;transform:none}}
+.c-cyan{color:var(--cyan)}.c-violet{color:var(--violet)}.c-pink{color:var(--pink)}.c-lime{color:var(--lime)}.c-amber{color:var(--amber)}.c-dim{color:var(--dim)}.c-red{color:var(--red)}
+
+/* SPLIT: AI vs YOU */
+.split{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:900px){.split{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.split{grid-template-columns:1fr}}
+.flip{perspective:900px;height:190px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:18px;border:1px solid var(--line);display:flex;flex-direction:column}
+.face.front{background:var(--panel-solid)}
+.face.back{transform:rotateY(180deg);background:linear-gradient(160deg,#1a1f3d,#141830)}
+.face .emo{font-size:30px}
+.face h4{margin:8px 0 4px;font-size:17px}
+.face p{margin:0;font-size:14px;color:var(--muted)}
+.face .hint{margin-top:auto;font-size:12px;color:var(--dim);font-family:var(--mono)}
+.verdict{font-weight:700;font-size:15px}
+.verdict.ai{color:var(--lime)}.verdict.you{color:var(--amber)}
+.score{margin-top:16px;color:var(--muted);font-size:14px}
+
+/* GENERATOR */
+.gen{display:grid;grid-template-columns:360px 1fr;gap:18px}
+@media (max-width:900px){.gen{grid-template-columns:1fr}}
+.gen-form{padding:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;font:inherit;font-size:15px;color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s}
+.field textarea{resize:vertical;min-height:84px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(62,230,255,.15)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--muted);background:rgba(255,255,255,.02);user-select:none;transition:all .2s}
+.chip.on{border-color:var(--violet);color:var(--ink);background:rgba(155,107,255,.18)}
+input[type=range]{accent-color:var(--violet);padding:0}
+.gen-out{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:460px}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:10px;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.tab{flex:none;font:inherit;font-size:13px;border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:8px;cursor:pointer}
+.tab.on{background:rgba(62,230,255,.12);color:var(--cyan)}
+.out-body{position:relative;flex:1;padding:16px}
+.out-body pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:#d9ddff;max-height:420px;overflow:auto}
+.out-body pre mark{background:rgba(255,95,168,.18);color:var(--pink);border-radius:3px;padding:0 2px}
+.copy-float{position:absolute;top:12px;right:14px}
+
+/* SIMULATOR */
+.sim{display:grid;grid-template-columns:270px 1fr;gap:18px}
+@media (max-width:900px){.sim{grid-template-columns:1fr}}
+.levels{padding:12px;display:flex;flex-direction:column;gap:6px;max-height:640px;overflow:auto}
+@media (max-width:900px){.levels{flex-direction:row;overflow-x:auto;max-height:none}}
+.lv{flex:none;display:flex;align-items:center;gap:10px;border:1px solid transparent;border-radius:12px;padding:8px 10px;cursor:pointer;color:var(--muted);background:transparent;font:inherit;text-align:left;transition:all .2s}
+.lv:hover{background:rgba(255,255,255,.04)}
+.lv.on{border-color:var(--line);background:rgba(155,107,255,.14);color:var(--ink)}
+.lv .n{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.06)}
+.lv.done .n{background:var(--lime);color:#07080f}
+.lv.bonus .n{background:linear-gradient(135deg,var(--amber),var(--pink));color:#07080f}
+.lv .t{font-size:14px;line-height:1.35}
+@media (max-width:900px){.lv .t{white-space:nowrap}}
+.stage{display:flex;flex-direction:column;gap:18px;min-width:0}
+.mission{padding:22px}
+.mission-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lvtag{font-family:var(--mono);font-size:12px;color:var(--violet);border:1px solid rgba(155,107,255,.4);border-radius:6px;padding:2px 8px}
+.mission h3{margin:0;font-size:22px}
+.xp{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--amber)}
+.goal{color:var(--muted);margin:10px 0 14px}
+.ops{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.ops li{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.ops li .k{flex:none;margin-top:3px;width:20px;height:20px;border-radius:6px;background:rgba(62,230,255,.12);color:var(--cyan);font-size:12px;display:grid;place-items:center;font-family:var(--mono)}
+.ops kbd{font-family:inherit;font-size:13px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px}
+.tip{margin-top:14px;font-size:14px;border-left:3px solid var(--amber);padding:8px 12px;background:rgba(255,195,90,.07);border-radius:0 8px 8px 0;color:#f5e3c0}
+.prompt-box{margin-top:16px;position:relative}
+.prompt-box .lbl{font-size:12px;font-family:var(--mono);color:var(--dim);margin-bottom:6px}
+.prompt-box pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:12px;padding:14px 16px;max-height:240px;overflow:auto;color:#d9ddff}
+.prompt-box .copy-float{top:30px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.codex{overflow:hidden;padding:0}
+.codex-body{display:grid;grid-template-columns:200px 1fr;min-height:360px}
+@media (max-width:640px){.codex-body{grid-template-columns:1fr}.tree{border-right:0!important;border-bottom:1px solid var(--line)}}
+.tree{border-right:1px solid var(--line);padding:12px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.tree .h{font-size:11px;letter-spacing:.1em;color:var(--dim);margin-bottom:8px}
+.tree .f{padding:2px 4px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tree .f.new{animation:flash 1.4s}
+@keyframes flash{0%{background:rgba(125,255,155,.35);color:var(--lime)}100%{background:transparent}}
+.tree .empty{color:var(--dim);font-style:italic}
+.chat{padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;font-size:14px}
+.msg{max-width:92%;border-radius:12px;padding:10px 13px;line-height:1.6;animation:in .35s forwards;opacity:0;transform:translateY(6px)}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,rgba(155,107,255,.35),rgba(255,95,168,.22));border:1px solid rgba(155,107,255,.4)}
+.msg.ai{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.msg.tool{align-self:flex-start;font-family:var(--mono);font-size:12.5px;background:rgba(62,230,255,.07);border:1px dashed rgba(62,230,255,.35);color:var(--cyan)}
+.msg.tool .spin{display:inline-block;width:10px;height:10px;border:2px solid var(--cyan);border-right-color:transparent;border-radius:50%;animation:rot .7s linear infinite;margin-right:6px;vertical-align:-1px}
+.msg.tool.ok .spin{display:none}
+.msg.tool.ok::before{content:"✓ ";color:var(--lime)}
+@keyframes rot{to{transform:rotate(360deg)}}
+.msg.sys{align-self:center;font-size:12px;color:var(--dim);font-family:var(--mono)}
+.chat-empty{color:var(--dim);font-size:14px;margin:auto;text-align:center;padding:40px 0}
+.mini-board{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.mini-board div{background:rgba(0,0,0,.3);border-radius:8px;padding:8px;font-size:12px}
+
+/* BOARD */
+.board-top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
+.q{flex:1;min-width:260px;padding:16px 18px}
+.q small{color:var(--dim);font-family:var(--mono);font-size:12px}
+.q p{margin:4px 0 0;font-size:16px}
+.donut-wrap{display:flex;align-items:center;gap:16px;padding:14px 18px}
+.legend{font-size:13px;display:grid;gap:3px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+.toggle{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-size:14px;padding:10px 16px}
+.sw{width:44px;height:24px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;transition:background .25s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s}
+.toggle.on .sw{background:var(--lime)}
+.toggle.on .sw::after{transform:translateX(20px)}
+.papers{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media (max-width:760px){.papers{grid-template-columns:1fr}}
+.paper{padding:18px;transition:opacity .35s,transform .35s,filter .35s}
+.paper.hide{opacity:.15;transform:scale(.97);filter:grayscale(1)}
+.paper h4{margin:4px 0 6px;font-size:16px}
+.paper .doi{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.paper .design{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:1px 8px;color:var(--muted);margin-top:6px}
+.zone{margin-top:12px;border-radius:12px;padding:12px}
+.zone.s{background:rgba(62,230,255,.06);border:1px solid rgba(62,230,255,.22)}
+.zone.a{background:rgba(155,107,255,.07);border:1px solid rgba(155,107,255,.28)}
+.zone .zt{font-size:11px;font-family:var(--mono);letter-spacing:.1em;margin-bottom:6px}
+.zone.s .zt{color:var(--cyan)}.zone.a .zt{color:var(--violet)}
+.bars{display:grid;gap:5px;margin-top:8px}
+.bar{display:grid;grid-template-columns:44px 1fr 38px;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.bar .tr{height:8px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar .fl{height:100%;width:0;border-radius:4px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.bar b{font-family:var(--mono);font-weight:500;text-align:right;color:var(--ink)}
+.pill{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px;margin:2px 4px 2px 0}
+.pill.oa{background:rgba(125,255,155,.15);color:var(--lime)}
+.pill.sub{background:rgba(62,230,255,.15);color:var(--cyan)}
+.pill.no{background:rgba(255,107,107,.15);color:var(--red)}
+.pill.warn{background:rgba(255,195,90,.15);color:var(--amber)}
+.demo-note{font-size:12px;color:var(--dim);margin-top:14px}
+
+/* PITFALL */
+.traps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.traps{grid-template-columns:1fr}}
+.trap{padding:20px}
+.trap .ic{font-size:26px}
+.trap h4{margin:6px 0;font-size:17px}
+.trap p{margin:0;color:var(--muted);font-size:14px}
+
+/* CHEAT */
+.cheat{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:760px){.cheat{grid-template-columns:1fr}}
+.cheat .panel{padding:18px 20px}
+.cheat h4{margin:0 0 8px;font-size:16px}
+.cheat ul{margin:0;padding-left:20px;color:var(--muted);font-size:14px}
+.cheat li{margin:4px 0}
+.cheat li b{color:var(--ink);font-weight:600}
+details.faq{padding:14px 18px;margin:10px 0}
+details.faq summary{cursor:pointer;font-weight:600;list-style:none}
+details.faq summary::before{content:"+";display:inline-block;width:20px;color:var(--cyan);font-family:var(--mono)}
+details.faq[open] summary::before{content:"−"}
+details.faq p{color:var(--muted);margin:8px 0 0 20px;font-size:14px}
+footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
+
+/* progress rail */
+.rail{position:fixed;top:0;left:0;height:3px;background:var(--grad);z-index:50;width:0;box-shadow:0 0 12px var(--violet)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(120px);background:var(--panel-solid);border:1px solid var(--line);padding:10px 18px;border-radius:12px;z-index:60;transition:transform .35s;font-size:14px}
+.toast.on{transform:translateX(-50%) translateY(0)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+.reveal.vis{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="net"></canvas>
+<div class="glow a"></div><div class="glow b"></div>
+<div class="rail" id="rail"></div>
+<canvas id="confetti"></canvas>
+<div class="toast" id="toast"></div>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span>Codex · 毕业论文实战</span>
+      <h1>文献这件苦差事，<br><span class="grad">交给 Codex。</span></h1>
+      <div class="typed" id="typed"><span class="cur"></span></div>
+      <div class="hero-cta">
+        <a class="btn" href="#gen">⚡ 输入我的论文题目</a>
+        <a class="btn ghost" href="#sim">▶ 看 Codex 怎么干活</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b class="grad" data-count="11">0</b><span>个通关步骤</span></div>
+        <div class="stat"><b class="grad" data-count="9">0</b><span>条现成提示词</span></div>
+        <div class="stat"><b class="grad" data-count="60">0</b><span>分钟出证据看板</span></div>
+      </div>
+    </div>
+    <div class="panel mini-win">
+      <div class="win-bar"><i></i><i></i><i></i><span>Codex — 我的论文证据看板</span></div>
+      <div class="hero-log" id="heroLog"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AI vs YOU ================= -->
+<section class="block reveal" id="split">
+  <div class="wrap">
+    <div class="kicker">01 / 分工</div>
+    <h2>让 AI 干最多的活，<span class="grad">但别让它替你背锅</span></h2>
+    <p class="sub">点开每张卡片，看看哪些事可以放心交给 Codex，哪些事交出去就会出问题。</p>
+    <div class="split" id="splitGrid"></div>
+    <div class="score" id="splitScore">已翻开 0 / 8 张</div>
+  </div>
+</section>
+
+<!-- ================= GENERATOR ================= -->
+<section class="block reveal" id="gen">
+  <div class="wrap">
+    <div class="kicker">02 / 定制</div>
+    <h2>填 3 个空，<span class="grad">生成你的全套提示词</span></h2>
+    <p class="sub">在左边输入你的论文信息，右边的 9 条提示词会实时改写好。下面闯关时用的也是这一套，复制到 Codex 里就能直接用。</p>
+    <div class="gen">
+      <div class="panel gen-form">
+        <div class="field"><label>论文题目</label><input id="fTitle" value="限时进食对肥胖人群减重效果的影响研究"></div>
+        <div class="field"><label>核心研究问题（越具体越好）</label><textarea id="fQ">对于肥胖成年人，在热量限制的基础上加入限时进食，是否能提高减重效果？</textarea></div>
+        <div class="field"><label>学科方向（自动匹配研究类型）</label>
+          <div class="chips" id="fField">
+            <span class="chip on" data-v="med">医学/公卫</span><span class="chip" data-v="soc">社科/教育</span>
+            <span class="chip" data-v="eco">经管</span><span class="chip" data-v="eng">理工</span><span class="chip" data-v="hum">人文</span>
+          </div>
+        </div>
+        <div class="field"><label>每次最多找 <b id="fNv">5</b> 篇（建议 3–8，求准不求多）</label><input type="range" id="fN" min="3" max="10" value="5" style="width:100%"></div>
+        <div class="field"><label>参考文献格式</label>
+          <select id="fCite"><option>GB/T 7714</option><option>APA 第 7 版</option><option>MLA</option><option>Chicago</option></select>
+        </div>
+      </div>
+      <div class="panel gen-out">
+        <div class="tabs" id="genTabs"></div>
+        <div class="out-body">
+          <button class="btn sm ghost copy-float" id="genCopy" type="button">复制</button>
+          <pre id="genPre"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SIMULATOR ================= -->
+<section class="block reveal" id="sim">
+  <div class="wrap">
+    <div class="kicker">03 / 闯关</div>
+    <h2>11 关实操，<span class="grad">一边看一边跟着做</span></h2>
+    <p class="sub">每一关都有：要点什么、要发什么、发完后 Codex 会做什么。点「▶ 模拟运行」能预览 Codex 的反应，然后打开你自己的 Codex 照做一遍，做完点「通关」。</p>
+    <div class="sim">
+      <div class="panel levels" id="levels"></div>
+      <div class="stage">
+        <div class="panel mission" id="mission"></div>
+        <div class="panel codex">
+          <div class="win-bar"><i></i><i></i><i></i><span id="winTitle">Codex — 本地项目</span></div>
+          <div class="codex-body">
+            <div class="tree"><div class="h">项目文件</div><div id="tree"></div></div>
+            <div class="chat" id="chat"><div class="chat-empty">点上方「▶ 模拟运行」，看 Codex 在这一关会做什么</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOARD ================= -->
+<section class="block reveal" id="board">
+  <div class="wrap">
+    <div class="kicker">04 / 成品</div>
+    <h2>做完长这样：<span class="grad">你的论文证据看板</span></h2>
+    <p class="sub">这是第 8 关和第 10 关做出来的效果示意。每篇文献都有“支持/反驳”引用数，以及“能不能读、能不能交给 AI”的状态。可以试试右上角的开关。</p>
+    <div class="board-top">
+      <div class="panel q"><small>RESEARCH QUESTION · 审阅于 <span id="bDate"></span></small><p id="bQ"></p></div>
+      <div class="panel donut-wrap">
+        <svg width="84" height="84" viewBox="0 0 42 42" id="donut"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="panel toggle" id="accToggle" role="switch" aria-checked="false" tabindex="0"><span class="sw"></span><span>只看“现在就能读”</span></div>
+    </div>
+    <div class="papers" id="papers"></div>
+    <div class="demo-note">* 演示数据，论文名称和部分数字为示意，仅用于展示看板效果。</div>
+  </div>
+</section>
+
+<!-- ================= TRAPS ================= -->
+<section class="block reveal" id="traps">
+  <div class="wrap">
+    <div class="kicker">05 / 防翻车</div>
+    <h2>想让 AI 多干点？<span class="grad">先躲开这 6 个坑</span></h2>
+    <p class="sub">用 AI 写论文，最常见的问题不是“被查出来”，而是出现低级、明显的错误。</p>
+    <div class="traps">
+      <div class="panel trap"><div class="ic">👻</div><h4>编造的参考文献</h4><p>普通聊天最容易编造 DOI。所以要在 AGENTS.md 里规定：只收录有真实 DOI 的文献，查不到就标注“未验证”。答辩时导师随手一查就能发现。</p></div>
+      <div class="panel trap"><div class="ic">🪞</div><h4>只挑对自己有利的文献</h4><p>只引用“支持”你观点的文献，综述就会写成一边倒。看板里的“反驳”数，就是你写“研究争议”部分的现成素材。</p></div>
+      <div class="panel trap"><div class="ic">🔒</div><h4>违规上传全文</h4><p>学校订阅了某篇文章，不代表你可以把全文喂给 AI。看清“GenAI 使用权”，不可用的就自己读。</p></div>
+      <div class="panel trap"><div class="ic">📜</div><h4>不了解学校规定</h4><p>各校、各专业对 AI 写作的要求差别很大。动手前先查规定、问导师，按要求披露 AI 的使用情况。</p></div>
+      <div class="panel trap"><div class="ic">🎤</div><h4>答辩时讲不出来</h4><p>AI 起草的段落如果你没读懂原文，答辩被追问一句就答不上来。看板上每篇文献至少要读摘要和结论。</p></div>
+      <div class="panel trap"><div class="ic">🌀</div><h4>AI 越权操作</h4><p>不加限制的话，智能体会自己去搜网页、改文件。每条提示词都要写清楚边界，比如“不要修改文件”“完成后停止”。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHEAT SHEET ================= -->
+<section class="block reveal" id="cheat">
+  <div class="wrap">
+    <div class="kicker">06 / 速查</div>
+    <h2>Codex 操作速查卡</h2>
+    <div class="cheat">
+      <div class="panel"><h4>🧭 界面里的按钮</h4><ul>
+        <li><b>New chat</b>：在当前项目下开一个新对话，能看到同一个文件夹</li>
+        <li><b>Project → Local</b>：绑定电脑上的文件夹（新手先用这个）</li>
+        <li><b>Plugins</b>：安装、授权文献插件（如 scite、Article Galaxy）</li>
+        <li><b>Side chat</b>：开一个不打断主任务的侧边对话，用来问“这段代码是什么意思”</li>
+        <li><b>Browser</b>：内置浏览器，直接预览生成的网页</li>
+        <li><b>Annotate</b>：在网页上圈出要改的地方并写意见，一次性发给 Codex</li>
+        <li><b>Terminal / Files</b>：查看 Codex 运行的命令和项目文件</li>
+        <li><b>Pin</b>：多个对话同时运行时，把对话置顶</li>
+      </ul></div>
+      <div class="panel"><h4>✍️ 提示词黄金法则</h4><ul>
+        <li><b>用 @ 点名插件</b>：写 <code>@scite</code>，不要只写“查文献”</li>
+        <li><b>先计划后动手</b>：“什么都别改，先写一份计划给我看”</li>
+        <li><b>每步都设边界</b>：“不要修改文件”“只用 X”“完成后停止”</li>
+        <li><b>限定数量</b>：“不超过 5 篇”，每步能控制在 2–5 分钟内完成</li>
+        <li><b>让它自己检查</b>：“运行校验脚本并报告结果”</li>
+        <li><b>界面可以随意改</b>：给它一张截图或一个参考网站，说“照这个风格改”</li>
+      </ul></div>
+      <div class="panel"><h4>💰 省 token（省钱）</h4><ul>
+        <li>结果一定要存进 <code>review.json</code>，之后只读文件，不用重复检索</li>
+        <li>读取、展示类任务可以切换到更便宜的模型</li>
+        <li>少用网页搜索：网页内容又贵又不一定准确</li>
+        <li>一个子问题一轮，不要一次让它“把整个领域全查一遍”</li>
+      </ul></div>
+      <div class="panel"><h4>🧠 名词解释</h4><ul>
+        <li><b>MCP / 插件</b>：让 Codex 能直接调用外部数据库的接口</li>
+        <li><b>AGENTS.md</b>：项目规则文件，Codex 每次回答前都会读</li>
+        <li><b>JSON</b>：结构化数据格式，AI 读得又快又准</li>
+        <li><b>支持 / 反驳 / 提及</b>：别的论文引用这篇时的态度</li>
+        <li><b>GenAI 使用权</b>：能否合规地把全文交给 AI 阅读</li>
+      </ul></div>
+    </div>
+
+    <div style="margin-top:40px">
+      <details class="panel faq"><summary>Codex 和普通 ChatGPT 聊天有什么区别？</summary><p>聊天只能一问一答，文件要手动上传。Codex 直接在你电脑的文件夹里工作：自己读写文件、写代码、运行代码、检查结果，一个任务能自动连续跑完很多步，而且可以反复运行。</p></details>
+      <details class="panel faq"><summary>我完全不会编程，能用吗？</summary><p>能。代码都是 Codex 写的，你只要用中文说清楚“想要什么、不许做什么”。看不懂的地方，开一个 Side chat 让它解释。</p></details>
+      <details class="panel faq"><summary>一定要装 scite 和 Article Galaxy 吗？</summary><p>不是必须的，但强烈推荐。没有文献插件的话，Codex 只能凭记忆或网页搜索，编造引用的风险会高很多。scite 有免费试用；如果学校买了机构版，可以先问图书馆。</p></details>
+      <details class="panel faq"><summary>每一步要等多久？</summary><p>一般 2–5 分钟。第一次检索文献最慢，因为 Codex 会多次调整检索式。等待时可以开一个新对话做别的事（比如第 9 关）。</p></details>
+      <details class="panel faq"><summary>能直接让它把整篇论文写出来吗？</summary><p>技术上可以生成文字，但这样风险最大：编造引用、观点一边倒、答辩讲不出来，还可能违反学校规定。更稳妥的做法是第 12 关（加分关）：让它基于你核实过的证据生成提纲和草稿，每句话都标注 DOI，然后由你改写定稿。</p></details>
+      <details class="panel faq"><summary>换一章、换一个问题，要从头再来吗？</summary><p>不用。做完第 11 关后，项目里会有模板和说明文档。之后只要说“按 README 为这个新问题生成一个证据看板”，Codex 就会把整套流程再跑一遍。</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Codex 毕业论文实操指南 · 界面以你使用的 Codex 版本为准 · 进度只保存在本机浏览器</div>
+</footer>
+</main>
+
+<script src="__THESIS_SCRIPT_URL__"></script>
+</body>
+</html>
