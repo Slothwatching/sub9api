@@ -303,6 +303,9 @@ syncForm();renderLevels();renderGen();renderMission();renderBoard();
   var ids = ['overview', 'split', 'gen', 'sim', 'board', 'traps', 'cheat']
   var previous = ''
   var queued = false
+  // about:srcdoc has a "null" location.origin, while its base URL and the
+  // same-origin parent retain the real site origin.
+  var parentOrigin = new URL(document.baseURI).origin
   // srcdoc inherits the parent URL as its base. Keep fragment links inside
   // the guide rather than requesting the main app inside the frame.
   document.addEventListener('click', function (event) {
@@ -325,11 +328,11 @@ syncForm();renderLevels();renderGen();renderMission();renderBoard();
     })
     if (current !== previous) {
       previous = current
-      window.parent.postMessage({ type: 'sloth-thesis:section', section: current }, window.location.origin)
+      window.parent.postMessage({ type: 'sloth-thesis:section', section: current }, parentOrigin)
     }
   }
   window.addEventListener('message', function (event) {
-    if (event.origin !== window.location.origin || event.source !== window.parent) return
+    if (event.origin !== parentOrigin || event.source !== window.parent) return
     if (!event.data || event.data.type !== 'sloth-thesis:navigate' || ids.indexOf(event.data.section) < 0) return
     var el = section(event.data.section)
     if (el) el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })
