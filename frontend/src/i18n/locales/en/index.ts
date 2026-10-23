@@ -1,3 +1,4 @@
+import experience from './experience'
 import storefront from './storefront'
 import commercial from './commercial'
 import landing from './landing'
@@ -9,6 +10,7 @@ import admin from './admin'
 import misc from './misc'
 
 export default {
+  ...experience,
   ...storefront,
   ...commercial,
   ...landing,

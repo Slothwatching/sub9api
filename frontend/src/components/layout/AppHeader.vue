@@ -35,6 +35,8 @@
           <span class="hidden sm:inline">{{ t('nav.docs') }}</span>
         </a>
 
+        <router-link to="/help" :title="t('experience.help.title')" :aria-label="t('experience.help.title')" class="hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-dark-400 dark:hover:bg-dark-800 md:flex"><Icon name="book" size="sm" /><span class="hidden sm:inline">{{ t('experience.help.title') }}</span></router-link>
+
         <!-- Model Plaza Entry (icon only below sm) -->
         <router-link
           v-if="user && modelPlazaEnabled"

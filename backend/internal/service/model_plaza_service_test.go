@@ -509,3 +509,25 @@ func TestListGroups_TimePricingPassthrough(t *testing.T) {
 	// 展示单价为标准时段价
 	require.InDelta(t, 0.28e-6, *m.Pricing.InputPrice, 1e-15)
 }
+
+// D95: catalog declarations are optional display metadata, not inferred features.
+func TestPlazaCatalogCapabilitiesPreserveUnknownAndAvoidFamilyFallback(t *testing.T) {
+	catalog := NewPricingService(&config.Config{}, nil)
+	data, err := catalog.parsePricingData([]byte(`{"gpt-known":{"input_cost_per_token":0.000001,"max_input_tokens":100000,"supports_vision":false,"supports_function_calling":true},"gpt-unknown":{"input_cost_per_token":0.000001}}`))
+	require.NoError(t, err)
+	catalog.pricingData = data
+	svc := newPlazaService([]Channel{plazaPricedChannel(1, "gpt", []int64{1}, PlatformOpenAI, "gpt-known", "gpt-unknown", "gpt-made-up")}, []Group{{ID: 1, Platform: PlatformOpenAI}}, catalog)
+	groups, err := svc.ListGroups(context.Background())
+	require.NoError(t, err)
+	require.Len(t, groups, 1)
+	models := plazaModelsByName(groups[0].Models)
+	metadata := models["gpt-known"].CatalogCapabilities
+	require.NotNil(t, metadata)
+	require.Equal(t, 100000, *metadata.MaxInputTokens)
+	require.NotNil(t, metadata.SupportsVision)
+	require.False(t, *metadata.SupportsVision)
+	require.True(t, *metadata.SupportsFunctionCalling)
+	require.Nil(t, metadata.MaxOutputTokens)
+	require.Nil(t, models["gpt-unknown"].CatalogCapabilities)
+	require.Nil(t, models["gpt-made-up"].CatalogCapabilities)
+}

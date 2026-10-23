@@ -305,3 +305,14 @@ func TestModelPlazaHandler_VaryKeepsCORSOrigin(t *testing.T) {
 		require.Equal(t, []string{"Origin", "Accept-Language"}, w.Header().Values("Vary"))
 	}
 }
+
+// D95: keep explicit false distinct from missing, and expose only safe metadata.
+func TestModelPlazaCapabilitiesDTO(t *testing.T) {
+	vision := false
+	metadata := &service.ModelCatalogCapabilities{SupportsVision: &vision}
+	dto := toModelPlazaGroupDTO(&service.PlazaGroup{Models: []service.PlazaModel{{Name: "configured-gpt", CatalogCapabilities: metadata}}}, nil)
+	body, err := json.Marshal(dto)
+	require.NoError(t, err)
+	require.Contains(t, string(body), `"catalog_capabilities":{"supports_vision":false}`)
+	require.NotContains(t, string(body), "max_input_tokens")
+}
