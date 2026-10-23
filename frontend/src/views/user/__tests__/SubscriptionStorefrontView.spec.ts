@@ -26,6 +26,19 @@ beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn()
 })
 describe('subscription storefront', () => {
+  it('shows six weekly/monthly plans and one monthly-only premium with no empty daily filter', async () => {
+    const monthly = [165, 330, 660, 1155, 1650, 2805, 4400]
+    getCheckoutInfo.mockResolvedValue({ data: { plans: monthly.map((cap, i) => plan(i + 1, { daily_limit_usd: null, weekly_limit_usd: i === 6 ? null : cap * 0.3, monthly_limit_usd: cap })) } })
+    const wrapper = render(); await flushPromises()
+    expect(wrapper.findAll('[data-plan-group]')).toHaveLength(7)
+    expect(wrapper.findAll('nav button').map(b => b.text())).toEqual(['storefront.all', 'storefront.monthly', 'storefront.combined'])
+    await wrapper.findAll('nav button')[2]!.trigger('click')
+    expect(wrapper.findAll('[data-plan-group]')).toHaveLength(6)
+    await wrapper.findAll('nav button')[1]!.trigger('click')
+    expect(wrapper.findAll('[data-plan-group]')).toHaveLength(1)
+    expect(wrapper.find('[data-plan-group]').attributes('data-plan-group')).toBe('7')
+    wrapper.unmount()
+  })
   it('keeps all seven new and seven existing groups; filters real quotas and excludes unavailable products', async () => {
     const existing = Array.from({ length: 7 }, (_, i) => plan(i + 1, { weekly_limit_usd: 75, monthly_limit_usd: 150 }))
     const added = Array.from({ length: 7 }, (_, i) => plan(i + 101, i === 6 ? { daily_limit_usd: null, monthly_limit_usd: 4000 } : {}))
