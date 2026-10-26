@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文献证据看板</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="page-header">
+    <p class="eyebrow">毕业论文 · 文献整理</p>
+    <h1>文献证据看板</h1>
+    <p id="research-question">正在读取研究问题……</p>
+    <p class="muted">审阅日期：<time id="reviewed-at">未获取</time></p>
+  </header>
+  <main>
+    <p id="load-status" role="status" aria-live="polite">正在读取数据……</p>
+    <section class="overview" aria-labelledby="overview-heading">
+      <h2 id="overview-heading">全文获取情况汇总</h2>
+      <p class="muted">以下为全部收录论文的数量，不随筛选变化。</p>
+      <div id="access-summary" class="summary-grid"></div>
+      <label class="filter"><input id="readable-only" type="checkbox" role="switch" disabled>只看现在就能读</label>
+      <p class="muted">按已核实记录筛选“开放获取”和“免费全文可获取”。</p>
+    </section>
+    <nav aria-label="看板区域"><a href="#evidence-heading">文献证据</a><a href="#access-heading">全文获取与使用权限</a></nav>
+    <section class="evidence-section" aria-labelledby="evidence-heading">
+      <div class="section-heading">
+        <p class="eyebrow">文献证据</p>
+        <h2 id="evidence-heading">研究设计、发现与引用</h2>
+        <p>GB/T 7714 参考文献仅用已记录字段生成，正式提交前请对照原文核对。</p>
+      </div>
+      <div id="evidence-list" class="card-list"></div>
+    </section>
+    <section class="access-section" aria-labelledby="access-heading">
+      <div class="section-heading">
+        <p class="eyebrow">全文获取</p>
+        <h2 id="access-heading">全文获取与使用权限</h2>
+        <p>获取状态、核实依据与 GenAI 使用权</p>
+      </div>
+      <div id="access-list" class="card-list"></div>
+    </section>
+  </main>
+</body>
+</html>

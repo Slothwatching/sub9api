@@ -12,8 +12,8 @@ var store = {
 function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('on');},1800);}
 function copyText(t,btn){
   var ok=function(){toast('✓ 已复制，去 Codex 里粘贴吧');if(btn){var o=btn.textContent;btn.textContent='已复制';setTimeout(function(){btn.textContent=o;},1400);}};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fb();ok();});}else{fb();ok();}
-  function fb(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){/* Clipboard fallback is best effort. */}document.body.removeChild(ta);}
+  function fallback(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();var copied=false;try{copied=document.execCommand('copy');}catch(e){copied=false;}document.body.removeChild(ta);if(copied)ok();else toast('复制未成功，请选中提示词手动复制。');}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fallback);else fallback();
 }
 
 /* ---------- network background ---------- */
@@ -38,7 +38,7 @@ $$('.reveal').forEach(function(el){io.observe(el);});
 
 /* ---------- hero typing ---------- */
 (function(){
-  var lines=['不想手动一篇篇翻文献？','不想自己整理引用表格？','让 Codex 找文献、查权限、做看板 —— 你只负责读懂和下判断。'];
+  var lines=['不想手动一篇篇翻文献？','不想自己整理引用表格？','跟着一个真实例子做：找不到插件，也能用公开学术来源继续。'];
   var el=$('#typed'),li=0,ci=0,txt='';
   function tick(){
     if(li>=lines.length){return;}
@@ -52,16 +52,15 @@ $$('.reveal').forEach(function(el){io.observe(el);});
     (function f(t){var k=Math.min(1,(t-s)/1400);el.textContent=Math.round(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f);})(s);});
   // hero log
   var log=[
-    ['c-violet','› 只用 @scite 研究我的论文问题，最多 5 篇'],
-    ['c-cyan','⟳ scite.search_literature("time-restricted eating" AND obesity …)'],
-    ['c-dim','  534 条结果 → 自动收窄检索式…'],
-    ['c-lime','✓ 找到 4 篇 RCT / 系统综述，均有真实 DOI'],
-    ['c-cyan','⟳ ArticleGalaxy.check_access(4 DOIs)'],
-    ['c-lime','✓ 2 篇开放获取 · 1 篇订阅 · 1 篇 GenAI 不可用'],
-    ['c-amber','+ data/review.json'],
-    ['c-amber','+ scripts/validate-review.js'],
-    ['c-lime','✓ 校验通过：4/4 篇字段完整'],
-    ['c-pink','★ 证据看板已生成 → index.html']
+    ['c-violet','› 以下是已跑通流程的回放，不会调用你的插件'],
+    ['c-cyan','⟳ scite 不可用 → 出版商 / PubMed / PMC 核对'],
+    ['c-lime','✓ 5 篇真实 DOI，保留结果不一致的研究'],
+    ['c-cyan','⟳ Article Galaxy 不可用 → 单独核实全文获取'],
+    ['c-lime','✓ 1 篇开放获取 · 2 篇免费全文 · 2 篇订阅'],
+    ['c-amber','GenAI 使用权：全部未核实'],
+    ['c-amber','+ data/review.json / scripts/preview.js'],
+    ['c-lime','✓ 结构校验通过 ≠ 原文核验通过'],
+    ['c-pink','★ 下载完整项目，或按七条主线提示词操作']
   ];
   var hl=$('#heroLog');
   function play(){hl.innerHTML='';log.forEach(function(l,i){setTimeout(function(){var d=document.createElement('div');d.className=l[0];d.textContent=l[1];hl.appendChild(d);},reduce?0:600+i*650);});}
@@ -71,13 +70,13 @@ $$('.reveal').forEach(function(el){io.observe(el);});
 /* ---------- AI vs YOU cards ---------- */
 (function(){
   var cards=[
-    ['🔍','检索相关文献','ai','交给 AI','接入 scite 后，Codex 会自己构造检索式、反复调整，几分钟就能筛出核心文献。'],
+    ['🔍','检索相关文献','ai','交给 AI','用实际可用的工具查出版商和学术数据库；scite 可用时优先用，不可用就记录替代来源。'],
     ['📊','整理引用数据表','ai','交给 AI','DOI、年份、研究设计、支持/反驳数，全部自动写进 JSON，零手抄。'],
-    ['🔓','查能不能读全文','ai','交给 AI','Article Galaxy 一次查完开放获取、订阅、GenAI 使用权。'],
+    ['🔓','查能不能读全文','ai','交给 AI','优先用 Article Galaxy；不可用就核对出版商/开放库，只确认可读状态，GenAI 权限写未核实。'],
     ['🎨','做可视化看板','ai','交给 AI','HTML 网页、Excel、Word 都行，还能在页面上批注直接改。'],
     ['✅','核对每条引用','you','你来做','点开 DOI 看原文：作者、年份、结论是否和 AI 写的一致。'],
     ['📖','读懂核心文献','you','你来做','至少读摘要、方法和结论。答辩时老师追问的就是这些。'],
-    ['⚖️','判断证据强弱','you','你来做','“支持 18、反驳 0”说明什么、算不算强证据，这个判断要你来下。'],
+    ['⚖️','判断证据强弱','you','你来做','看研究设计、对照和结果。分类引用数不是结论的支持票数，不能代替证据质量判断。'],
     ['✍️','写出你的论证','you','你来做','AI 可以给提纲和草稿，但论点、取舍和最终文字要你来定。']
   ];
   var g=$('#splitGrid'),seen={};
@@ -92,35 +91,25 @@ $$('.reveal').forEach(function(el){io.observe(el);});
 })();
 
 /* ---------- prompt generator ---------- */
-var FIELDS={
-  med:'随机对照试验或系统综述',soc:'实证研究、准实验研究或元分析',eco:'实证研究、面板数据分析或元分析',
-  eng:'实验研究、对比评测或系统综述',hum:'同行评审的专著章节、期刊论文或综述'
-};
-var cfg=store.get('ctg-cfg',null)||{title:$('#fTitle').value,q:$('#fQ').value,field:'med',n:5,cite:'GB/T 7714'};
+// D108: one worked example; no untested discipline/format combinations.
+var cfg={title:'限时进食对肥胖人群减重效果的影响研究',q:'对于肥胖成年人，在热量限制的基础上加入限时进食，是否能提高减重效果？',n:5,cite:'GB/T 7714'};
 function m(s){return '⟦'+s+'⟧';}
 function P(){
-  var c=cfg,t=c.title||'【论文题目】',q=c.q||'【研究问题】',ty=FIELDS[c.field],n=c.n;
+  var root='请只在当前选定的论文证据看板文件夹工作。';
+  var schema='顶层固定为 {"question":"研究问题","reviewed_at":"YYYY-MM-DD","papers":[]}。每篇字段统一为 title、doi、year、authors（姓名数组）、study_design、verified_at、key_findings、citation_counts（supporting/contrasting/mentioning/source_note）、editorial_statements（correction/retraction/sources/source_note）、evidence_source_note、evidence_sources、full_text_access。来源数组每项用 name、url、description（说明支撑内容及原文位置）。full_text_access 包含 status、basis、sources、genai_usage_rights、verified_at、source_note，可选 read_url。status 只允许“开放获取”“免费全文可获取”“订阅获取”“未核实”。期刊字段 journal、volume、issue、pages 仅填已核实值。';
   return [
-  {k:'agents',name:'① 项目规则',text:
-'在项目根目录创建 AGENTS.md，写入以下项目规则：\n\n【用途】为我的毕业论文《'+m(t)+'》搭建文献证据看板。\n\n【文献来源】\n- 文献发现、论文元数据、研究发现、引用语境（支持/反驳/提及）和编辑声明（更正、关注声明、撤稿），只使用 @scite。\n- 全文获取方式、订阅状态和 GenAI 使用权，只使用 @Article Galaxy。\n- 不要使用网页搜索，也不要使用以上两者以外的任何来源。\n- 只收录有真实 DOI 的已验证文献。\n\n【采购】不得购买、租用、订购或授权任何文章。\n\n【数据】如果 scite 没有返回支持某条结论的证据，标注为“未验证”，不要从其他来源补充。\n\n写完后把文件内容展示给我，然后停止。'},
-  {k:'shell',name:'② 看板骨架',text:
-'遵守 AGENTS.md，在本地创建一个“文献证据看板”的空白骨架：\n- index.html：页面结构\n- styles.css：页面样式\n- app.js：从 data/review.json 读取数据并渲染\n- data/review.json：目前为空，不要放示例论文\n\n要求：\n- 不安装任何软件包，不使用框架、外部库或 CDN。\n- 为 @scite 证据和 @Article Galaxy 获取权限分别预留独立区域。\n- 完成后告诉我改动了哪些文件，并在内置浏览器里打开页面。'},
-  {k:'scite',name:'③ 找文献',text:
-'只使用 @scite 研究这个问题：\n'+m(q)+'\n\n找出不超过 '+m(n)+' 篇直接相关的'+m(ty)+'。\n\n每篇返回：\n1. 标题、DOI、年份、作者、研究设计\n2. 与研究问题直接相关的发现\n3. scite 引用计数：支持 / 反驳 / 提及\n4. 任何更正、关注声明、撤稿或其他编辑声明\n5. 支撑该发现所用的 scite 证据\n\n不要使用网页搜索或 scite 以外的来源。\n这一步先不要修改任何文件。'},
-  {k:'ag',name:'④ 查权限',text:
-'只使用 @Article Galaxy 检查 scite 刚找到的这些 DOI。\n不要购买、租用、订购或授权任何内容。\n\n对每篇论文判断：开放获取 / 订阅获取 / 可购买 GenAI 使用权 / GenAI 使用权不可用。\n用一张简短的表格给出结果。'},
-  {k:'json',name:'⑤ 写入数据',text:
-'把已核实的结果写入 data/review.json，顶层结构：\n{ "question": 研究问题, "reviewed_at": 审阅日期, "papers": [ ... ] }\n\n- 同时保留 @scite 证据和 @Article Galaxy 获取信息。\n- scite 没有返回支持证据的，写“未验证”，不要用其他来源补充。\n\n再编写 scripts/validate-review.js，要求每篇论文必须包含：DOI、研究设计、核实日期、scite 来源说明、所用证据、引用计数，以及 Article Galaxy 来源说明和一个合法的获取类型分类。\n\n运行校验脚本，告诉我改动了哪些文件以及校验结果。'},
-  {k:'board',name:'⑥ 生成看板',text:
-'根据 data/review.json 更新证据看板，显示：\n- 研究问题和审阅日期\n- Article Galaxy 获取情况汇总（各类状态分别有几篇）\n- 每篇论文的 DOI、研究设计、关键发现\n- scite 引用计数：支持 / 反驳 / 提及\n- 任何编辑声明\n- 获取状态、GenAI 使用权状态和显示的价格\n- 每篇论文的 '+m(c.cite)+' 格式参考文献（只用已有字段）\n\n让 @scite 区块和 @Article Galaxy 区块在视觉上明显区分。\n不要添加来自其他来源的信息。\n完成后运行校验脚本，并打开更新后的页面。'},
-  {k:'coll',name:'⑦ 存收藏夹',text:
-'把 data/review.json 里的论文添加到一个新的 @scite 收藏夹（Collection），命名为“'+m(t.slice(0,16))+' review”。'},
-  {k:'tpl',name:'⑧ 做成模板',text:
-'把这个项目整理成可复用的模板：\n- 基于 data/review.json 的结构，创建空模板 data/review.template.json\n- 写 README.md，说明如何用一个新的研究问题复用这个流程\n- 写 review-checklist.md，列出每次复用都必须完成的检查步骤\n不要删除当前的 review.json。\n\n以后复用时只需要说：\n按照 README.md 和 review-checklist.md，为这个新问题生成证据看板：【论文第 X 章的子问题】'},
-  {k:'draft',name:'⑨ 加分：提纲草稿',text:
-'只根据 data/review.json 中已核实的文献，为论文《'+m(t)+'》的文献综述部分生成：\n1. 一份三级提纲\n2. 每个小节 150 字左右的要点草稿\n\n硬性要求：\n- 每一句事实性陈述后都标注来源 DOI；review.json 里没有的内容一律不写。\n- 有“反驳”引用的文献，必须在“研究争议”小节里体现。\n- 标注为“未验证”的内容不得使用。\n- 输出到 drafts/lit-review-outline.md，不要修改其他文件。\n\n这只是供我改写的草稿，不是终稿。'}
+    {k:'agents',name:'① 项目规则',text:root+'先检查当前文件夹、可调用的学术检索/联网工具及 Node.js 是否可用；不要安装软件。创建 AGENTS.md：\n【用途】为毕业论文《'+m(cfg.title)+'》搭建文献证据看板。\n【来源】优先使用实际可调用的 scite 查文献/引用/编辑声明，Article Galaxy 查全文与 GenAI 权限；不可用时，用出版商、PubMed、Crossref、PMC 等可访问学术来源逐 DOI 核实，并记录实际来源。不凭记忆编造论文、DOI、工具调用或计数。没有任何联网工具时保留空骨架，给人工检索清单，不假装检索完成。\n【采购】禁止购买、租用、订购或授权文章。\n【数据】未知写“未获取”或“未核实”，结论无证据写“未验证”；分类引用数不代表研究结论票数。\n展示规则和实际环境检查结果，然后停止。'},
+    {k:'shell',name:'② 空白骨架',text:root+'遵守 AGENTS.md，创建 index.html、styles.css、app.js、data/review.json 的空骨架，不放示例论文。'+schema+'\napp.js 从第一步就读取 papers 数组，分别预留文献证据和全文获取区。创建只用 Node.js 内置模块的 scripts/preview.js：监听 127.0.0.1、自动选空闲端口并打印网址。不要安装软件包，不用框架/外部库/CDN。Node.js 可用则启动服务并尝试打开浏览器；否则说明缺失条件，不能声称已预览。报告新增文件后停止。'},
+    {k:'scite',name:'③ 核实文献',text:root+'研究问题：'+m(cfg.q)+'\n找不超过 5 篇直接相关的随机对照试验或系统综述。优先实际可用的 scite；插件缺失即用出版商/PubMed/Crossref/PMC 等学术来源，不用记忆补论文。逐个打开 DOI 核对标题、作者、年份和设计。保留支持与不支持额外减重的结果，区分组内和组间差异。每篇返回标题、DOI、年份、作者、期刊/卷期/页码（取得才填）、研究设计、关键发现、支撑发现的原文段落或表格及来源链接、支持/反驳/提及计数、编辑声明和核实日期。未知计数写“未获取”，编辑状态无法确认写“未核实”；未发现声明不等于确定不存在。原文不可得时注明仅核摘要。没有联网工具则报告未验证，不编造候选文献。先用表格返回，不修改文件。'},
+    {k:'ag',name:'④ 全文与权限',text:root+'检查上一条已核实的 DOI，优先实际可用的 Article Galaxy。不可用则仅根据出版商和开放获取数据库核实。全文状态分别用“开放获取”“免费全文可获取”“订阅获取”“未核实”；订阅不等于我有访问权。另列 GenAI 使用权，拿不到写“未核实”，不把免费阅读或开放许可当专项权限。记录判断依据、来源链接、可读全文地址和实际核实日期。禁止购买、租用、订购或授权。简表返回，不修改文件。'},
+    {k:'json',name:'⑤ 写入并校验',text:root+'仅将本聊天已经核实的结果写入 data/review.json，不新增论文或推断结论。'+schema+'\n未知字段保留“未获取”/“未核实”，无证据结论写“未验证”。同时更新 app.js 兼容这个结构，避免换 schema 后页面报错。编写 scripts/validate-review.js，检查各项必填字段、DOI 格式/重复、日期真实性、来源说明及 URL、引用计数（非负整数或未获取）和合法获取分类。空论文只能通过 --allow-empty 骨架检查，不能报研究完成。运行 node scripts/validate-review.js，说明它仅校验结构、不证明 DOI 真实或原文核实通过。报告修改文件和真实校验结果后停止。'},
+    {k:'board',name:'⑥ 看板与预览',text:root+'只根据 data/review.json 更新页面：研究问题/审阅日期、各全文状态篇数，每篇标题/DOI/作者/研究设计/关键发现/引用计数/编辑声明/证据来源与链接/获取状态/GenAI 使用权/核实日期。证据和获取区分色；加入“只看现在就能读”开关，仅筛开放获取和免费全文，两块同步，订阅不自动算可读。生成 GB/T 7714 参考文献，仅用已有字段；缺期刊/卷期/页码必须标明不完整。运行校验、启动 scripts/preview.js 并打开实际网址；浏览器无法打开时提供网址让我手动打开。实测开关前后数量、空数据/加载失败提示、窄屏阅读。报告真实结果后停止。'},
+    {k:'coll',name:'可选：收藏',text:root+'读取 data/review.json。如果实际可调用 scite 收藏夹功能，将已核实论文添加至新收藏夹“限时进食 review”，报告实际成功和失败条目。不购买或订阅服务；若功能不可用，改为在本地创建 reading-list.md，逐项列出标题、DOI 与已有来源链接。不要承诺邮件提醒，也不要修改 review.json。'},
+    {k:'tpl',name:'⑦ 复用模板',text:root+'按当前 papers 结构创建 data/review.template.json（question/reviewed_at 留空、papers 为 []），写 README.md 和 review-checklist.md。说明复制到新文件夹再换问题，不覆盖现有 review.json；写明 node scripts/validate-review.js 和 node scripts/preview.js、Node 缺失与浏览器不能打开时的处理、插件降级和人工逐 DOI/原文复核。校验通过不是事实核验；未知权限不冒认可用。完成后列新增文件并停止。'},
+    {k:'draft',name:'可选：提纲',text:root+'先读取学校公开 AI 使用规定或我提供的要求；查不到标未核实，不推定允许。只根据 data/review.json 中已核实发现，为《'+m(cfg.title)+'》整理三级提纲和待我改写的要点，事实陈述对应 DOI 和证据位置。不写标为未验证的内容，不把分类反驳计数直接当研究争议；比较原始研究真实结果及局限，避免综述/试验重复计数。不获取或上传未确认使用权的全文。保存 drafts/lit-review-outline.md，供我对照原文审阅，不作为可直接提交的终稿。'}
   ];
 }
+
 var genIdx=0;
 function hl(s){return esc(s).replace(/⟦([\s\S]*?)⟧/g,'<mark>$1</mark>');}
 function plain(s){return s.replace(/⟦|⟧/g,'');}
@@ -132,67 +121,28 @@ function renderGen(){
 }
 $('#genTabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(!b)return;genIdx=+b.dataset.i;renderGen();});
 $('#genCopy').addEventListener('click',function(){copyText(plain(P()[genIdx].text),this);});
-function syncForm(){
-  $('#fTitle').value=cfg.title;$('#fQ').value=cfg.q;$('#fN').value=cfg.n;$('#fNv').textContent=cfg.n;$('#fCite').value=cfg.cite;
-  $$('#fField .chip').forEach(function(ch){ch.classList.toggle('on',ch.dataset.v===cfg.field);});
-}
-function upd(){cfg.title=$('#fTitle').value.trim();cfg.q=$('#fQ').value.trim();cfg.n=+$('#fN').value;$('#fNv').textContent=cfg.n;cfg.cite=$('#fCite').value;store.set('ctg-cfg',cfg);renderGen();renderBoardQ();}
-['#fTitle','#fQ','#fN','#fCite'].forEach(function(s){$(s).addEventListener('input',upd);});
-$('#fField').addEventListener('click',function(e){var ch=e.target.closest('.chip');if(!ch)return;cfg.field=ch.dataset.v;syncForm();upd();});
+// The form is intentionally a fixed, tested example. Prompts are copyable as-is.
+function syncForm(){}
 
 /* ---------- levels ---------- */
 var LV=[
- {t:'新建本地项目',goal:'给 Codex 一个专属工作区：一个空文件夹。之后它所有的读写都只发生在这里。',
-  ops:['打开 ChatGPT 桌面应用，切到 <b>Codex</b>','点 <kbd>New chat</kbd> → 新建 <b>Project</b>','位置选 <kbd>Local</kbd>（不要选 Remote）','新建一个空文件夹，比如 <code>我的论文证据看板</code>','在项目下再点 <kbd>New chat</kbd>，确认对话框上方显示的是这个文件夹'],
-  tip:'同时在访达（Finder）里打开这个文件夹，就能看到 Codex 实时新建的文件，很直观。',
-  sim:[{s:'项目已创建：我的论文证据看板（Local）'},{a:'项目已就绪。当前文件夹为空，等待指令。'}],files:[]},
- {t:'安装文献插件',goal:'接入专业文献库，让 Codex 不再“凭记忆”引用文献。',
-  ops:['左侧打开 <kbd>Plugins</kbd>','搜索 <b>scite</b> → 安装 → 登录授权 → 返回','搜索 <b>Article Galaxy</b> → 安装 → 登录授权','回到对话，输入 <code>@</code> 能看到这两个插件，说明安装成功'],
-  tip:'全程不到 1 分钟。以后提示词里都用 @scite / @Article Galaxy 明确点名，不要指望它自己猜。',
-  sim:[{tool:'Plugins › scite 已连接'},{tool:'Plugins › Article Galaxy 已连接'},{a:'现在可以调用 scite 检索文献、调用 Article Galaxy 查询全文权限了。'}],files:[]},
- {t:'写项目规则 AGENTS.md',p:0,goal:'给 Codex 定“家规”。这个文件它每次回答前都会读，比在聊天里反复叮嘱可靠得多。',
-  ops:['复制下方提示词，粘贴到 Codex 并发送','等它写完，点开 <code>AGENTS.md</code>','切换“原文 / 预览”，确认来源、采购、数据三类规则都在'],
-  tip:'为什么禁止网页搜索？智能体会“抓住一切能抓的东西”。只允许用有真实 DOI 的文献，能把编造引用的风险降到最低。',
-  sim:[{tool:'write_file AGENTS.md'},{f:'AGENTS.md'},{a:'已创建 AGENTS.md，包含：用途、文献来源（仅 scite / Article Galaxy）、采购禁令、数据规则。已停止，等待下一步。'}]},
- {t:'搭看板骨架',p:1,goal:'先搭一个空网页框架，后面往里填数据。',
-  ops:['发送提示词','观察右侧：Codex 依次创建 HTML / CSS / JS / JSON 文件','它会自动启动本地服务，并在 <kbd>Browser</kbd> 里打开预览','对样式不满意？发一张参考截图，说“照这个风格改”'],
-  tip:'HTML 是网页结构，CSS 是颜色和字体，JS 负责交互。看不懂没关系，开一个 Side chat 问它。',
-  sim:[{tool:'write_file index.html'},{f:'index.html'},{tool:'write_file styles.css'},{f:'styles.css'},{tool:'write_file app.js'},{f:'app.js'},{tool:'write_file data/review.json'},{f:'data/review.json'},{tool:'terminal › 启动本地预览服务'},{a:'骨架已完成，review.json 为空。页面已为 scite 和 Article Galaxy 预留独立区域，已在内置浏览器中打开。'}]},
- {t:'用 scite 找文献',p:2,goal:'最关键的一关：找到真实、相关、有引用信号的核心文献。',
-  ops:['发送提示词（研究问题已经替换成你的）','展开工具调用，可以看到 Codex 自己写的布尔检索式','它会多次调整检索式，这是正常现象','看结果时重点看“支持 / 反驳”数，而不是总被引数'],
-  tip:'这一关可以多聊几轮：“再找找反驳第 1 篇的研究”“排除 2015 年以前的”，直到确定核心文献清单。',
-  sim:[{tool:'scite.search_literature(query: 你的研究问题 → 布尔检索式)'},{s:'返回 534 条 → 收窄检索式'},{tool:'scite.search_literature(加入研究设计限定)'},{tool:'scite.get_citation_context(4 DOIs)'},{a:'找到 4 篇相关文献，结论有分歧：1 篇发现额外减重，2 篇未发现，1 篇报告了代谢指标改善。\n\n论文 A：支持 18 · 反驳 0 · 提及 470\n论文 C：支持 12 · 反驳 3 · 提及 112\n\n按要求，未修改任何文件。'}]},
- {t:'查全文权限',p:3,goal:'弄清楚每篇文献：能不能读？能不能合规地交给 AI？',
-  ops:['发送提示词','得到一张表：开放获取 / 订阅 / 可购买 GenAI 使用权 / 不可用','有的还会显示购买、租用价格（只看，不要买）'],
-  tip:'订阅获取 ≠ 可以喂给 AI。“GenAI 使用权不可用”的文献，只能你自己读。',
-  sim:[{tool:'ArticleGalaxy.check_access(4 DOIs)'},{a:'| 论文 | 状态 |\n| A | 订阅获取 |\n| B | GenAI 使用权不可用 |\n| C | 开放获取 |\n| D | 开放获取 |\n\n未进行任何购买。'}]},
- {t:'写入数据 + 自动校验',p:4,goal:'把结果存进 review.json。以后读文件就行，不用重复检索，省时又省钱。',
-  ops:['发送提示词','Codex 会逐篇把文献写成结构化数据','它会写一个校验脚本并自动运行','看到“4/4 通过”就算通关'],
-  tip:'从这一步开始，后续任务都只读文件，可以切到更便宜的模型。',
-  sim:[{tool:'write_file data/review.json (4 papers)'},{tool:'write_file scripts/validate-review.js'},{f:'scripts/validate-review.js'},{tool:'terminal › node scripts/validate-review.js'},{a:'✓ 校验通过：4 篇论文的必填字段和获取类型分类全部合格。'}]},
- {t:'生成证据看板',p:5,goal:'把数据变成一眼就能看懂的可视化页面。',
-  ops:['发送提示词，等待 2–5 分钟','可以实时看到它改写 HTML / CSS / JS','完成后在 <kbd>Browser</kbd> 里查看看板','往下滚动到「成品」部分，看看示意效果'],
-  tip:'不一定要做网页：也可以说“导出成 Excel 阅读清单”或“生成 Word 版”，方便发给导师。',
-  sim:[{tool:'read_file data/review.json'},{tool:'edit index.html'},{tool:'edit styles.css'},{tool:'edit app.js'},{tool:'terminal › node scripts/validate-review.js ✓'},{a:'看板已更新：研究问题、获取汇总（2 篇开放获取 · 1 篇订阅 · 1 篇不可用）、4 张论文卡片，scite 和 Article Galaxy 区块分色显示。',board:1}]},
- {t:'存进 scite 收藏夹',p:6,goal:'等上一关运行时并行做：把文献存到云端，以后有新的引用会自动提醒你。',
-  ops:['在同一个项目里点 <kbd>New chat</kbd> 开一个新对话','发送提示词','把两个对话都 <kbd>Pin</kbd> 置顶，方便来回切换','到 scite 网站的 Collections 页面刷新，确认收藏夹已出现'],
-  tip:'论文写作周期长，收藏夹里的论文有新引用时，scite 会发邮件提醒你，帮你跟上最新研究。',
-  sim:[{s:'新对话 · 同一项目文件夹'},{tool:'read_file data/review.json'},{tool:'scite.create_collection(4 papers)'},{a:'已创建 scite 收藏夹，添加并匹配了 4 篇论文。'}]},
- {t:'在页面上批注修改',goal:'不用写提示词：直接在网页上圈出要改的地方。',
-  ops:['在 <kbd>Browser</kbd> 中打开看板','点 <kbd>Annotate</kbd>','点选页面上的位置，写修改意见，比如“加一个‘现在就能读’的开关”','可以一次批注多处，还能附上截图','点 <kbd>Send</kbd>，所有批注会合并成一条消息发给 Codex'],
-  tip:'其他好用的批注：“只显示反驳数大于 0 的论文”“每张卡片加一个已读/未读标记”“加一个复制参考文献的按钮”。',
-  sim:[{u:'[批注 @ 获取汇总区] 加一个“Accessible now / 现在就能读”开关'},{tool:'edit app.js'},{tool:'edit index.html'},{a:'已添加开关：打开后只显示开放获取或订阅可读的论文，当前 3/4 篇可读。'}]},
- {t:'打包成模板',p:7,goal:'一次搭建，反复使用。论文每一章、每个子问题都能直接复用。',
-  ops:['发送提示词','确认新增了 README.md、review-checklist.md 和 data/review.template.json','以后只需一句话：“按 README 为这个新问题生成证据看板”'],
-  tip:'这个文件夹本身就是你的上下文：不用重新粘贴说明，也不用重新上传文件。可以放进网盘，和导师共享。',
-  sim:[{tool:'write_file README.md'},{f:'README.md'},{tool:'write_file review-checklist.md'},{f:'review-checklist.md'},{tool:'write_file data/review.template.json'},{f:'data/review.template.json'},{a:'模板已完成。下次只需要提供一个新的研究问题即可。'}]},
- {t:'加分关：提纲 + 草稿',p:8,bonus:1,goal:'在核实过的证据上，让 Codex 起草综述提纲。每句话都可以溯源，方便你改写。',
-  ops:['先确认学校和导师允许使用 AI 辅助写作','发送提示词','打开 <code>drafts/lit-review-outline.md</code>，逐条对照 DOI 检查','用你自己的话改写，并加入你的判断和取舍'],
-  tip:'草稿的价值在于“不用从白纸开始”，而不是直接交上去。每句都标了 DOI，答辩时被问到也能马上找到出处。',
-  sim:[{tool:'read_file data/review.json'},{tool:'write_file drafts/lit-review-outline.md'},{f:'drafts/lit-review-outline.md'},{a:'已生成三级提纲和各小节要点草稿，共 27 处 DOI 标注；“研究争议”小节引用了论文 C 的 3 条反驳证据。'}]}
+ {t:'新建本地项目',goal:'选一个空文件夹，让 Codex 能在其中读写文件。下载完整项目也可以直接查看结果。',ops:['打开你已能使用的 Codex 本地聊天；若尚未接通，先看本站“接入教程”','选一个专用空文件夹，例如“论文证据看板演示”，确认聊天能访问它','发送“请告诉我当前工作目录，不要修改文件”，核对确为你选的文件夹'],tip:'界面名称随版本变化，不必寻找完全相同的按钮。不要把项目放在已有论文唯一原件所在目录。',sim:[{s:'流程回放：不会在你的电脑创建文件'},{a:'实际验收：Codex 回报的工作目录与你选择的文件夹一致。'}]},
+ {t:'检查工具（插件可跳过）',goal:'先确认现有能力，不把找不到插件当成失败。',ops:['发送“检查你当前实际可调用的联网/学术检索工具和 Node.js；只报告，不安装软件”','scite / Article Galaxy 可用就优先用；找不到就直接采用公开学术检索','没有任何联网工具时，停在待人工核实清单，不能生成假论文'],tip:'输入 @ 只是选择已有工具，不会自动安装或解锁服务。这个例子是在两个插件均不可用时跑通的。',sim:[{s:'本例实际路径：两个插件均不可调用'},{a:'改用出版商、PubMed、PMC 核对 DOI 和结果；GenAI 权限保留未核实。无需安装插件。'}]},
+ {t:'写项目规则',p:0,goal:'把来源、禁止采购和未知信息处理写清楚。',ops:['复制提示词①，粘贴到同一个 Codex 聊天并发送','打开 AGENTS.md，核对没有“只许用缺失插件”的排他规则','检查环境报告；Node 缺失时先告知，不自动安装'],tip:'本例问题已填好，整条复制即可。之后每一步沿用同一聊天与文件夹。',sim:[{tool:'回放：创建 AGENTS.md'},{f:'AGENTS.md'},{a:'验收：来源允许降级，禁止采购，未知不编造；环境能力如实说明。'}]},
+ {t:'搭看板骨架',p:1,goal:'从一开始统一 papers 数据结构，避免后续写入后页面报错。',ops:['发送提示词②','检查 index.html、styles.css、app.js、data/review.json 和 scripts/preview.js','确认 papers 为 []，页面显示空状态；HTTP 预览成功才进入下一步'],tip:'不要双击 HTML。让 Codex 运行预览脚本，把打印的网址复制进浏览器也能看。',sim:[{tool:'回放：创建空页面、papers 数组及预览脚本'},{f:'index.html'},{f:'styles.css'},{f:'app.js'},{f:'data/review.json'},{f:'scripts/preview.js'},{a:'验收：空网页没有示例论文；预览脚本只监听本机，自动选择空闲端口。'}]},
+ {t:'找文献并核实 DOI',p:2,goal:'找到直接比较“热量限制＋限时进食”和“单纯热量限制”的真实研究。',ops:['发送提示词③，先看表格，不写入文件','逐 DOI 打开出版商页，核对题名、作者、设计和原文结果','确认未知计数写未获取；对照是否匹配研究问题，不能只看标题'],tip:'本例收录 3 项随机试验与 2 篇综述，其中一项试验和综述包含超重者。综述与试验重叠，不能作为独立证据累加。',sim:[{tool:'回放：出版商 / PubMed / PMC 交叉核对'},{a:'本例得到 5 篇：短期试验可见额外减重，12 个月试验未达显著优势；分类引用数未获取。先保留表格给你核对。'}]},
+ {t:'查全文与使用权限',p:3,goal:'把能否免费读与能否交给 AI 分开记录。',ops:['发送提示词④','确认全文四种分类与 GenAI 权限是两列','不要采购；订阅不等于你当前已获访问权'],tip:'本例：开放获取 1、免费全文 2、订阅 2；GenAI 全部未核实。数字是这次记录，不保证以后永远不变。',sim:[{tool:'回放：核对出版商及 Europe PMC'},{a:'5 篇全文状态：1 开放、2 免费全文、2 订阅。GenAI 使用权均未核实，未采购任何内容。'}]},
+ {t:'写入数据 + 结构校验',p:4,goal:'把已核实表格写入统一 JSON，防止数据和页面脱节。',ops:['发送提示词⑤','检查真实 DOI、设计、日期和来源，再运行校验','看到 5 篇结构通过后，仍需人工核对 DOI/原文，不把脚本当事实审查'],tip:'来源打不开或原文不可得就写明核查范围。不能为了通过校验给未知字段编答案。',sim:[{tool:'回放：写入 data/review.json'},{tool:'回放：node scripts/validate-review.js'},{f:'scripts/validate-review.js'},{a:'结构校验通过：5 篇。它不证明 DOI 真实性、原文结论或使用权限。'}]},
+ {t:'生成证据看板',p:5,goal:'看清研究证据与全文获取，并实际打开页面检查。',ops:['发送提示词⑥','让 Codex 运行预览脚本，打开输出的实际网址','核对总数 5、可读筛选 3；逐项对照 JSON 与页面'],tip:'下方“成品”直接读取本例五篇 JSON。你的本地页面只会展示自己项目的数据，不会自动同步到本站。',sim:[{tool:'回放：更新 HTML / CSS / JS'},{tool:'回放：校验并启动本地预览'},{a:'验收：全部 5 篇、免费可读 3 篇，两块区域同步筛选，参考文献只用已有字段。',board:1}]},
+ {t:'可选：收藏或本地清单',p:6,goal:'保存入口方便重读；这一步不影响主线完成。',ops:['没有 scite 收藏夹功能就跳过，或发送提示词生成本地 reading-list.md','功能确实可用时再创建收藏夹，核对成功条目','不承诺提醒功能，也不为此订阅服务'],tip:'不要为这一步另开会同时改同一数据文件的聊天。保留一份清晰的本地清单已经足够。',sim:[{s:'可跳过，不影响本地看板'},{a:'插件不可用时，改为生成带真实 DOI 和已有来源的本地阅读清单。'}]},
+ {t:'检查与修改页面',goal:'用普通中文描述问题，不必寻找特定批注按钮。',ops:['查看本地看板，试开关并核对 5→3→5','直接发送“仅调整样式，不改数据；把两块区域区分清楚”','如有批注功能可用；没有就文字说明，修改后重新校验'],tip:'原文事实不一致要改数据并记录核实来源；纯样式问题只改页面。不要让样式修改补造研究信息。',sim:[{u:'只检查展示：开关开启仅显示开放获取或免费全文，订阅不自动可读。'},{a:'实测筛选应为 3/5，关闭恢复 5/5；整体获取汇总仍统计全部 5 篇。'}]},
+ {t:'打包成模板',p:7,goal:'保留本次记录，在新文件夹复用，避免覆盖已有成果。',ops:['发送提示词⑦','检查空模板、README 与人工审阅清单','复制项目到新文件夹后再换研究问题，不覆盖当前 review.json'],tip:'完整下载包内已经带有这三个文件及可直接运行的脚本。空模板还要填问题/日期并重新检索，不能直接算完成。',sim:[{tool:'回放：创建空模板、README、核对清单'},{f:'README.md'},{f:'review-checklist.md'},{f:'data/review.template.json'},{a:'主线完成：保留当前数据，按 README 在副本复用。'}]},
+ {t:'加分关：提纲与要点',p:8,bonus:1,goal:'在学校允许的范围内，基于核实证据整理供你改写的提纲。',ops:['先读学校公开规定或你提供的要求；无法确定就标未核实','发送可选提示词，不上传未确认使用权的全文','逐句对照 DOI 与原文证据，自行读懂和改写'],tip:'研究争议来自研究的真实结果和局限，不来自“反驳引用数”投票。草稿不能直接当终稿提交。',sim:[{tool:'回放：只读已核实的 review.json'},{a:'按已核实发现列提纲与证据位置，标明待人工审阅，不补写数据中没有的事实。'}]}
 ];
-var FILES_BY=[[],[],['AGENTS.md'],['index.html','styles.css','app.js','data/review.json'],[],[],['scripts/validate-review.js'],[],[],[],['README.md','review-checklist.md','data/review.template.json'],['drafts/lit-review-outline.md']];
-var done=store.get('ctg-done',{}),cur=store.get('ctg-cur',0),running=0;
+var FILES_BY=[[],[],['AGENTS.md'],['index.html','styles.css','app.js','data/review.json','scripts/preview.js'],[],[],['scripts/validate-review.js'],[],[],[],['README.md','review-checklist.md','data/review.template.json'],[]];
+
+var done=store.get('ctg-d108-done',{}),cur=store.get('ctg-d108-cur',0),running=0;
+if(!Number.isInteger(cur)||cur<0||cur>=LV.length)cur=0;
 function filesUpTo(i){var a=[];for(var k=0;k<i;k++)a=a.concat(FILES_BY[k]);return a;}
 function renderLevels(){
   $('#levels').innerHTML=LV.map(function(l,i){return '<button type="button" class="lv'+(i===cur?' on':'')+(done[i]?' done':'')+(l.bonus?' bonus':'')+'" data-i="'+i+'"><span class="n">'+(done[i]?'✓':(l.bonus?'★':i+1))+'</span><span class="t">'+l.t+'</span></button>';}).join('');
@@ -211,13 +161,13 @@ function renderMission(resetChat){
   $('#mission').innerHTML=h;
   if(l.p!=null)$('#mCopy').onclick=function(){copyText(plain(P()[l.p].text),this);};
   $('#mRun').onclick=runSim;
-  $('#mDone').onclick=function(e){if(!done[cur]){done[cur]=1;store.set('ctg-done',done);var r=e.target.getBoundingClientRect();confetti(r.left+r.width/2,r.top);
-      var n=Object.keys(done).length;toast(n>=LV.length?'🏆 全部通关！你已经搭好了自己的论文证据系统':'通关！'+xp);if(n>=LV.length)setTimeout(function(){confetti(innerWidth/2,innerHeight/3);},400);}
+  $('#mDone').onclick=function(e){if(!done[cur]){done[cur]=1;store.set('ctg-d108-done',done);var r=e.target.getBoundingClientRect();confetti(r.left+r.width/2,r.top);
+      var n=Object.keys(done).length;toast(n>=LV.length?'🏆 已勾选全部验收项；请确认你确实在本地完成了操作':'通关！'+xp);if(n>=LV.length)setTimeout(function(){confetti(innerWidth/2,innerHeight/3);},400);}
     renderLevels();renderMission(false);};
   if($('#mNext'))$('#mNext').onclick=function(){go(cur+1);};
   if(resetChat!==false){$('#chat').innerHTML='<div class="chat-empty">点上方「▶ 模拟运行」，看 Codex 在这一关会做什么</div>';renderTree(filesUpTo(cur));}
 }
-function go(i){if(running)return;cur=i;store.set('ctg-cur',cur);renderLevels();renderMission();}
+function go(i){if(running)return;cur=i;store.set('ctg-d108-cur',cur);renderLevels();renderMission();}
 $('#levels').addEventListener('click',function(e){var b=e.target.closest('.lv');if(b)go(+b.dataset.i);});
 function runSim(){
   if(running)return;running=1;
@@ -231,7 +181,7 @@ function runSim(){
       else if(ev.u)add('user',esc(ev.u));
       else if(ev.tool){var d=add('tool','<span class="spin"></span>'+esc(ev.tool));setTimeout(function(){d.classList.add('ok');},reduce?0:600);}
       else if(ev.f){files=files.concat([ev.f]);renderTree(files,[ev.f]);}
-      else if(ev.a){var d2=add('ai','');typeInto(d2,ev.a,function(){if(ev.board){d2.insertAdjacentHTML('beforeend','<div class="mini-board"><div>🟦 scite 证据区</div><div>🟪 Article Galaxy 权限区</div></div><div style="margin-top:8px"><a href="#board">↓ 查看完整看板效果</a></div>');}chat.scrollTop=chat.scrollHeight;});}
+      else if(ev.a){var d2=add('ai','');typeInto(d2,ev.a,function(){if(ev.board){d2.insertAdjacentHTML('beforeend','<div class="mini-board"><div>🟦 文献证据区</div><div>🟪 全文获取区</div></div><div style="margin-top:8px"><a href="#board">↓ 查看完整看板效果</a></div>');}chat.scrollTop=chat.scrollHeight;});}
     },delay);
     delay+=ev.a?step*1.5:(ev.f?step*.5:step);
   });
@@ -244,38 +194,39 @@ function typeInto(el,text,cb){
 }
 
 /* ---------- evidence board ---------- */
-var PAPERS=[
-  {id:'A',title:'示例论文 A：限时进食 + 热量限制的 12 个月随机对照试验',doi:'10.xxxx/demo.a',design:'随机对照试验',find:'与单纯热量限制相比，未观察到具有统计学意义的额外减重。',s:18,c:0,m:470,acc:'sub',gen:'no',notice:null},
-  {id:'B',title:'示例论文 B：限时进食对体重影响的系统综述与荟萃分析',doi:'10.xxxx/demo.b',design:'系统综述',find:'限时进食组体重下降略多，但研究间异质性较高。',s:9,c:0,m:140,acc:'none',gen:'no',notice:null},
-  {id:'C',title:'示例论文 C：早时段限时进食的随机对照试验',doi:'10.xxxx/demo.c',design:'随机对照试验',find:'早时段进食组减重更明显，部分后续研究的结果与之相反。',s:12,c:3,m:112,acc:'oa',gen:'na',notice:null},
-  {id:'D',title:'示例论文 D：限时进食对代谢指标的影响',doi:'10.xxxx/demo.d',design:'随机对照试验',find:'减重差异不显著，但血压和胰岛素敏感性有所改善。',s:3,c:1,m:45,acc:'oa',gen:'na',notice:'2023-09-08 利益冲突声明更正'}
-];
-var ACC={oa:['开放获取','oa'],sub:['订阅获取','sub'],none:['无订阅','warn']},GEN={no:['GenAI 使用权不可用','no'],na:['GenAI 使用权：未返回','warn']};
-function renderBoardQ(){$('#bQ').textContent=cfg.q||'【你的研究问题】';}
+var PAPERS=[], boardReview=null;
+function renderBoardQ(){$('#bQ').textContent=boardReview?boardReview.question:cfg.q;}
 function renderBoard(){
-  $('#bDate').textContent=new Date().toISOString().slice(0,10);renderBoardQ();
-  var mx=Math.max.apply(null,PAPERS.map(function(p){return p.m;}));
-  $('#papers').innerHTML=PAPERS.map(function(p){
-    function bar(lbl,v,col,base){return '<div class="bar"><span>'+lbl+'</span><div class="tr"><div class="fl" data-w="'+Math.max(2,v/base*100)+'" style="background:'+col+'"></div></div><b>'+v+'</b></div>';}
-    return '<div class="panel paper" data-acc="'+p.acc+'"><div class="doi">'+p.doi+'</div><h4>'+p.title+'</h4><span class="design">'+p.design+'</span>'+
-      '<div class="zone s"><div class="zt">SCITE · 证据</div><div style="font-size:14px">'+p.find+'</div><div class="bars">'+
-        bar('支持',p.s,'var(--lime)',20)+bar('反驳',p.c,'var(--red)',20)+bar('提及',p.m,'var(--dim)',mx)+'</div>'+
-        (p.notice?'<div style="margin-top:8px"><span class="pill warn">⚠ '+p.notice+'</span></div>':'<div style="margin-top:8px;font-size:12px;color:var(--dim)">无编辑声明</div>')+'</div>'+
-      '<div class="zone a"><div class="zt">ARTICLE GALAXY · 权限</div><span class="pill '+ACC[p.acc][1]+'">'+ACC[p.acc][0]+'</span><span class="pill '+GEN[p.gen][1]+'">'+GEN[p.gen][0]+'</span></div></div>';
+  $('#bDate').textContent=boardReview.reviewed_at;renderBoardQ();
+  $('#papers').innerHTML=PAPERS.map(function(p,i){
+    var a=p.full_text_access,cs=p.citation_counts,ed=p.editorial_statements;
+    var readable=a.status==='开放获取'||a.status==='免费全文可获取';
+    var correction=typeof ed.correction==='object'?ed.correction.description+'（'+ed.correction.date+'）':ed.correction;
+    var source=p.evidence_sources[0];
+    var author=p.authors.slice(0,3).map(function(name){var parts=name.trim().split(/\s+/),last=parts.pop().toUpperCase();return last+' '+parts.map(function(part){return part.split('-').map(function(piece){return piece[0].toUpperCase();}).join('');}).join('');}).join(', ')+(p.authors.length>3?', et al':'');
+    return '<article class="panel paper" data-readable="'+readable+'"><div class="doi">'+esc(p.doi)+'</div><h4>['+(i+1)+'] '+esc(p.title)+'</h4><span class="design">'+esc(p.study_design)+'</span>'+
+      '<div class="zone s"><div class="zt">文献证据 · 已记录来源</div><div style="font-size:14px">'+esc(p.key_findings)+'</div>'+
+      '<p style="font-size:12px">分类引用计数：支持 '+esc(cs.supporting)+' · 反驳 '+esc(cs.contrasting)+' · 提及 '+esc(cs.mentioning)+'</p>'+
+      '<p style="font-size:12px">更正：'+esc(correction)+'<br>撤稿：'+esc(ed.retraction)+'</p>'+
+      '<a href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">查看证据来源 ↗</a><p style="font-size:12px">'+esc(source.description)+'</p></div>'+
+      '<div class="zone a"><div class="zt">全文获取 · 与 GenAI 权限分开</div><span class="pill '+(readable?'oa':'warn')+'">'+esc(a.status)+'</span><span class="pill warn">GenAI 使用权：'+esc(a.genai_usage_rights)+'</span>'+
+      '<p style="font-size:12px">'+esc(a.basis)+'</p>'+(readable&&a.read_url?'<a href="'+esc(a.read_url)+'" target="_blank" rel="noopener noreferrer">打开已记录全文 ↗</a>':'')+'</div>'+
+      '<details style="font-size:12px;margin-top:12px"><summary>作者、参考文献与核实日期</summary><p>'+esc(p.authors.join('；'))+'</p><p>'+esc(author+'. '+p.title+'[J]. '+p.journal+', '+p.year+', '+p.volume+'('+p.issue+'): '+p.pages+'. DOI: '+p.doi+'.')+'</p><p>记录核实日期：'+esc(p.verified_at)+'；GB/T 7714 格式引文仅使用已记录字段，提交前人工复核。</p></details></article>';
   }).join('');
-  var segs=[['开放获取',2,'#7dff9b'],['订阅获取',1,'#3ee6ff'],['GenAI 不可用',1,'#ff6b6b']],off=25,tot=4,svg='<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>';
-  segs.forEach(function(s){var pc=s[1]/tot*100;svg+='<circle cx="21" cy="21" r="15.9" fill="none" stroke="'+s[2]+'" stroke-width="5" stroke-dasharray="'+pc+' '+(100-pc)+'" stroke-dashoffset="'+off+'"/>';off-=pc;});
-  svg+='<text x="21" y="24" text-anchor="middle" fill="#eef0ff" font-size="9" font-weight="700">4</text>';
-  $('#donut').innerHTML=svg;
-  $('#legend').innerHTML=segs.map(function(s){return '<div><i style="background:'+s[2]+'"></i>'+s[0]+' '+s[1]+'</div>';}).join('')+'<div style="color:var(--dim)"><i style="background:#555"></i>可购买 GenAI 0</div>';
-  var bio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){$$('.fl',e.target).forEach(function(f){f.style.width=f.dataset.w+'%';});bio.unobserve(e.target);}});},{threshold:.3});
-  $$('.paper').forEach(function(p){bio.observe(p);});
+  var statuses=[['开放获取','#7dff9b'],['免费全文可获取','#9b6bff'],['订阅获取','#3ee6ff'],['未核实','#ffc35a']],off=25,tot=PAPERS.length;
+  var svg='<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>';
+  $('#legend').innerHTML=statuses.map(function(s){var count=PAPERS.filter(function(p){return p.full_text_access.status===s[0];}).length;var pc=tot?count/tot*100:0;svg+='<circle cx="21" cy="21" r="15.9" fill="none" stroke="'+s[1]+'" stroke-width="5" stroke-dasharray="'+pc+' '+(100-pc)+'" stroke-dashoffset="'+off+'"/>';off-=pc;return '<div><i style="background:'+s[1]+'"></i>'+s[0]+' '+count+'</div>';}).join('');
+  $('#donut').innerHTML=svg+'<text x="21" y="24" text-anchor="middle" fill="#eef0ff" font-size="9" font-weight="700">'+tot+'</text>';
+  applyAccessible();
 }
 var tg=$('#accToggle');
-function flipAcc(){var on=!tg.classList.contains('on');tg.classList.toggle('on',on);tg.setAttribute('aria-checked',on);
-  $$('.paper').forEach(function(p){p.classList.toggle('hide',on&&!(p.dataset.acc==='oa'||p.dataset.acc==='sub'));});
-  if(on)toast('3 / 4 篇现在就能读');}
+function applyAccessible(){var on=tg.getAttribute('aria-checked')==='true';var count=0;$$('.paper').forEach(function(p){var hide=on&&p.dataset.readable!=='true';p.hidden=hide;if(!hide)count++;});$('#boardCount').textContent='当前显示 '+count+' / '+PAPERS.length+' 篇；获取汇总统计全部文献。';}
+function flipAcc(){var on=tg.getAttribute('aria-checked')!=='true';tg.classList.toggle('on',on);tg.setAttribute('aria-checked',String(on));applyAccessible();}
 tg.addEventListener('click',flipAcc);tg.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();flipAcc();}});
+async function loadBoard(){
+  try{var response=await fetch('/guides/thesis-example/data/review.json',{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);var review=await response.json();if(!review||!Array.isArray(review.papers))throw new Error('数据格式错误');boardReview=review;PAPERS=review.papers;renderBoard();}
+  catch(error){$('#bDate').textContent='未获取';$('#papers').textContent='例子暂未加载成功，请刷新页面，或下载完整项目阅读 data/review.json。'+error.message;$('#boardCount').textContent='数据未加载，不显示虚构论文或计数。';}
+}
 
 /* ---------- confetti ---------- */
 var cf=$('#confetti'),cx=cf.getContext('2d'),parts=[],cfOn=0;
@@ -292,7 +243,7 @@ function confetti(x,y){
 }
 
 /* ---------- init ---------- */
-syncForm();renderLevels();renderGen();renderMission();renderBoard();
+syncForm();renderLevels();renderGen();renderMission();loadBoard();
 })();
 
 

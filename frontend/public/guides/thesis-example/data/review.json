@@ -1,0 +1,329 @@
+{
+  "question": "对于肥胖成年人，在热量限制的基础上加入限时进食，是否能提高减重效果？",
+  "reviewed_at": "2026-10-26",
+  "papers": [
+    {
+      "title": "Calorie Restriction with or without Time-Restricted Eating in Weight Loss",
+      "doi": "10.1056/NEJMoa2114833",
+      "year": 2022,
+      "authors": [
+        "Deying Liu",
+        "Yan Huang",
+        "Chensihan Huang",
+        "Shunyu Yang",
+        "Xueyun Wei",
+        "Peizhen Zhang",
+        "Dan Guo",
+        "Jiayang Lin",
+        "Bingyan Xu",
+        "Changwei Li",
+        "Hua He",
+        "Jiang He",
+        "Shiqun Liu",
+        "Linna Shi",
+        "Yaoming Xue",
+        "Huijie Zhang"
+      ],
+      "study_design": "随机对照试验；139 名肥胖成年人；12 个月；8:00–16:00 限时进食＋热量限制 vs 单纯热量限制，两组采用相同热量目标。",
+      "verified_at": "2026-10-26",
+      "key_findings": "未发现额外减重的统计学显著优势。体重变化 −8.0 vs −6.3 kg；组间差 −1.8 kg，95% CI −4.0～0.4，P=0.11。未达显著不等于证明等效。",
+      "citation_counts": {
+        "supporting": "未获取",
+        "contrasting": "未获取",
+        "mentioning": "未获取",
+        "source_note": "@scite 不可用，未取得分类引用计数；未获取不表示零。"
+      },
+      "editorial_statements": {
+        "correction": "本次检索未发现；完整编辑状态未验证",
+        "retraction": "本次检索未发现；完整编辑状态未验证",
+        "source_note": "依据期刊页面及 DOI 定向检索；未发现声明不等于证明不存在。",
+        "sources": [
+          {
+            "name": "NEJM 原论文",
+            "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2114833?query=TOC",
+            "description": "原论文元数据及摘要 Methods、Results；同样热量目标下的组间减重差异。"
+          }
+        ]
+      },
+      "evidence_source_note": "@scite 不可用，改用学术检索；DOI 已与出版商及／或 PubMed、PMC 元数据核对。研究发现的具体依据见 evidence_sources。",
+      "evidence_sources": [
+        {
+          "name": "NEJM 原论文",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2114833?query=TOC",
+          "description": "原论文元数据及摘要 Methods、Results；同样热量目标下的组间减重差异。"
+        }
+      ],
+      "full_text_access": {
+        "status": "订阅获取",
+        "basis": "Europe PMC 按 DOI 查询：isOpenAccess=N、inPMC=N，全文链接标记 Subscription required。",
+        "sources": [
+          {
+            "name": "Europe PMC",
+            "url": "https://europepmc.org/article/MED/35443107",
+            "description": "全文链接获取分类。"
+          }
+        ],
+        "genai_usage_rights": "未核实",
+        "verified_at": "2026-10-26",
+        "source_note": "@Article Galaxy 不可用，仅核对出版商或开放获取数据库；未进行购买、租用、订购或授权。",
+        "read_url": null
+      },
+      "journal": "New England Journal of Medicine",
+      "volume": "386",
+      "issue": "16",
+      "pages": "1495-1504"
+    },
+    {
+      "title": "Effectiveness of Early Time-Restricted Eating for Weight Loss, Fat Loss, and Cardiometabolic Health in Adults With Obesity: A Randomized Clinical Trial",
+      "doi": "10.1001/jamainternmed.2022.3050",
+      "year": 2022,
+      "authors": [
+        "Humaira Jamshed",
+        "Felicia L. Steger",
+        "David R. Bryan",
+        "Joshua S. Richman",
+        "Amy H. Warriner",
+        "Cody J. Hanick",
+        "Corby K. Martin",
+        "Sarah-Jeanne Salvy",
+        "Courtney M. Peterson"
+      ],
+      "study_design": "平行组随机试验；90 名肥胖成年人；14 周；两组均接受能量限制及减重干预，比较 7:00–15:00 与 ≥12 小时进食窗口。",
+      "verified_at": "2026-10-26",
+      "key_findings": "支持短期额外减重：体重变化 −6.3 vs −4.0 kg；调整后组间差 −2.3 kg，95% CI −3.7～−0.9，P=0.002。主要分析体脂组间差 −1.4 kg，95% CI −2.9～0.2，P=0.09，未达显著。不能推定长期效果或严格等热量下的独立作用。",
+      "citation_counts": {
+        "supporting": "未获取",
+        "contrasting": "未获取",
+        "mentioning": "未获取",
+        "source_note": "@scite 不可用，未取得分类引用计数；未获取不表示零。"
+      },
+      "editorial_statements": {
+        "correction": "本次检索未发现；完整编辑状态未验证",
+        "retraction": "本次检索未发现；完整编辑状态未验证",
+        "source_note": "依据期刊页面及 DOI 定向检索；未发现声明不等于证明不存在。",
+        "sources": [
+          {
+            "name": "JAMA / PMC 原论文",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9361187/",
+            "description": "原论文元数据、摘要、Results、Table 2；体重与体脂组间比较。"
+          }
+        ]
+      },
+      "evidence_source_note": "@scite 不可用，改用学术检索；DOI 已与出版商及／或 PubMed、PMC 元数据核对。研究发现的具体依据见 evidence_sources。",
+      "evidence_sources": [
+        {
+          "name": "JAMA / PMC 原论文",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9361187/",
+          "description": "原论文元数据、摘要、Results、Table 2；体重与体脂组间比较。"
+        }
+      ],
+      "full_text_access": {
+        "status": "免费全文可获取",
+        "basis": "PMC 提供免费全文；版权注明 All Rights Reserved，未确认开放再利用许可。",
+        "sources": [
+          {
+            "name": "PMC",
+            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9361187/",
+            "description": "免费全文及 Copyright 2022 American Medical Association. All Rights Reserved 声明。"
+          }
+        ],
+        "genai_usage_rights": "未核实",
+        "verified_at": "2026-10-26",
+        "source_note": "@Article Galaxy 不可用，仅核对出版商或开放获取数据库；未进行购买、租用、订购或授权。",
+        "read_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9361187/"
+      },
+      "journal": "JAMA Internal Medicine",
+      "volume": "182",
+      "issue": "9",
+      "pages": "953-962"
+    },
+    {
+      "title": "Early time-restricted eating compared with daily caloric restriction: A randomized trial in adults with obesity",
+      "doi": "10.1002/oby.23420",
+      "year": 2022,
+      "authors": [
+        "Elizabeth A. Thomas",
+        "Adnin Zaman",
+        "Kelsey J. Sloggett",
+        "Sheila Steinke",
+        "Laura Grau",
+        "Victoria A. Catenacci",
+        "Marc-Andre Cornier",
+        "Corey A. Rynders"
+      ],
+      "study_design": "平行组随机试验；81 名成年人，BMI 27–45（包含超重者）；39 周，主要终点为第 12 周体重；早间 10 小时窗口＋每日热量限制 vs 单纯热量限制，两组均有行为支持。",
+      "verified_at": "2026-10-26",
+      "key_findings": "未发现额外减重优势：第 12 周体重变化 −6.2 vs −5.1 kg；第 39 周 −4.9 vs −4.3 kg；摘要报告组间均无显著差异。并非全部为肥胖者；疫情导致部分测量方案改变；限时进食组可优先进食窗口而非热量目标。",
+      "citation_counts": {
+        "supporting": "未获取",
+        "contrasting": "未获取",
+        "mentioning": "未获取",
+        "source_note": "@scite 不可用，未取得分类引用计数；未获取不表示零。"
+      },
+      "editorial_statements": {
+        "correction": "本次检索未发现；完整编辑状态未验证",
+        "retraction": "本次检索未发现；完整编辑状态未验证",
+        "source_note": "依据期刊页面及 DOI 定向检索；未发现声明不等于证明不存在。",
+        "sources": [
+          {
+            "name": "Obesity / Wiley 原论文",
+            "url": "https://onlinelibrary.wiley.com/doi/10.1002/oby.23420",
+            "description": "元数据、摘要 Methods、Results 及正文方案调整说明。"
+          }
+        ]
+      },
+      "evidence_source_note": "@scite 不可用，改用学术检索；DOI 已与出版商及／或 PubMed、PMC 元数据核对。研究发现的具体依据见 evidence_sources。",
+      "evidence_sources": [
+        {
+          "name": "Obesity / Wiley 原论文",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/oby.23420",
+          "description": "元数据、摘要 Methods、Results 及正文方案调整说明。"
+        }
+      ],
+      "full_text_access": {
+        "status": "免费全文可获取",
+        "basis": "Wiley 标注 Free Access；Europe PMC 确认 PMC9046980 免费全文；未确认开放再利用许可。",
+        "sources": [
+          {
+            "name": "Wiley",
+            "url": "https://onlinelibrary.wiley.com/doi/10.1002/oby.23420",
+            "description": "页面明确标注 Free Access。"
+          }
+        ],
+        "genai_usage_rights": "未核实",
+        "verified_at": "2026-10-26",
+        "source_note": "@Article Galaxy 不可用，仅核对出版商或开放获取数据库；未进行购买、租用、订购或授权。",
+        "read_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9046980/"
+      },
+      "journal": "Obesity",
+      "volume": "30",
+      "issue": "5",
+      "pages": "1027-1038"
+    },
+    {
+      "title": "Time-restricted eating with calorie restriction on weight loss and cardiometabolic risk: a systematic review and meta-analysis",
+      "doi": "10.1038/s41430-023-01311-w",
+      "year": 2023,
+      "authors": [
+        "Jing-Chao Sun",
+        "Zhen-Tao Tan",
+        "Chao-Jie He",
+        "Hui-Lin Hu",
+        "Chang-Lin Zhai",
+        "Gang Qian"
+      ],
+      "study_design": "系统综述与荟萃分析；8 项 RCT，579 人；限时进食＋热量限制 vs 单纯热量限制；摘要报告检索截至 2022-10-18，正文另披露 2023-01-13 更新检索。",
+      "verified_at": "2026-10-26",
+      "key_findings": "合并结果支持小幅额外减重：体重加权平均差 −1.40 kg，95% CI −1.81～−1.00，I²=0%；血压、血糖和血脂未见显著额外获益。不能直接视为肥胖成年人长期疗效的确定结论；与清单部分原始试验重叠，不应重复计数。",
+      "citation_counts": {
+        "supporting": "未获取",
+        "contrasting": "未获取",
+        "mentioning": "未获取",
+        "source_note": "@scite 不可用，未取得分类引用计数；未获取不表示零。"
+      },
+      "editorial_statements": {
+        "correction": {
+          "date": "2023-09-08",
+          "doi": "10.1038/s41430-023-01341-4",
+          "description": "将错误基金号 LGF21H090017 改为 LGF21H020006；更正声明未涉及疗效数据修改。"
+        },
+        "retraction": "本次检索未发现；完整编辑状态未验证",
+        "sources": [
+          {
+            "name": "出版商更正声明",
+            "url": "https://www.nature.com/articles/s41430-023-01341-4",
+            "description": "独立更正声明明确说明基金号修正。"
+          }
+        ]
+      },
+      "evidence_source_note": "@scite 不可用，改用学术检索；DOI 已与出版商及／或 PubMed、PMC 元数据核对。研究发现的具体依据见 evidence_sources。",
+      "evidence_sources": [
+        {
+          "name": "European Journal of Clinical Nutrition 原论文",
+          "url": "https://www.nature.com/articles/s41430-023-01311-w",
+          "description": "元数据、摘要及合并分析；8 项 RCT 的体重加权平均差。"
+        }
+      ],
+      "full_text_access": {
+        "status": "开放获取",
+        "basis": "出版商明确标注 Open access，采用 CC BY 4.0 许可；不据此推断 GenAI 专项使用权。",
+        "sources": [
+          {
+            "name": "Springer Nature",
+            "url": "https://www.nature.com/articles/s41430-023-01311-w",
+            "description": "Open access 标记及 Rights and permissions 中 CC BY 4.0 许可。"
+          }
+        ],
+        "genai_usage_rights": "未核实",
+        "verified_at": "2026-10-26",
+        "source_note": "@Article Galaxy 不可用，仅核对出版商或开放获取数据库；未进行购买、租用、订购或授权。",
+        "read_url": "https://www.nature.com/articles/s41430-023-01311-w"
+      },
+      "journal": "European Journal of Clinical Nutrition",
+      "volume": "77",
+      "issue": "11",
+      "pages": "1014-1025"
+    },
+    {
+      "title": "Does time-restricted eating add benefits to calorie restriction? A systematic review",
+      "doi": "10.1002/oby.23984",
+      "year": 2024,
+      "authors": [
+        "Armin Ezzati",
+        "Christian McLaren",
+        "Carly Bohlman",
+        "Javier A. Tamargo",
+        "Yi Lin",
+        "Stephen D. Anton"
+      ],
+      "study_design": "系统综述；7 项研究，579 人；检索截至 2023 年 4 月；超重和／或肥胖成年人、至少 8 周、能量匹配的热量限制＋限时进食 vs 单纯热量限制 RCT。",
+      "verified_at": "2026-10-26",
+      "key_findings": "多数研究未发现额外获益。两项研究在 8–14 周观察到更大减重，总体结果不一致。为定性综述，未提供统一合并减重差值；包含超重者，与清单部分试验重叠。",
+      "citation_counts": {
+        "supporting": "未获取",
+        "contrasting": "未获取",
+        "mentioning": "未获取",
+        "source_note": "@scite 不可用，未取得分类引用计数；未获取不表示零。"
+      },
+      "editorial_statements": {
+        "correction": "本次检索未发现；完整编辑状态未验证",
+        "retraction": "本次检索未发现；完整编辑状态未验证",
+        "source_note": "依据期刊页面及 DOI 定向检索；未发现声明不等于证明不存在。",
+        "sources": [
+          {
+            "name": "Obesity / Wiley 系统综述",
+            "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/oby.23984",
+            "description": "元数据及摘要 Methods、Results、Conclusions。"
+          }
+        ]
+      },
+      "evidence_source_note": "@scite 不可用，改用学术检索；DOI 已与出版商及／或 PubMed、PMC 元数据核对。研究发现的具体依据见 evidence_sources。",
+      "evidence_sources": [
+        {
+          "name": "Obesity / Wiley 系统综述",
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/oby.23984",
+          "description": "元数据及摘要 Methods、Results、Conclusions。"
+        }
+      ],
+      "full_text_access": {
+        "status": "订阅获取",
+        "basis": "Europe PMC 按 DOI 查询：isOpenAccess=N、inPMC=N，全文链接标记 Subscription required。",
+        "sources": [
+          {
+            "name": "Europe PMC",
+            "url": "https://europepmc.org/search?query=DOI%3A10.1002%2Foby.23984",
+            "description": "按 DOI 查询的全文获取分类。"
+          }
+        ],
+        "genai_usage_rights": "未核实",
+        "verified_at": "2026-10-26",
+        "source_note": "@Article Galaxy 不可用，仅核对出版商或开放获取数据库；未进行购买、租用、订购或授权。",
+        "read_url": null
+      },
+      "journal": "Obesity",
+      "volume": "32",
+      "issue": "4",
+      "pages": "640-654"
+    }
+  ]
+}
