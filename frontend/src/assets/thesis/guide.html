@@ -241,13 +241,13 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
       <h1>文献这件苦差事，<br><span class="grad">交给 Codex。</span></h1>
       <div class="typed" id="typed"><span class="cur"></span></div>
       <div class="hero-cta">
-        <a class="btn" href="#gen">⚡ 输入我的论文题目</a>
+        <a class="btn" href="#gen">⚡ 跟着本例开始</a>
         <a class="btn ghost" href="#sim">▶ 看 Codex 怎么干活</a>
       </div>
       <div class="stats">
         <div class="stat"><b class="grad" data-count="11">0</b><span>个通关步骤</span></div>
         <div class="stat"><b class="grad" data-count="9">0</b><span>条现成提示词</span></div>
-        <div class="stat"><b class="grad" data-count="60">0</b><span>分钟出证据看板</span></div>
+        <div class="stat"><b class="grad" data-count="5">0</b><span>篇真实文献例子</span></div>
       </div>
     </div>
     <div class="panel mini-win">
@@ -272,22 +272,16 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
 <section class="block reveal" id="gen">
   <div class="wrap">
     <div class="kicker">02 / 定制</div>
-    <h2>填 3 个空，<span class="grad">生成你的全套提示词</span></h2>
-    <p class="sub">在左边输入你的论文信息，右边的 9 条提示词会实时改写好。下面闯关时用的也是这一套，复制到 Codex 里就能直接用。</p>
+    <h2>一个跑通的例子，<span class="grad">整条复制就能开始</span></h2>
+    <p class="sub">先跟着“限时进食”这个真实例子完成七条主线提示词；收藏和提纲可跳过。没有 scite / Article Galaxy 也能继续。右侧每条复制到同一个 Codex 聊天，做完一步、核对一步。</p>
     <div class="gen">
       <div class="panel gen-form">
-        <div class="field"><label>论文题目</label><input id="fTitle" value="限时进食对肥胖人群减重效果的影响研究"></div>
-        <div class="field"><label>核心研究问题（越具体越好）</label><textarea id="fQ">对于肥胖成年人，在热量限制的基础上加入限时进食，是否能提高减重效果？</textarea></div>
-        <div class="field"><label>学科方向（自动匹配研究类型）</label>
-          <div class="chips" id="fField">
-            <span class="chip on" data-v="med">医学/公卫</span><span class="chip" data-v="soc">社科/教育</span>
-            <span class="chip" data-v="eco">经管</span><span class="chip" data-v="eng">理工</span><span class="chip" data-v="hum">人文</span>
-          </div>
-        </div>
-        <div class="field"><label>每次最多找 <b id="fNv">5</b> 篇（建议 3–8，求准不求多）</label><input type="range" id="fN" min="3" max="10" value="5" style="width:100%"></div>
-        <div class="field"><label>参考文献格式</label>
-          <select id="fCite"><option>GB/T 7714</option><option>APA 第 7 版</option><option>MLA</option><option>Chicago</option></select>
-        </div>
+        <div class="field"><label>本例论文题目</label><p>限时进食对肥胖人群减重效果的影响研究</p></div>
+        <div class="field"><label>本例研究问题</label><p>对于肥胖成年人，在热量限制的基础上加入限时进食，是否能提高减重效果？</p></div>
+        <div class="field"><label>已经跑通的路径</label><p>公开学术来源 · 5 篇真实 DOI · GB/T 7714<br>scite / Article Galaxy 不可用也可继续。</p></div>
+        <p><a class="btn sm" href="/guides/thesis-example.zip" download>下载完整例子 ZIP</a></p>
+        <p><a href="/guides/thesis-example/data/review.json" download="review.json">只下载文献数据</a> · <a href="/guides/thesis-example/README.md" download="README.md">下载操作说明</a></p>
+        <p class="demo-note">解压后选中项目文件夹，让 Codex 读取 README 并运行校验/预览。不会编程也不必手写命令。不要把示例直接当成自己的论文成果。</p>
       </div>
       <div class="panel gen-out">
         <div class="tabs" id="genTabs"></div>
@@ -305,7 +299,7 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
   <div class="wrap">
     <div class="kicker">03 / 闯关</div>
     <h2>11 关实操，<span class="grad">一边看一边跟着做</span></h2>
-    <p class="sub">每一关都有：要点什么、要发什么、发完后 Codex 会做什么。点「▶ 模拟运行」能预览 Codex 的反应，然后打开你自己的 Codex 照做一遍，做完点「通关」。</p>
+    <p class="sub">保留原来的 11 关和加分关：项目准备 → 能力检查 → 七条主线提示词，穿插可跳过的收藏与页面修改。模拟只是回放，不会检索或写文件；“通关”是你完成本地验收后的手动记录。</p>
     <div class="sim">
       <div class="panel levels" id="levels"></div>
       <div class="stage">
@@ -327,7 +321,7 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
   <div class="wrap">
     <div class="kicker">04 / 成品</div>
     <h2>做完长这样：<span class="grad">你的论文证据看板</span></h2>
-    <p class="sub">这是第 8 关和第 10 关做出来的效果示意。每篇文献都有“支持/反驳”引用数，以及“能不能读、能不能交给 AI”的状态。可以试试右上角的开关。</p>
+    <p class="sub">直接读取本例 data/review.json 的 5 篇真实文献，审阅日期固定为本次记录。引用分类计数未获取就如实显示，不画虚构柱状图；全文获取与 GenAI 权限分别展示。试试右上角开关，应从 5 篇变为 3 篇。</p>
     <div class="board-top">
       <div class="panel q"><small>RESEARCH QUESTION · 审阅于 <span id="bDate"></span></small><p id="bQ"></p></div>
       <div class="panel donut-wrap">
@@ -336,8 +330,9 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
       </div>
       <div class="panel toggle" id="accToggle" role="switch" aria-checked="false" tabindex="0"><span class="sw"></span><span>只看“现在就能读”</span></div>
     </div>
+    <p id="boardCount" role="status" aria-live="polite">正在读取本例数据……</p>
     <div class="papers" id="papers"></div>
-    <div class="demo-note">* 演示数据，论文名称和部分数字为示意，仅用于展示看板效果。</div>
+    <div class="demo-note">* 真实来源记录，非完整系统综述；包含超重者及重叠证据，需人工核对 DOI 和原文。未知引用数不是 0，未发现编辑声明不等于确定不存在。本站不会调用你的插件，也不会读取你的本地文件。</div>
   </div>
 </section>
 
@@ -348,11 +343,11 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
     <h2>想让 AI 多干点？<span class="grad">先躲开这 6 个坑</span></h2>
     <p class="sub">用 AI 写论文，最常见的问题不是“被查出来”，而是出现低级、明显的错误。</p>
     <div class="traps">
-      <div class="panel trap"><div class="ic">👻</div><h4>编造的参考文献</h4><p>普通聊天最容易编造 DOI。所以要在 AGENTS.md 里规定：只收录有真实 DOI 的文献，查不到就标注“未验证”。答辩时导师随手一查就能发现。</p></div>
-      <div class="panel trap"><div class="ic">🪞</div><h4>只挑对自己有利的文献</h4><p>只引用“支持”你观点的文献，综述就会写成一边倒。看板里的“反驳”数，就是你写“研究争议”部分的现成素材。</p></div>
+      <div class="panel trap"><div class="ic">👻</div><h4>编造的参考文献</h4><p>每个 DOI 都要打开出版商页面，与题名、作者、年份和原文对应。格式校验只能查结构，不能证明论文存在；查不到就标未验证。</p></div>
+      <div class="panel trap"><div class="ic">🪞</div><h4>只挑对自己有利的文献</h4><p>比较研究真实结果、设计和局限，保留不一致发现。引用分类数表示后续引用语境，不是对你论文观点投票，也不能直接当研究争议。</p></div>
       <div class="panel trap"><div class="ic">🔒</div><h4>违规上传全文</h4><p>学校订阅了某篇文章，不代表你可以把全文喂给 AI。看清“GenAI 使用权”，不可用的就自己读。</p></div>
-      <div class="panel trap"><div class="ic">📜</div><h4>不了解学校规定</h4><p>各校、各专业对 AI 写作的要求差别很大。动手前先查规定、问导师，按要求披露 AI 的使用情况。</p></div>
-      <div class="panel trap"><div class="ic">🎤</div><h4>答辩时讲不出来</h4><p>AI 起草的段落如果你没读懂原文，答辩被追问一句就答不上来。看板上每篇文献至少要读摘要和结论。</p></div>
+      <div class="panel trap"><div class="ic">📜</div><h4>不了解学校规定</h4><p>先查学校和院系公开规定及已提供的要求。资料不足时把问题整理成一份具体清单再询问，按规定披露 AI 使用。</p></div>
+      <div class="panel trap"><div class="ic">🎤</div><h4>答辩时讲不出来</h4><p>AI 起草的段落如果你没读懂原文，答辩被追问一句就答不上来。每篇核心文献都要核对方法、结果和对应表格；原文读不到须明确仅核摘要，不能声称已全文验证。</p></div>
       <div class="panel trap"><div class="ic">🌀</div><h4>AI 越权操作</h4><p>不加限制的话，智能体会自己去搜网页、改文件。每条提示词都要写清楚边界，比如“不要修改文件”“完成后停止”。</p></div>
     </div>
   </div>
@@ -367,7 +362,7 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
       <div class="panel"><h4>🧭 界面里的按钮</h4><ul>
         <li><b>New chat</b>：在当前项目下开一个新对话，能看到同一个文件夹</li>
         <li><b>Project → Local</b>：绑定电脑上的文件夹（新手先用这个）</li>
-        <li><b>Plugins</b>：安装、授权文献插件（如 scite、Article Galaxy）</li>
+        <li><b>Plugins（可选）</b>：只有实际可调用才使用；找不到就走公开学术来源，不需为了本教程安装</li>
         <li><b>Side chat</b>：开一个不打断主任务的侧边对话，用来问“这段代码是什么意思”</li>
         <li><b>Browser</b>：内置浏览器，直接预览生成的网页</li>
         <li><b>Annotate</b>：在网页上圈出要改的地方并写意见，一次性发给 Codex</li>
@@ -375,22 +370,22 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
         <li><b>Pin</b>：多个对话同时运行时，把对话置顶</li>
       </ul></div>
       <div class="panel"><h4>✍️ 提示词黄金法则</h4><ul>
-        <li><b>用 @ 点名插件</b>：写 <code>@scite</code>，不要只写“查文献”</li>
+        <li><b>先查实际能力</b>：@ 只能选择已有工具，不会安装或解锁插件；没有联网时停止事实填充</li>
         <li><b>先计划后动手</b>：“什么都别改，先写一份计划给我看”</li>
         <li><b>每步都设边界</b>：“不要修改文件”“只用 X”“完成后停止”</li>
-        <li><b>限定数量</b>：“不超过 5 篇”，每步能控制在 2–5 分钟内完成</li>
+        <li><b>限定数量</b>：“不超过 5 篇”，检索规模可控；耗时以实际网络与核查情况为准</li>
         <li><b>让它自己检查</b>：“运行校验脚本并报告结果”</li>
         <li><b>界面可以随意改</b>：给它一张截图或一个参考网站，说“照这个风格改”</li>
       </ul></div>
       <div class="panel"><h4>💰 省 token（省钱）</h4><ul>
         <li>结果一定要存进 <code>review.json</code>，之后只读文件，不用重复检索</li>
         <li>读取、展示类任务可以切换到更便宜的模型</li>
-        <li>少用网页搜索：网页内容又贵又不一定准确</li>
+        <li>优先出版商与学术数据库，记录具体证据链接；不要用搜索摘要替代原文核查</li>
         <li>一个子问题一轮，不要一次让它“把整个领域全查一遍”</li>
       </ul></div>
       <div class="panel"><h4>🧠 名词解释</h4><ul>
         <li><b>MCP / 插件</b>：让 Codex 能直接调用外部数据库的接口</li>
-        <li><b>AGENTS.md</b>：项目规则文件，Codex 每次回答前都会读</li>
+        <li><b>AGENTS.md</b>：项目规则文件；每步要求助手遵守，仍需查看实际执行是否符合规则</li>
         <li><b>JSON</b>：结构化数据格式，AI 读得又快又准</li>
         <li><b>支持 / 反驳 / 提及</b>：别的论文引用这篇时的态度</li>
         <li><b>GenAI 使用权</b>：能否合规地把全文交给 AI 阅读</li>
@@ -399,11 +394,11 @@ footer{padding:80px 0 60px;text-align:center;color:var(--dim);font-size:13px}
 
     <div style="margin-top:40px">
       <details class="panel faq"><summary>Codex 和普通 ChatGPT 聊天有什么区别？</summary><p>聊天只能一问一答，文件要手动上传。Codex 直接在你电脑的文件夹里工作：自己读写文件、写代码、运行代码、检查结果，一个任务能自动连续跑完很多步，而且可以反复运行。</p></details>
-      <details class="panel faq"><summary>我完全不会编程，能用吗？</summary><p>能。代码都是 Codex 写的，你只要用中文说清楚“想要什么、不许做什么”。看不懂的地方，开一个 Side chat 让它解释。</p></details>
-      <details class="panel faq"><summary>一定要装 scite 和 Article Galaxy 吗？</summary><p>不是必须的，但强烈推荐。没有文献插件的话，Codex 只能凭记忆或网页搜索，编造引用的风险会高很多。scite 有免费试用；如果学校买了机构版，可以先问图书馆。</p></details>
-      <details class="panel faq"><summary>每一步要等多久？</summary><p>一般 2–5 分钟。第一次检索文献最慢，因为 Codex 会多次调整检索式。等待时可以开一个新对话做别的事（比如第 9 关）。</p></details>
-      <details class="panel faq"><summary>能直接让它把整篇论文写出来吗？</summary><p>技术上可以生成文字，但这样风险最大：编造引用、观点一边倒、答辩讲不出来，还可能违反学校规定。更稳妥的做法是第 12 关（加分关）：让它基于你核实过的证据生成提纲和草稿，每句话都标注 DOI，然后由你改写定稿。</p></details>
-      <details class="panel faq"><summary>换一章、换一个问题，要从头再来吗？</summary><p>不用。做完第 11 关后，项目里会有模板和说明文档。之后只要说“按 README 为这个新问题生成一个证据看板”，Codex 就会把整套流程再跑一遍。</p></details>
+      <details class="panel faq"><summary>我完全不会编程，能用吗？</summary><p>可以先下载完整项目查看本例，或按七条主线提示词操作。代码由助手编写，你负责核对题目、文件和原文。预览打不开时复制实际网址到浏览器；没有 Node.js 就让助手如实报告，不盲目安装依赖。</p></details>
+      <details class="panel faq"><summary>一定要装 scite 和 Article Galaxy 吗？</summary><p>不是必须的。本例在两个插件均不可用时，使用出版商、PubMed、PMC 和 Europe PMC 完成核查。先让助手检查实际工具；插件缺失直接降级，没有任何联网能力才保留待核实清单。不要凭记忆补 DOI，也不需先找人开通服务。</p></details>
+      <details class="panel faq"><summary>每一步要等多久？</summary><p>不承诺固定时间。检索、网络和人工核查决定耗时。一次发一条，等助手给出结果与验收说明再继续；不要同时让多个聊天修改同一个数据文件。</p></details>
+      <details class="panel faq"><summary>能直接让它把整篇论文写出来吗？</summary><p>技术上可以生成文字，但这样风险最大：编造引用、观点一边倒、答辩讲不出来，还可能违反学校规定。加分关仅用已核实证据整理提纲与待改写要点，逐句标 DOI 和证据位置，由你对照原文审阅。分类反驳计数不能直接充当争议证据。</p></details>
+      <details class="panel faq"><summary>换一章、换一个问题，要从头再来吗？</summary><p>不用。做完第 11 关后，项目里会有模板和说明文档。先复制到新文件夹，再说“按 README 和清单为新问题重做检索”。保留旧 review.json，不把本例论文自动当作新问题的证据。</p></details>
     </div>
   </div>
 </section>

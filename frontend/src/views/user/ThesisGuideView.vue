@@ -15,7 +15,7 @@
     <nav class="thesis-chapters" :aria-label="t('thesis.chapters')">
       <button v-for="section in sections" :key="section" type="button" :aria-current="active === section ? 'location' : undefined" @click="navigate(section)">{{ t(`thesis.sections.${section}`) }}</button>
     </nav>
-    <iframe ref="guide" class="thesis-document" :srcdoc="guideDocument" :title="t('thesis.title')" allow="clipboard-write" sandbox="allow-scripts allow-same-origin" @load="navigate(active)" />
+    <iframe ref="guide" class="thesis-document" :srcdoc="guideDocument" :title="t('thesis.title')" allow="clipboard-write" sandbox="allow-scripts allow-same-origin allow-downloads allow-popups" @load="navigate(active)" />
   </div>
 </template>
 
