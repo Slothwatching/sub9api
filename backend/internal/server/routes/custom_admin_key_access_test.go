@@ -411,9 +411,24 @@ func TestScopedAdminRegisteredRoutesExcludeForkOnlyEndpoints(t *testing.T) {
 	for _, route := range r.Routes() {
 		paths[route.Method+" "+route.Path] = true
 	}
-	for _, path := range []string{"GET /api/v1/admin/model-catalog", "GET /api/v1/admin/proxies/options", "GET /api/v1/admin/groups/:id/models-list-candidates"} {
+	for _, path := range []string{"GET /api/v1/admin/model-catalog", "GET /api/v1/admin/proxies/options"} {
 		require.False(t, paths[path], path)
 	}
+	// Fork-local D37: retain the display-only route for admin sessions;
+	// scoped keys must still fail closed on this unregistered permission.
+	require.True(t, paths["GET /api/v1/admin/groups/:id/models-list-candidates"])
+	settings := service.NewSettingService(&scopedRouteModelSettings{}, nil)
+	settings.SetScopedAdminKeyRepository(&scopedRouteKeys{})
+	key, _, err := settings.CreateScopedAdminKey(context.Background(), service.ScopedAdminKeyInput{Name: "group reader", Enabled: true, Policy: adminaccess.Policy{GlobalPermissions: []string{"groups.read"}}}, 9)
+	require.NoError(t, err)
+	auth := middleware.NewAdminAuthMiddleware(nil, service.NewUserService(&scopedRouteUsers{}, nil, nil, nil), settings, nil)
+	protected := gin.New()
+	RegisterAdminRoutes(protected.Group("/api/v1"), &handler.Handlers{Admin: &handler.AdminHandlers{}}, auth, middleware.AuditLogMiddleware(func(c *gin.Context) { c.Next() }), middleware.StepUpAuthMiddleware(func(c *gin.Context) { c.Next() }), nil, nil)
+	req := httptest.NewRequest("GET", "/api/v1/admin/groups/1/models-list-candidates", nil)
+	req.Header.Set("x-api-key", key)
+	response := httptest.NewRecorder()
+	protected.ServeHTTP(response, req)
+	require.Equal(t, 403, response.Code, response.Body.String())
 	for _, path := range []string{"GET /api/v1/admin/proxies", "GET /api/v1/admin/proxies/all", "GET /api/v1/admin/groups/:id/model-allowlist-candidates", "POST /api/v1/admin/accounts/import/codex-session"} {
 		require.True(t, paths[path], path)
 	}
