@@ -2,6 +2,7 @@ import thesis from './thesis'
 import experience from './experience'
 import storefront from './storefront'
 import commercial from './commercial'
+import adminAccessKeys from './adminAccessKeys'
 import landing from './landing'
 import common from './common'
 import dashboard from './dashboard'
@@ -15,6 +16,7 @@ export default {
   ...experience,
   ...storefront,
   ...commercial,
+  adminAccessKeys,
   ...landing,
   ...common,
   ...dashboard,
