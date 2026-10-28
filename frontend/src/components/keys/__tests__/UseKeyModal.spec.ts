@@ -722,6 +722,18 @@ describe('UseKeyModal', () => {
     }
     expect(models['gpt-5.6'].name).toBe('GPT-5.6 (Sol)')
     expect(models['gpt-6.1-sol'].variants).not.toHaveProperty('none')
+    expect(models['gpt-6.1-terra']).toEqual({
+      name: 'GPT-6.1 Terra',
+      limit: { context: 1050000, output: 128000 },
+      // Fork-local PR #10 format applies to the upstream Terra entry too.
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        none: { reasoningEffort: 'none' }, low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' }, high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' }, max: { reasoningEffort: 'max' }
+      }
+    })
     expect(models['gpt-6-sol'].variants).toHaveProperty('none')
     expect(models['gpt-6-luna'].limit).toEqual({ context: 1050000, output: 128000 })
     // Fork-local OpenCode format includes explicit reasoning effort and encrypted reasoning.

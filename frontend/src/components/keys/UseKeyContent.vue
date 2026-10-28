@@ -1477,6 +1477,21 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
       }
     },
     // Upstream 9688571a8, in the explicit reasoning form of PR #10; no none tier.
+    // Fork-local: upstream 342366742 in PR #10's explicit reasoning format.
+    'gpt-6.1-terra': {
+      name: 'GPT-6.1 Terra',
+      limit: { context: 1050000, output: 128000 },
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        none: { reasoningEffort: 'none' },
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
+    },
     'gpt-6.1-sol': {
       name: 'GPT-6.1 Sol',
       limit: {
