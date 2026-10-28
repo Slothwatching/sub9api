@@ -50,7 +50,8 @@ func TestGrokResponseAuditNativeProtocols(t *testing.T) {
 	}{
 		{name: "native-sse", requested: "composer-2.5", returned: "grok-4.5-build", stream: true, mismatch: true, clientModel: "composer-2.5"},
 		{name: "native-json", requested: "composer-2.5", returned: "grok-4.5-build", stream: false, mismatch: true, clientModel: "composer-2.5"},
-		{name: "normal-alias", requested: "grok-4.7", returned: "grok-4.7-build", stream: true, clientModel: "grok-4.7-build"},
+		// Fork-local D46: clients see the public model; raw upstream identity stays in audit metadata.
+		{name: "normal-alias", requested: "grok-4.7", returned: "grok-4.7-build", stream: true, clientModel: "grok-4.7"},
 		{name: "missing-model", requested: "grok-4.7", returned: "", stream: false, mismatchNil: true},
 	}
 	for i, tt := range cases {
@@ -141,7 +142,9 @@ func TestGrokResponseAuditForwardDoesNotLeakPreviousObservation(t *testing.T) {
 	require.Nil(t, upstreamModelMismatch(second.UpstreamModel, second.UpstreamResponseModel))
 	require.False(t, gjson.Get(secondRec.Body.String(), "model").Exists())
 	require.NotContains(t, secondRec.Body.String(), "grok-4.5-build")
-	require.Contains(t, rec.Body.String(), "grok-4.5-build")
+	// Fork-local D46: retain private observation above, never expose its model ID.
+	require.Equal(t, "grok-4.7", gjson.Get(rec.Body.String(), "model").String())
+	require.NotContains(t, rec.Body.String(), "grok-4.5-build")
 }
 
 func TestGrokResponseAuditRetryDoesNotKeepFailedAttemptModel(t *testing.T) {
