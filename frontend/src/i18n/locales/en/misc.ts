@@ -433,6 +433,8 @@ export default {
       BALANCE_PAYMENT_DISABLED: 'Balance recharge has been disabled.',
       INVALID_AMOUNT: 'Invalid amount.',
       INVALID_INPUT: 'Invalid request.',
+      PLAN_IN_RENEWAL_POLICY: 'This plan is referenced by the renewal policy. Review existing entitlements and remove its policy references before deleting it.',
+      INVALID_RENEWAL_POLICY: 'Subscription purchases and renewals are temporarily unavailable because the renewal policy needs administrator attention. Please contact the administrator. Balance top-ups remain available where enabled.',
       PLAN_NOT_AVAILABLE: 'Plan not found or no longer available.',
       GROUP_NOT_FOUND: 'Subscription group is no longer available.',
       GROUP_TYPE_MISMATCH: 'Group is not a subscription type.',

@@ -219,12 +219,13 @@ function oauthOrderFixture() {
   }
 }
 
-async function mountSubscriptionConfirm(options: Parameters<typeof checkoutInfoWithPlansFixture>[0] = {}) {
+async function mountSubscriptionConfirm(options: Parameters<typeof checkoutInfoWithPlansFixture>[0] = {}, query: Record<string, unknown> = {}) {
   vi.useRealTimers()
   routeState.path = '/purchase'
   routeState.query = {
     tab: 'subscription',
     group: '3',
+    ...query,
   }
   routerReplace.mockReset().mockResolvedValue(undefined)
   routerPush.mockReset().mockResolvedValue(undefined)
@@ -900,6 +901,41 @@ describe('PaymentView catalog links', () => {
   it.each(['999', '2.5', 'oops', ['2']])('keeps the plan list for an unavailable or malformed plan ID %s', async (id) => {
     const wrapper = await mountSubscriptionPlanList(3, { plan_id: id })
     expect(wrapper.findAllComponents(SubscriptionPlanCard)).toHaveLength(3)
+    expect(createOrder).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+})
+
+
+describe('invalid renewal policy checkout isolation', () => {
+  it('blocks catalog/group subscription entry and confirmation but still creates balance orders', async () => {
+    appStoreState.setPublicSettings(undefined)
+    const wrapper = await mountSubscriptionConfirm({ checkout: { subscription_renewal_error: 'INVALID_RENEWAL_POLICY' } })
+    expect(wrapper.get('[role="alert"]').text()).toBe('payment.errors.INVALID_RENEWAL_POLICY')
+    expect(wrapper.findAllComponents(SubscriptionPlanCard)).toHaveLength(0)
+    expect(wrapper.findAll('button').some(button => button.text().startsWith('payment.createOrder'))).toBe(false)
+    expect(createOrder).not.toHaveBeenCalled()
+    // Also reject a stale selection that predates the policy error.
+    const state = wrapper.vm.$.setupState as unknown as { selectedPlan: SubscriptionPlan; confirmSubscribe: () => Promise<void> }
+    state.selectedPlan = checkoutInfoWithPlansFixture().data.plans[0]!
+    await state.confirmSubscribe()
+    expect(createOrder).not.toHaveBeenCalled()
+    await wrapper.findAll('button').find(button => button.text() === 'payment.tabTopUp')!.trigger('click')
+    wrapper.getComponent(AmountInput).vm.$emit('update:modelValue', 10)
+    await flushPromises()
+    createOrder.mockResolvedValue({ ...oauthOrderFixture(), result_type: 'qrcode', oauth: undefined, qr_code: 'policy-error-top-up-qr' })
+    await wrapper.findAll('button').find(button => button.text().startsWith('payment.createOrder'))!.trigger('click')
+    await flushPromises()
+    expect(createOrder).toHaveBeenCalledTimes(1)
+    expect(createOrder).toHaveBeenCalledWith(expect.objectContaining({ order_type: 'balance', amount: 10 }))
+    wrapper.unmount()
+  })
+  it('does not turn a catalog deep link into a purchasable subscription when policy is invalid', async () => {
+    appStoreState.setPublicSettings(undefined)
+    const wrapper = await mountSubscriptionConfirm({ checkout: { subscription_renewal_error: 'INVALID_RENEWAL_POLICY' } }, { plan_id: '7' })
+    const state = wrapper.vm.$.setupState as unknown as { selectPlan: (plan: SubscriptionPlan) => void; selectedPlan: SubscriptionPlan | null }
+    state.selectPlan(checkoutInfoWithPlansFixture().data.plans[0]!)
+    expect(state.selectedPlan).toBeNull()
     expect(createOrder).not.toHaveBeenCalled()
     wrapper.unmount()
   })

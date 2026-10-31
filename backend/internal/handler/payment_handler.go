@@ -118,11 +118,16 @@ func (h *PaymentHandler) GetCheckoutInfo(c *gin.Context) {
 		}
 	}
 
+	// D123: renewal configuration must not take balance top-ups offline.
+	var renewalError string
 	// Fetch plans with group info
 	plans, err := h.configService.ListPlansForSale(ctx)
 	if err != nil {
-		response.ErrorFrom(c, err)
-		return
+		if infraerrors.Reason(err) != "INVALID_RENEWAL_POLICY" {
+			response.ErrorFrom(c, err)
+			return
+		}
+		renewalError = "INVALID_RENEWAL_POLICY"
 	}
 	groupInfo := h.configService.GetGroupInfoMap(ctx, plans)
 	planList := make([]checkoutPlan, 0, len(plans))
@@ -149,15 +154,19 @@ func (h *PaymentHandler) GetCheckoutInfo(c *gin.Context) {
 		return
 	}
 	var renewal *service.SubscriptionRenewalInfo
-	if h.paymentService != nil {
+	if h.paymentService != nil && renewalError == "" {
 		renewal, err = h.paymentService.SubscriptionRenewalInfo(ctx, subject.UserID, cfg)
 		if err != nil {
-			response.ErrorFrom(c, err)
-			return
+			if infraerrors.Reason(err) != "INVALID_RENEWAL_POLICY" {
+				response.ErrorFrom(c, err)
+				return
+			}
+			renewalError = "INVALID_RENEWAL_POLICY"
 		}
 	}
 	response.Success(c, checkoutInfoResponse{
 		SubscriptionRenewal:           renewal,
+		SubscriptionRenewalError:      renewalError,
 		Methods:                       limitsResp.Methods,
 		GlobalMin:                     limitsResp.GlobalMin,
 		GlobalMax:                     limitsResp.GlobalMax,
@@ -178,6 +187,7 @@ func (h *PaymentHandler) GetCheckoutInfo(c *gin.Context) {
 }
 
 type checkoutInfoResponse struct {
+	SubscriptionRenewalError      string                           `json:"subscription_renewal_error,omitempty"`
 	SubscriptionRenewal           *service.SubscriptionRenewalInfo `json:"subscription_renewal,omitempty"`
 	Methods                       map[string]service.MethodLimits  `json:"methods"`
 	GlobalMin                     float64                          `json:"global_min"`

@@ -22,6 +22,7 @@
         <p>{{ t('storefront.loadError') }}</p>
         <button class="btn btn-primary" @click="loadPlans">{{ t('storefront.retry') }}</button>
       </div>
+      <p v-else-if="renewalError" role="alert" class="card border border-amber-300 p-5 font-semibold text-amber-900 dark:border-amber-700 dark:text-amber-200">{{ t('payment.errors.INVALID_RENEWAL_POLICY') }}</p>
       <template v-else>
         <SubscriptionRenewalNotice :info="renewalInfo" />
         <PlanGuide v-if="plans.length" :plans="plans" @select="choosePlan" />
@@ -85,6 +86,7 @@ const { t } = useI18n()
 const authStore = useAuthStore()
 const subscriptionStore = useSubscriptionStore()
 const renewalInfo = ref<SubscriptionRenewalInfo>()
+const renewalError = ref<string>()
 const loading = ref(true)
 const failed = ref(false)
 const plans = ref<SubscriptionPlan[]>([])
@@ -138,7 +140,7 @@ function chooseGroup(groupId: number) {
   if (id != null) void choosePlan(id)
 }
 async function choosePlan(planId: number) {
-  if (!plans.value.some(plan => plan.id === planId)) return
+  if (renewalError.value || !plans.value.some(plan => plan.id === planId)) return
   selectedId.value = planId
   await nextTick()
   summary.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -149,6 +151,7 @@ async function loadPlans() {
   failed.value = false
   try {
     const response = await paymentAPI.getCheckoutInfo()
+    renewalError.value = response.data.subscription_renewal_error
     renewalInfo.value = response.data.subscription_renewal
     plans.value = response.data.plans.filter(plan => plan.for_sale !== false)
     selectedId.value = null

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -218,6 +219,19 @@ func (s *PaymentConfigService) UpdatePlan(ctx context.Context, id int64, req Upd
 }
 
 func (s *PaymentConfigService) DeletePlan(ctx context.Context, id int64) error {
+	// D123: off-sale products may still identify grandfathered quota groups.
+	// Require an explicit policy edit before deleting any referenced product.
+	raw, err := s.settingRepo.GetValue(ctx, SettingSubscriptionRenewalPolicy)
+	if err != nil && !errors.Is(err, ErrSettingNotFound) {
+		return fmt.Errorf("check subscription renewal policy: %w", err)
+	}
+	policy := parseSubscriptionRenewalPolicy(raw)
+	if err := validateSubscriptionRenewalPolicy(policy); err != nil {
+		return err
+	}
+	if policy != nil && (containsPlan(policy.LegacyPlanIDs, id) || containsPlan(policy.ReplacementPlanIDs, id)) {
+		return infraerrors.Conflict("PLAN_IN_RENEWAL_POLICY", "this plan is referenced by the renewal policy; update the policy before deleting it, or take the plan off sale")
+	}
 	count, err := s.countPendingOrdersByPlan(ctx, id)
 	if err != nil {
 		return fmt.Errorf("check pending orders: %w", err)

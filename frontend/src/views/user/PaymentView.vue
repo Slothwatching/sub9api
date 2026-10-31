@@ -6,7 +6,7 @@
       </div>
       <template v-else>
         <!-- Tab Switcher (hide during payment and subscription confirm) -->
-        <div v-if="tabs.length > 1 && paymentPhase === 'select' && !selectedPlan" class="flex space-x-1 rounded-xl bg-gray-100 p-1 dark:bg-dark-800">
+        <div v-if="tabs.length > 1 && paymentPhase === 'select' && (!selectedPlan || checkout.subscription_renewal_error)" class="flex space-x-1 rounded-xl bg-gray-100 p-1 dark:bg-dark-800">
           <button v-for="tab in tabs" :key="tab.key"
             class="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all"
             :class="activeTab === tab.key ? 'bg-white text-gray-900 shadow dark:bg-dark-700 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
@@ -122,7 +122,8 @@
             <SubscriptionRenewalNotice :info="checkout.subscription_renewal" />
             <BillingPolicyNotice context="subscription" />
             <!-- Subscription confirm (inline, replaces plan list) -->
-            <template v-if="selectedPlan">
+            <p v-if="checkout.subscription_renewal_error" role="alert" class="card border border-amber-300 p-5 font-semibold text-amber-900 dark:border-amber-700 dark:text-amber-200">{{ t('payment.errors.INVALID_RENEWAL_POLICY') }}</p>
+            <template v-else-if="selectedPlan">
               <div class="card p-5">
                 <!-- Header: platform badge + plan name -->
                 <div class="mb-3 flex flex-wrap items-center gap-2">
@@ -243,7 +244,7 @@
             </template>
           </template>
         </template>
-        <div v-if="(checkout.help_text || checkout.help_image_url) && paymentPhase === 'select' && !selectedPlan" class="card p-4">
+        <div v-if="(checkout.help_text || checkout.help_image_url) && paymentPhase === 'select' && (!selectedPlan || checkout.subscription_renewal_error)" class="card p-4">
           <div class="flex flex-col items-center gap-3">
             <img v-if="checkout.help_image_url" :src="checkout.help_image_url" alt=""
               class="h-40 max-w-full cursor-pointer rounded-lg object-contain transition-opacity hover:opacity-80"
@@ -774,6 +775,7 @@ const subMethodOptions = computed<PaymentMethodOption[]>(() => {
 
 const canSubmitSubscription = computed(() =>
   selectedPlan.value !== null
+    && !checkout.value.subscription_renewal_error
     && amountFitsMethod(subTotalAmount.value, selectedMethod.value)
     && selectedLimit.value?.available !== false
 )
@@ -822,11 +824,13 @@ function planPeakRateLabel(plan: SubscriptionPlan): string {
 }
 
 function selectPlan(plan: SubscriptionPlan) {
+  if (checkout.value.subscription_renewal_error) return
   selectedPlan.value = plan
   errorMessage.value = ''
 }
 
 function selectPlanFromModal(plan: SubscriptionPlan) {
+  if (checkout.value.subscription_renewal_error) return
   showRenewalModal.value = false
   renewGroupId.value = null
   selectedPlan.value = plan
@@ -844,7 +848,7 @@ async function handleSubmitRecharge() {
 }
 
 async function confirmSubscribe() {
-  if (!selectedPlan.value || submitting.value) return
+  if (!canSubmitSubscription.value || !selectedPlan.value || submitting.value) return
   await createOrder(selectedPlan.value.price, 'subscription', selectedPlan.value.id)
 }
 
@@ -1228,7 +1232,7 @@ onMounted(async () => {
       const catalogPlan = checkout.value.plans.find(plan => plan.id === catalogPlanId)
       if (catalogPlan && !hasWechatResumeQuery(route.query) && paymentPhase.value === 'select') {
         selectPlan(catalogPlan)
-      } else if (route.query.group) {
+      } else if (route.query.group && !checkout.value.subscription_renewal_error) {
         const groupId = Number(route.query.group)
         const groupPlans = checkout.value.plans.filter(p => p.group_id === groupId)
         if (groupPlans.length === 1) {
