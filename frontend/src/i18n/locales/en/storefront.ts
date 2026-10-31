@@ -1,5 +1,7 @@
 export default {
   renewal: {
+    missingPlan: 'Deleted or unavailable plan #{id}',
+    missingWarning: 'This policy references missing plans. Check existing subscription entitlements before explicitly deselecting these IDs and saving.',
     title: 'Grandfathered plan renewals',
     enabled: 'Renew only on current plans after the legacy term ends',
     legacy: 'Legacy plans (keep purchased entitlements; stop new sales and renewals)',

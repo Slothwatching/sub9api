@@ -32,7 +32,7 @@ vi.mock('vue-i18n', async (importOriginal) => {
   return {
     ...actual,
     useI18n: () => ({
-      t: (key: string) => key,
+      t: (key: string, params?: { id: number }) => params ? `${key} #${params.id}` : key,
     }),
   }
 })
@@ -124,4 +124,61 @@ it('saves an explicit legacy/current policy without changing plan prices or enti
   await flushPromises()
   expect(updateConfig).toHaveBeenCalledWith({subscription_renewal_policy:{enabled:true,legacy_plan_ids:[1],replacement_plan_ids:[9]}})
   wrapper.unmount()
+})
+
+
+describe('renewal policy missing references', () => {
+  function renderPolicy() {
+    return mount(AdminPaymentPlansView, { global: {
+      plugins: [createPinia()],
+      stubs: {
+        AppLayout: { template: '<div><slot /></div>' }, DataTable: DataTableStub,
+        ConfirmDialog: true, GroupBadge: true, Icon: true, PlanEditDialog: true,
+        BaseDialog: { props: ['show'], template: '<div v-if="show"><slot /><slot name="footer" /></div>' },
+      },
+    } })
+  }
+  async function open(wrapper: ReturnType<typeof renderPolicy>) {
+    await wrapper.findAll('button').find(button => button.text() === 'renewal.title')!.trigger('click')
+  }
+  beforeEach(() => {
+    vi.clearAllMocks()
+    getGroups.mockResolvedValue([])
+    getPlans.mockResolvedValue({ data: [{ id: 1, name: 'Old', price: 60, features: [] }, { id: 9, name: 'New', price: 63, features: [] }] })
+    getConfig.mockResolvedValue({ data: { subscription_renewal_policy: { enabled: true, legacy_plan_ids: [16, 1], replacement_plan_ids: [9, 22] } } })
+    updateConfig.mockResolvedValue({ data: {} })
+  })
+  it('shows selected missing IDs in both lists and preserves them until explicitly removed', async () => {
+    const wrapper = renderPolicy(); await flushPromises(); await open(wrapper)
+    expect(wrapper.get('[role="alert"]').text()).toBe('renewal.missingWarning')
+    expect(wrapper.text()).toContain('renewal.missingPlan #16')
+    expect(wrapper.text()).toContain('renewal.missingPlan #22')
+    expect((wrapper.get('input[value="16"]').element as HTMLInputElement).checked).toBe(true)
+    expect((wrapper.get('input[value="22"]').element as HTMLInputElement).checked).toBe(true)
+    await wrapper.get('#renewal-policy-form').trigger('submit'); await flushPromises()
+    expect(updateConfig).toHaveBeenCalledWith({ subscription_renewal_policy: { enabled: true, legacy_plan_ids: [16, 1], replacement_plan_ids: [9, 22] } })
+    wrapper.unmount()
+  })
+  it('cancels draft removals without writing and saves only the explicitly retained IDs', async () => {
+    const wrapper = renderPolicy(); await flushPromises(); await open(wrapper)
+    await wrapper.get('input[value="16"]').setValue(false)
+    await wrapper.get('input[value="22"]').setValue(false)
+    await wrapper.findAll('button').find(button => button.text() === 'common.cancel')!.trigger('click')
+    expect(updateConfig).not.toHaveBeenCalled()
+    await open(wrapper)
+    expect((wrapper.get('input[value="16"]').element as HTMLInputElement).checked).toBe(true)
+    expect((wrapper.get('input[value="22"]').element as HTMLInputElement).checked).toBe(true)
+    await wrapper.get('input[value="16"]').setValue(false)
+    await wrapper.get('input[value="22"]').setValue(false)
+    // Keep missing options visible so an accidental deselection can be undone before saving.
+    expect(wrapper.get('input[value="16"]').exists()).toBe(true)
+    getConfig.mockResolvedValue({ data: { subscription_renewal_policy: { enabled: true, legacy_plan_ids: [1], replacement_plan_ids: [9] } } })
+    await wrapper.get('#renewal-policy-form').trigger('submit'); await flushPromises()
+    expect(updateConfig).toHaveBeenCalledTimes(1)
+    expect(updateConfig).toHaveBeenCalledWith({ subscription_renewal_policy: { enabled: true, legacy_plan_ids: [1], replacement_plan_ids: [9] } })
+    await open(wrapper)
+    expect(wrapper.find('input[value="16"]').exists()).toBe(false)
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    wrapper.unmount()
+  })
 })

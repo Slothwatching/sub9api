@@ -457,6 +457,8 @@ export default {
       BALANCE_PAYMENT_DISABLED: '余额充值功能已关闭',
       INVALID_AMOUNT: '金额无效',
       INVALID_INPUT: '参数有误',
+      PLAN_IN_RENEWAL_POLICY: '该套餐仍被续费策略引用，请先核对存量权益并移除策略中的引用，再删除套餐。',
+      INVALID_RENEWAL_POLICY: '续费策略配置异常，暂时无法购买或续费订阅，请联系管理员处理。已启用的余额充值仍可使用。',
       PLAN_NOT_AVAILABLE: '套餐不存在或已下架',
       GROUP_NOT_FOUND: '订阅分组不可用',
       GROUP_TYPE_MISMATCH: '分组类型不是订阅类型',

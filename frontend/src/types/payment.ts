@@ -80,6 +80,7 @@ export interface SubscriptionRenewalInfo {
 }
 
 export interface CheckoutInfoResponse {
+  subscription_renewal_error?: string
   subscription_renewal?: SubscriptionRenewalInfo
   methods: Record<string, MethodLimit>
   global_min: number

@@ -71,13 +71,16 @@
     <BaseDialog :show="showRenewalPolicy" :title="t('renewal.title')" width="wide" @close="showRenewalPolicy = false">
       <form id="renewal-policy-form" class="space-y-5" @submit.prevent="saveRenewalPolicy">
         <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">{{ t('renewal.hint') }}</p>
+        <p v-if="missingLegacyPlanIds.length || missingReplacementPlanIds.length" role="alert" class="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm font-semibold text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">{{ t('renewal.missingWarning') }}</p>
         <label class="flex items-center gap-2 text-sm"><input v-model="renewalPolicy.enabled" type="checkbox" />{{ t('renewal.enabled') }}</label>
         <div class="grid gap-5 sm:grid-cols-2">
           <fieldset class="space-y-2"><legend class="mb-3 text-sm font-semibold">{{ t('renewal.legacy') }}</legend>
             <label v-for="plan in plans" :key="plan.id" class="flex items-start gap-2 text-sm"><input v-model="renewalPolicy.legacy_plan_ids" :value="plan.id" type="checkbox" class="mt-1" />#{{ plan.id }} {{ plan.name }}</label>
+            <label v-for="id in missingLegacyPlanIds" :key="`missing-${id}`" class="flex items-start gap-2 text-sm font-semibold text-amber-800 dark:text-amber-200"><input v-model="renewalPolicy.legacy_plan_ids" :value="id" type="checkbox" class="mt-1" />{{ t('renewal.missingPlan', { id }) }}</label>
           </fieldset>
           <fieldset class="space-y-2"><legend class="mb-3 text-sm font-semibold">{{ t('renewal.replacement') }}</legend>
             <label v-for="plan in plans" :key="plan.id" class="flex items-start gap-2 text-sm"><input v-model="renewalPolicy.replacement_plan_ids" :value="plan.id" type="checkbox" class="mt-1" />#{{ plan.id }} {{ plan.name }}</label>
+            <label v-for="id in missingReplacementPlanIds" :key="`missing-${id}`" class="flex items-start gap-2 text-sm font-semibold text-amber-800 dark:text-amber-200"><input v-model="renewalPolicy.replacement_plan_ids" :value="id" type="checkbox" class="mt-1" />{{ t('renewal.missingPlan', { id }) }}</label>
           </fieldset>
         </div>
       </form>
@@ -123,6 +126,8 @@ function planCurrencySymbol(currency?: string): string {
 const showRenewalPolicy = ref(false)
 const savingRenewalPolicy = ref(false)
 const renewalPolicy = ref<SubscriptionRenewalPolicy>({enabled: false, legacy_plan_ids: [], replacement_plan_ids: []})
+const missingLegacyPlanIds = computed(() => (paymentConfig.value?.subscription_renewal_policy?.legacy_plan_ids ?? []).filter(id => !plans.value.some(plan => plan.id === id)))
+const missingReplacementPlanIds = computed(() => (paymentConfig.value?.subscription_renewal_policy?.replacement_plan_ids ?? []).filter(id => !plans.value.some(plan => plan.id === id)))
 function openRenewalPolicy() {
   const policy = paymentConfig.value?.subscription_renewal_policy
   renewalPolicy.value = policy ? { ...policy, legacy_plan_ids: [...(policy.legacy_plan_ids ?? [])], replacement_plan_ids: [...(policy.replacement_plan_ids ?? [])] } : {enabled: false, legacy_plan_ids: [], replacement_plan_ids: []}

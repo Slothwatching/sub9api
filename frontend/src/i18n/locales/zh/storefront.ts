@@ -1,5 +1,7 @@
 export default {
   renewal: {
+    missingPlan: '已删除或失效的套餐 #{id}',
+    missingWarning: '续费策略引用了已删除或失效的套餐。请先核对存量订阅权益，再明确取消勾选相应 ID 并保存。',
     title: '旧套餐续费接续',
     enabled: '仅允许新套餐续费，到期后接续',
     legacy: '存量套餐（保留已购权益，停止新购和续费）',

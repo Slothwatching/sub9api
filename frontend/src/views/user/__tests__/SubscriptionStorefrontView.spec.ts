@@ -95,3 +95,15 @@ it('keeps the exact product and duration selected by the comparison guide', asyn
   expect(summary.findComponent(RouterLinkStub).props('to')).toEqual({ path: '/purchase', query: { tab: 'subscription', plan_id: '2' } })
   expect(summary.text()).toContain('¥170.10 CNY')
 })
+
+
+it('blocks subscription selection and checkout on invalid policy while retaining the top-up link', async () => {
+  getCheckoutInfo.mockResolvedValue({ data: { plans: [plan(1)], methods: { wxpay: {} }, subscription_renewal_error: 'INVALID_RENEWAL_POLICY' } })
+  const wrapper = render(); await flushPromises()
+  expect(wrapper.get('[role="alert"]').text()).toBe('payment.errors.INVALID_RENEWAL_POLICY')
+  expect(wrapper.findAll('[data-plan-group]')).toHaveLength(0)
+  expect(wrapper.findComponent({ name: 'PlanGuide' }).exists()).toBe(false)
+  expect(wrapper.find('section[tabindex]').exists()).toBe(false)
+  expect(wrapper.findAllComponents(RouterLinkStub).map(link => link.props('to'))).toEqual(['/purchase?tab=recharge'])
+  wrapper.unmount()
+})
