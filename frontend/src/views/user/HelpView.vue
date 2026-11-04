@@ -11,7 +11,8 @@
       <div class="space-y-3">
         <details v-for="article in filtered" :id="article.id" :key="article.id" :open="route.query.topic === article.id || !!search.trim()" class="card scroll-mt-24 p-5 sm:p-6">
           <summary class="cursor-pointer text-lg font-medium">{{ t(`experience.articles.${article.id}.title`) }}</summary>
-          <div class="mt-4 space-y-4 text-sm leading-7 text-gray-600 dark:text-dark-300"><p>{{ t(`experience.articles.${article.id}.lead`) }}</p><ol class="list-decimal space-y-2 pl-5"><li v-for="step in ['step1', 'step2', 'step3']" :key="step">{{ t(`experience.articles.${article.id}.${step}`) }}</li></ol>
+          <div class="mt-4 space-y-4 text-sm leading-7 text-gray-600 dark:text-dark-300"><p>{{ t(`experience.articles.${article.id}.lead`) }}</p><ol class="list-decimal space-y-2 pl-5"><li v-for="step in article.steps" :key="step">{{ t(`experience.articles.${article.id}.${step}`) }}</li></ol>
+            <RouterLink v-if="article.id === 'upgrade' || article.id === 'refund'" :to="{ path: '/help', query: { topic: article.id === 'upgrade' ? 'refund' : 'upgrade' }, hash: article.id === 'upgrade' ? '#refund' : '#upgrade' }" class="mr-5 inline-block font-medium text-primary-700 underline dark:text-primary-300" @click="search = ''; category = 'all'">{{ t(`experience.help.actions.${article.id === 'upgrade' ? 'refund' : 'upgrade'}`) }} →</RouterLink>
             <RouterLink v-if="actionEnabled(article.action)" :to="article.action === 'usage' && auth.isSimpleMode ? '/keys' : article.to" class="inline-block font-medium text-primary-700 underline dark:text-primary-300">{{ t(`experience.help.actions.${article.action}`) }} →</RouterLink>
             <RouterLink :to="{ path: '/help', query: { topic: article.id }, hash: `#${article.id}` }" class="ml-5 inline-block text-gray-500 underline dark:text-dark-400" @click="search = ''; category = 'all'">{{ t('experience.help.permalink') }}</RouterLink>
           </div>
@@ -53,10 +54,12 @@ const articles = [
   { id: 'billing', category: 'billing', to: '/billing', action: 'estimate' },
   { id: 'cache', category: 'billing', to: '/billing', action: 'estimate' },
   { id: 'renewal', category: 'billing', to: '/orders', action: 'orders' },
-  { id: 'refund', category: 'billing', to: '/orders', action: 'orders' },
+  { id: 'refund', category: 'billing', to: '/orders', action: 'orders', stepCount: 5 },
+  { id: 'upgrade', category: 'billing', to: '/subscriptions', action: 'subscriptions', stepCount: 5 },
   { id: 'recharge', category: 'billing', to: '/orders', action: 'orders' },
-]
+// Local policy articles share the same steps for rendering and search.
+].map(article => ({ ...article, steps: Array.from({ length: article.stepCount ?? 3 }, (_, i) => `step${i + 1}`) }))
 const filtered = computed(() => articles.filter(a => (category.value === 'all' || a.category === category.value) &&
-  (!search.value.trim() || ['title', 'lead', 'step1', 'step2', 'step3'].some(field => t(`experience.articles.${a.id}.${field}`).toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())))))
+  (!search.value.trim() || ['title', 'lead', ...a.steps].some(field => t(`experience.articles.${a.id}.${field}`).toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())))))
 onMounted(() => { void app.fetchPublicSettings() })
 </script>

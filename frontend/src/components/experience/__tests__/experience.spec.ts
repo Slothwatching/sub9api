@@ -5,6 +5,8 @@ import { createI18n } from 'vue-i18n'
 import ModelGuide from '../ModelGuide.vue'
 import CostCalculator from '../CostCalculator.vue'
 import HelpView from '@/views/user/HelpView.vue'
+import BillingPolicyNotice from '@/components/payment/BillingPolicyNotice.vue'
+import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import BillingGuideView from '@/views/user/BillingGuideView.vue'
 import PlanGuide from '../PlanGuide.vue'
 import type { SubscriptionPlan } from '@/types/payment'
@@ -12,6 +14,7 @@ import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import zh from '@/i18n/locales/zh'
 import en from '@/i18n/locales/en'
 const mocks = vi.hoisted(() => ({ list: vi.fn(), plaza: vi.fn(), settings: vi.fn(), plans: vi.fn() }))
+const route = reactive({ query: { topic: 'auth' } })
 const auth = reactive({ isAuthenticated: false, isSimpleMode: false })
 const app = reactive({ cachedPublicSettings: { model_plaza_enabled: true, model_plaza_require_auth: false, channel_monitor_enabled: true, payment_enabled: true, subscription_enabled: true }, fetchPublicSettings: mocks.settings })
 vi.mock('@/stores/auth', () => ({ useAuthStore: () => auth }))
@@ -19,7 +22,7 @@ vi.mock('@/stores/app', () => ({ useAppStore: () => app }))
 vi.mock('@/api/channelMonitor', () => ({ list: mocks.list }))
 vi.mock('@/api/modelPlaza', () => ({ getModelPlaza: mocks.plaza }))
 vi.mock('@/api/payment', () => ({ paymentAPI: { getCheckoutInfo: mocks.plans } }))
-vi.mock('vue-router', async () => ({ ...await vi.importActual('vue-router'), useRoute: () => ({ query: { topic: 'auth' } }) }))
+vi.mock('vue-router', async () => ({ ...await vi.importActual('vue-router'), useRoute: () => route }))
 const groups = [{ id: 1, name: 'GPT', rate_multiplier: 1, models: [{ name: 'configured-gpt', platform: 'openai', catalog_capabilities: { supports_vision: false }, pricing: { billing_mode: 'token', input_price: 1e-6, output_price: 2e-6, cache_read_price: 0.1e-6, cache_write_price: null, intervals: [] } }] }] as ModelPlazaGroup[]
 // The test runtime omits the i18n string compiler. Supply message functions
 // while exercising actual translated content and search behavior.
@@ -29,7 +32,7 @@ function compiledMessages(value: Record<string, unknown>): Record<string, unknow
     : compiledMessages(item as Record<string, unknown>)]))
 }
 function options(locale = 'zh') { return { global: { plugins: [createI18n({ legacy: false, locale, messages: { zh: compiledMessages(zh), en: compiledMessages(en) } })], stubs: { RouterLink: RouterLinkStub, PlazaNavBar: true, AppLayout: { template: '<div><slot /></div>' } } } } }
-beforeEach(() => { vi.clearAllMocks(); auth.isAuthenticated = false; app.cachedPublicSettings.model_plaza_enabled = true; app.cachedPublicSettings.model_plaza_require_auth = false; auth.isSimpleMode = false; mocks.settings.mockResolvedValue(undefined); mocks.list.mockResolvedValue({ items: [] }) })
+beforeEach(() => { vi.clearAllMocks(); route.query.topic = 'auth'; auth.isAuthenticated = false; app.cachedPublicSettings.model_plaza_enabled = true; app.cachedPublicSettings.model_plaza_require_auth = false; auth.isSimpleMode = false; mocks.settings.mockResolvedValue(undefined); mocks.list.mockResolvedValue({ items: [] }) })
 describe('GPT customer experience', () => {
   it('loads sale quotas only for signed-in billing and discards an old plan response after logout', async () => {
     mocks.plaza.mockResolvedValue({ groups })
@@ -110,7 +113,7 @@ describe('GPT customer experience', () => {
   })
   it.each(['zh', 'en'])('searches translated help content and supports deep-linked articles in %s', async locale => {
     const wrapper = mount(HelpView, options(locale)); await flushPromises()
-    expect(wrapper.findAll('details')).toHaveLength(14)
+    expect(wrapper.findAll('details')).toHaveLength(15)
     expect(wrapper.find('#auth').attributes()).toHaveProperty('open')
     await wrapper.find('input[type=search]').setValue('429')
     expect(wrapper.findAll('details')).toHaveLength(1)
@@ -154,4 +157,37 @@ it('retains the existing simple-mode usage destination and hides purchase discov
   expect(targets).not.toContain('/usage')
   expect(targets).not.toContain('/subscribe')
   wrapper.unmount()
+})
+
+// Local manual-upgrade policy must stay discoverable without implying automatic migration.
+it.each(['zh', 'en'])('opens linked upgrade rules and searches their final clauses in %s', async locale => {
+  route.query.topic = 'upgrade'
+  const wrapper = mount(HelpView, options(locale)); await flushPromises()
+  expect(wrapper.find('#upgrade').attributes()).toHaveProperty('open')
+  expect(wrapper.find('#upgrade').findAll('ol li')).toHaveLength(5)
+  expect(wrapper.find('#refund').findAll('ol li')).toHaveLength(5)
+  const refundLink = wrapper.find('#upgrade').findAllComponents(RouterLinkStub).find(link => typeof link.props('to') === 'object' && link.props('to').query?.topic === 'refund')!
+  await wrapper.find('input[type=search]').setValue(locale === 'zh' ? '不得重复使用' : 'cannot be reused')
+  expect(wrapper.findAll('details').map(card => card.attributes('id'))).toEqual(['upgrade'])
+  await refundLink.trigger('click')
+  route.query.topic = 'refund'; await flushPromises()
+  expect(wrapper.findAll('details')).toHaveLength(15)
+  expect(wrapper.find('#refund').attributes()).toHaveProperty('open')
+  await wrapper.find('input[type=search]').setValue(locale === 'zh' ? '重复付款' : 'Duplicate payments')
+  expect(wrapper.findAll('details').map(card => card.attributes('id'))).toEqual(['refund'])
+  wrapper.unmount()
+})
+it.each(['zh', 'en'])('distinguishes manual upgrade key switching from normal deferred migration in %s', async locale => {
+  const wrapper = mount(BillingPolicyNotice, { props: { context: 'subscription' }, ...options(locale) })
+  expect(wrapper.find('section').text()).toContain(locale === 'zh' ? '未切换的密钥不会自动使用新套餐额度' : 'keys are not switched automatically')
+  expect(wrapper.findAllComponents(RouterLinkStub).map(link => link.props('to').query?.topic)).toEqual(['refund', 'recharge', 'upgrade'])
+  for (const context of ['recharge', 'orders'] as const) {
+    await wrapper.setProps({ context })
+    expect(wrapper.find('section').exists()).toBe(false)
+  }
+  wrapper.unmount()
+  const renewal = mount(SubscriptionRenewalNotice, { props: { info: { activation_at: '2026-12-01T00:00:00Z', scheduled: [] } }, ...options(locale) })
+  expect(renewal.text()).toContain(locale === 'zh' ? '原 API Key 届时转入' : 'API')
+  expect(renewal.text()).toContain(locale === 'zh' ? '需自行切换分组' : 'must switch')
+  renewal.unmount()
 })

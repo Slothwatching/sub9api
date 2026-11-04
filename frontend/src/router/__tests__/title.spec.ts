@@ -146,3 +146,13 @@ describe('resolveRouteDocumentTitle 站点类型', () => {
     expect(title).toBe('充值/订阅 - EzouAPI')
   })
 })
+
+// Help policy links must land below the fixed header, preserving browser history.
+it('reveals help anchors while preserving saved positions and other route behavior', async () => {
+  const help = router.resolve('/help?topic=upgrade#upgrade')
+  const from = router.resolve('/purchase')
+  const scroll = router.options.scrollBehavior!
+  expect(await scroll(help, from, null)).toEqual({ el: '#upgrade', top: 96 })
+  expect(await scroll(help, from, { left: 0, top: 250 })).toEqual({ left: 0, top: 250 })
+  expect(await scroll(router.resolve('/connect#manual-configuration'), from, null)).toEqual({ top: 0 })
+})

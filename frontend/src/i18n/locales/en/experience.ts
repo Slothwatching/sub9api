@@ -7,7 +7,12 @@ export default {
       "subscription": "Check the plan, duration, quota and activation time, then choose a payment method and complete your purchase. For subscription refunds, contact an administrator with the order number. Processing depends on the original provider’s refund capabilities and settings.",
       "orders": "Self-service refund requests are limited to completed balance top-ups with sufficient available balance and an eligible original payment provider. For subscription refunds, contact an administrator with the order number. Processing depends on the original provider’s refund capabilities and settings.",
       "refundLink": "Read the full refund rules",
-      "rechargeLink": "How to top up or buy a subscription"
+      "rechargeLink": "How to top up or buy a subscription",
+      "upgradeTitle": "Plan upgrades",
+      "upgrade": "Contact an administrator to upgrade a valid subscription for a plan currently on sale to a higher tier. Credit depends on its actual payment or carried-forward value, remaining validity and monthly quota. The final quote requires manual confirmation.",
+      "upgradeActivation": "After the additional payment is verified and the upgrade is completed, the old subscription ends and the new plan starts immediately with a full 30 days and fresh applicable weekly/monthly quota windows. On the API Keys page, switch the keys you want to use to the new plan’s group; keys are not switched automatically.",
+      "upgradeWarning": "Do not buy another plan as a substitute for an upgrade: normal purchase or deferred renewal rules will apply.",
+      "upgradeLink": "Read the full upgrade rules"
     },
     "plans": {
       "title": "Choose a plan",
@@ -70,7 +75,9 @@ export default {
         "subscriptions": "View my subscriptions",
         "usage": "View usage and available error records",
         "estimate": "Open cost estimator",
-        "orders": "View orders"
+        "orders": "View orders",
+        "refund": "Read refund rules",
+        "upgrade": "Read plan upgrade rules"
       }
     },
     "billing": {
@@ -98,8 +105,11 @@ export default {
       "forecastMonthly": "30-day window",
       "forecastNote": "Uses full-window quota, not your remaining allowance. All windows apply together; do not add these estimates. Unused quota does not increase the next window cap. Recalculate if content, caching, model or multipliers change. This does not guarantee completed tasks.",
       "loginRequired": "The administrator requires sign-in to view model prices. Sign in to estimate costs; the billing guide remains readable.",
-      "inputCost": "Uncached input cost", "outputCost": "Output cost", "cacheReadCost": "Cache-read cost", "cacheWriteCost": "Cache-write cost", "rateHint": "Effective group / user billing multiplier: ×{rate}.",
-
+      "inputCost": "Uncached input cost",
+      "outputCost": "Output cost",
+      "cacheReadCost": "Cache-read cost",
+      "cacheWriteCost": "Cache-write cost",
+      "rateHint": "Effective group / user billing multiplier: ×{rate}.",
       "title": "GPT text request cost estimator",
       "intro": "Estimate identical requests using this site’s prices from the model directory. Select the group and model you actually use.",
       "empty": "No GPT text price cards are available, or the model directory is disabled. You can still read the billing guide.",
@@ -249,8 +259,10 @@ export default {
         "title": "Refunds for balance top-ups and subscriptions",
         "lead": "Submitting a refund request does not mean a refund is complete. Processing depends on the original payment provider’s capabilities, settings and order status. For subscription refunds, contact an administrator with the order number.",
         "step1": "The user-facing refund request supports completed balance top-up orders only. The original provider must allow user requests, and sufficient available balance must remain. Administrators handle subscription refunds.",
-        "step2": "Paid succession orders that have not activated support full refunds only, with no partial refunds. Refunding such an order does not deduct benefits from the legacy plan you are currently using.",
-        "step3": "For an active subscription refund that also deducts benefits, the deduction uses the original order’s purchased days and may expire the subscription. It is not automatically prorated by remaining days or by a partial refund amount. Have an administrator confirm both the refund amount and benefit changes first. This process is not an upgrade credit mechanism."
+        "step2": "Paid deferred renewal orders that have not activated support full-order refunds only. Refunding such an order does not deduct benefits from the legacy plan you are currently using.",
+        "step3": "For an active subscription refund, contact an administrator to review the actual payment, benefits already used and order history. Refunds are not automatically calculated from remaining days or quota. The administrator will confirm the refund amount and benefit changes with you after review.",
+        "step4": "Manual upgrade refunds distinguish the old benefit credit from the actual additional payment; they are not based directly on the new plan’s list price. For an unused mistaken upgrade, ask an administrator to review reversal. If approved, the additional payment is refunded and the previous subscription state is restored without extending its original expiry.",
+        "step5": "After an upgraded plan has been used, refunds and benefit adjustments require individual manual review. There is no automatic remaining-day refund or guarantee of restoring old quota or refunding the full additional payment. Duplicate payments and platform faults are reviewed separately."
       },
       "recharge": {
         "title": "How do I top up my balance or buy a subscription?",
@@ -258,6 +270,15 @@ export default {
         "step1": "To top up: open the payment page, choose an amount and available payment method, check the payment total, fees and credited balance, then create an order and follow the payment instructions.",
         "step2": "To subscribe: select a plan, check its price, duration, quota and expected activation time, then choose a payment method and pay. Renewing an active subscription in the same group extends time without immediately resetting usage. Orders covered by legacy succession activate at the time shown.",
         "step3": "After payment, check Orders and confirm the balance or subscription has been credited. If a paid order has not updated, refresh it first. For unresolved issues, contact an administrator with the order number and avoid paying again. Follow the refund instructions for refund requests."
+      },
+      "upgrade": {
+        "title": "How do I upgrade or downgrade a subscription?",
+        "lead": "Contact an administrator to upgrade a valid subscription for a plan currently on sale to a higher tier. Legacy, expired or invalid subscriptions are ineligible. Each upgrade covers one subscription; other subscriptions are not merged or credited.",
+        "step1": "Ask an administrator for a quote. Credit equals the current subscription’s acquisition value multiplied by the smaller of its remaining validity fraction and remaining monthly quota fraction, rounded down to the nearest cent. Ordinary purchases use the amount actually paid, excluding discounts. Monthly quota uses cumulative consumption in the current monthly window, rather than weekly usage alone.",
+        "step2": "Example: a Starter plan paid at ¥120 has 27 of 30 days left and 70% of its monthly quota remaining. Credit is ¥84; upgrading to a Standard plan priced at ¥230 costs ¥146 extra. Exhausted monthly quota gives zero credit. Free gifts and manually issued benefits without an actual payment are not credited. Prepaid renewals or complex payment histories require individual reconciliation. If you keep using the old quota after a quote, it must be recalculated before processing.",
+        "step3": "Once an administrator verifies the additional payment and completes the upgrade, the old subscription ends and its unused quota is not carried over. The new plan starts immediately with a full 30 days and fresh applicable weekly/monthly windows; subsequent resets follow the existing window rules. Do not buy another plan instead of requesting an upgrade: normal subscription and deferred renewal rules still apply to direct purchases.",
+        "step4": "Upgrading does not automatically switch API key groups. On the API Keys page, switch the keys you want to use to the new plan’s group. Keys left in other groups will not automatically use the new plan’s quota.",
+        "step5": "Further upgrades use the current subscription. Its acquisition value is the previous credit plus the previous actual additional payment; previously credited subscriptions cannot be reused. Immediate downgrades are not available during the current term. Buy a lower tier after expiry; consumed quota is not recalculated and tier price differences are not refunded."
       }
     }
   }

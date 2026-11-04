@@ -6,6 +6,14 @@
       <RouterLink :to="{ path: '/help', query: { topic: 'refund' }, hash: '#refund' }" class="underline underline-offset-4">{{ t('experience.paymentPolicy.refundLink') }} →</RouterLink>
       <RouterLink v-if="context !== 'orders'" :to="{ path: '/help', query: { topic: 'recharge' }, hash: '#recharge' }" class="underline underline-offset-4">{{ t('experience.paymentPolicy.rechargeLink') }} →</RouterLink>
     </div>
+    <!-- Local manual-upgrade guidance; no automatic billing or key migration. -->
+    <section v-if="context === 'subscription'" class="mt-4 space-y-2 border-t border-primary-200 pt-4 dark:border-primary-800">
+      <h3 class="font-semibold">{{ t('experience.paymentPolicy.upgradeTitle') }}</h3>
+      <p>{{ t('experience.paymentPolicy.upgrade') }}</p>
+      <p>{{ t('experience.paymentPolicy.upgradeActivation') }}</p>
+      <p class="font-medium">{{ t('experience.paymentPolicy.upgradeWarning') }}</p>
+      <RouterLink :to="{ path: '/help', query: { topic: 'upgrade' }, hash: '#upgrade' }" class="inline-block underline underline-offset-4">{{ t('experience.paymentPolicy.upgradeLink') }} →</RouterLink>
+    </section>
   </aside>
 </template>
 
