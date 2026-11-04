@@ -8,6 +8,7 @@ export default {
     replacement: 'Current plans (all new purchases and renewals)',
     hint: 'Existing subscriptions remain valid until expiry. Replacement purchases wait for the old term to end; existing API keys then move to the new quota group. Select products using separate old and new groups. Each product retains its own pricing and entitlements.',
     notice: 'Your legacy entitlement remains valid until {date}. Any replacement purchase takes effect afterwards; your existing API keys will then move to the selected new plan group.',
+    manualUpgrade: 'The above describes normal deferred purchases. A manual upgrade takes effect once confirmed and processed; you must switch the relevant API key groups yourself.',
     scheduled: 'Payment received · renewal scheduled',
     activation: 'Expected activation',
     waiting: 'Order #{id}: the replacement plan will take effect on {date}.',

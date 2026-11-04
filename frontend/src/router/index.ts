@@ -761,6 +761,10 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition
     }
+    // Local help deep links must reveal the expanded policy article.
+    if (_to.path === '/help' && _to.hash) {
+      return { el: _to.hash, top: 96 }
+    }
     // Scroll to top for new routes
     return { top: 0 }
   }
