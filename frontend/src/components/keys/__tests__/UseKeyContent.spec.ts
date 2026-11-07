@@ -69,6 +69,41 @@ describe('UseKeyContent', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
+  // Fork-local: v0.2.20 changes the upstream modal, but /connect and the
+  // key modal both generate their exports here. Cover the actual shared guide.
+  it.each(['codexCli', 'codexCliWs'])('exports native Codex defaults from the shared %s guide while retaining legacy auth', async (transport) => {
+    const wrapper = mount(UseKeyContent, {
+      props: {
+        show: true,
+        apiKey: 'test-only-key',
+        baseUrl: 'https://gateway.example.com',
+        platform: 'openai'
+      },
+      global: { stubs: { Icon: { template: '<span />' } } }
+    })
+    await wrapper.findAll('button').find((button) => button.text().trim() === `keys.useKeyModal.cliTabs.${transport}`)!.trigger('click')
+    const config = () => wrapper.findAll('pre code').map((code) => code.text())
+      .find((content) => content.includes('model_provider = "OpenAI"'))!
+
+    expect(wrapper.get('[data-testid="codex-auth-mode-api-key"]').attributes('aria-checked')).toBe('true')
+    expect(config()).toContain('model = "gpt-6.1-sol"')
+    expect(config()).toContain('review_model = "gpt-6.1-sol"')
+    expect(config().split('[model_providers.')[0]).toContain('web_search = "live"')
+    expect(config()).toContain('requires_openai_auth = false')
+    expect(config()).toContain('experimental_bearer_token = "test-only-key"')
+    expect(config().split('[features]')[1]).toContain('image_generation = true')
+    expect(wrapper.text()).not.toContain('auth.json')
+
+    await wrapper.get('[data-testid="codex-auth-mode-legacy"]').trigger('click')
+    expect(config()).toContain('requires_openai_auth = true')
+    expect(config()).not.toContain('image_generation')
+    expect(wrapper.text()).toContain('auth.json')
+    await wrapper.setProps({ show: false })
+    await wrapper.setProps({ show: true })
+    expect(wrapper.get('[data-testid="codex-auth-mode-api-key"]').attributes('aria-checked')).toBe('true')
+    expect(config()).toContain('image_generation = true')
+  })
+
   // Fork-local: upstream d1ba57977 added the TypeSafe System One guide to the
   // monolithic UseKeyModal; this fork renders guides from UseKeyContent, so the
   // port is covered here.

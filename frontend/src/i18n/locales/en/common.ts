@@ -261,6 +261,7 @@ export default {
       EMAIL_NOT_CONFIGURED: 'Email delivery is not configured. Use another sign-in method.',
       SERVICE_UNAVAILABLE: 'Service is temporarily unavailable. Please try again later.',
       USER_NOT_ACTIVE: 'Account has been disabled.',
+      EMAIL_BLOCKED: 'This email address is not allowed. Please use a different one.',
     },
     registrationFailed: 'Registration failed. Please try again.',
     emailDomainRegistrationLimit:

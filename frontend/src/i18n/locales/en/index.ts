@@ -3,6 +3,7 @@ import experience from './experience'
 import storefront from './storefront'
 import commercial from './commercial'
 import adminAccessKeys from './adminAccessKeys'
+import mcp from './mcp'
 import landing from './landing'
 import common from './common'
 import dashboard from './dashboard'
@@ -17,6 +18,7 @@ export default {
   ...storefront,
   ...commercial,
   adminAccessKeys,
+  mcp,
   ...landing,
   ...common,
   ...dashboard,
