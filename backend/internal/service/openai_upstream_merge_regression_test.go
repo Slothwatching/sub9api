@@ -73,3 +73,38 @@ func TestStreamingCreatedAtStampingPreservesPublicModelRewrite(t *testing.T) {
 		})
 	}
 }
+
+// Fork-local: upstream instruction restoration and public model isolation must
+// both survive the buffered SSE fallback, including when no mapping was needed.
+func TestBufferedSSEFallbackPreservesPublicModelAndClientInstructions(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	for _, passthrough := range []bool{false, true} {
+		for _, mapped := range []string{"provider-model", "public"} {
+			name := mapped
+			if passthrough {
+				name += "/passthrough"
+			}
+			t.Run(name, func(t *testing.T) {
+				rec := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rec)
+				c.Request = httptest.NewRequest(http.MethodPost, "/v1/responses", nil)
+				rememberOpenAIResponsesClientInstructions(c, []byte(`{"instructions":"client rule"}`))
+				syncOpenAIResponsesInstructionsEcho(c, []byte(`{"instructions":"injected rule"}`))
+				body := []byte("data: " + `{"type":"response.created","response":{"id":"r","model":"provider-alias","instructions":"injected rule"}}` + "\n\n")
+				resp := &http.Response{StatusCode: http.StatusOK, Header: http.Header{"Content-Type": {"text/event-stream"}}}
+				svc := &OpenAIGatewayService{}
+				if passthrough {
+					_, err := svc.handlePassthroughSSEToJSON(resp, c, &Account{ID: 1}, body, "public", mapped)
+					require.NoError(t, err)
+				} else {
+					_, err := svc.handleSSEToJSON(resp, c, &Account{ID: 1}, body, "public", mapped)
+					require.NoError(t, err)
+				}
+				payloads := sseDataPayloads(rec.Body.String())
+				require.Len(t, payloads, 1)
+				require.Equal(t, "public", gjson.Get(payloads[0], "response.model").String(), "provider aliases must not leak even without a channel mapping")
+				require.Equal(t, "client rule", gjson.Get(payloads[0], "response.instructions").String(), "upstream injected instructions must not replace the client's echo")
+			})
+		}
+	}
+}
