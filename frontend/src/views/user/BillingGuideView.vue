@@ -22,13 +22,14 @@ import CostCalculator from '@/components/experience/CostCalculator.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { getModelPlaza, type ModelPlazaResponse } from '@/api/modelPlaza'
+import { displayPlazaGroups } from '@/utils/displayModels'
 import { FeatureFlags, resolveFeatureFlag } from '@/utils/featureFlags'
 import { paymentAPI } from '@/api/payment'
 import type { SubscriptionPlan } from '@/types/payment'
 const { t } = useI18n(); const auth = useAuthStore(); const app = useAppStore()
 const loading = ref(true); const failed = ref(false); const data = ref<ModelPlazaResponse | null>(null)
 const subscriptionPlans = ref<SubscriptionPlan[]>([])
-const groups = computed(() => data.value?.groups.filter(g => g.models.some(m => m.platform === 'openai' && m.pricing?.billing_mode === 'token')) ?? [])
+const groups = computed(() => displayPlazaGroups(data.value?.groups ?? []).filter(g => g.models.some(m => m.platform === 'openai' && m.pricing?.billing_mode === 'token')))
 const authRequired = computed(() => resolveFeatureFlag(app.cachedPublicSettings, FeatureFlags.modelPlaza) && app.cachedPublicSettings?.model_plaza_require_auth === true && !auth.isAuthenticated)
 let version = 0
 async function load() {

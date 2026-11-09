@@ -57,6 +57,7 @@ import Icon from '@/components/icons/Icon.vue'
 import AvailableChannelsTable from '@/components/channels/AvailableChannelsTable.vue'
 import userChannelsAPI, { type UserAvailableChannel } from '@/api/channels'
 import userGroupsAPI from '@/api/groups'
+import { displayChannels } from '@/utils/displayModels'
 import { useAppStore } from '@/stores/app'
 import { extractApiErrorMessage } from '@/utils/apiError'
 
@@ -84,8 +85,9 @@ const columnLabels = computed(() => ({
  */
 const filteredChannels = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
-  if (!q) return channels.value
-  return channels.value
+  const visibleChannels = displayChannels(channels.value)
+  if (!q) return visibleChannels
+  return visibleChannels
     .map((ch) => {
       const nameHit = ch.name.toLowerCase().includes(q)
       const descHit = (ch.description || '').toLowerCase().includes(q)
