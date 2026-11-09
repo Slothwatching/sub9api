@@ -10,13 +10,16 @@ describe('curated model display', () => {
       { name: 'gpt-4', platform: 'openai' },
       { name: 'gpt-6.1-sol-fake', platform: 'openai' },
       { name: 'gpt-6.1-sol', platform: 'openai', pricing: price },
+      { name: 'gpt-image-2.6-flare', platform: 'openai' },
+      { name: 'gpt-image-2.6-sunburst', platform: 'openai' },
+      { name: 'gpt-5.5', platform: 'openai' },
       { name: 'other-model', platform: 'anthropic' }
     ] }, { id: 2, models: [{ name: 'gpt-4', platform: 'openai' }] }] as unknown as ModelPlazaGroup[]
     const visible = displayPlazaGroups(groups)
     expect(visible).toHaveLength(1)
-    expect(visible[0].models.map(m => m.name)).toEqual(['gpt-6.1-sol', 'other-model'])
+    expect(visible[0].models.map(m => m.name)).toEqual(['gpt-6.1-sol', 'gpt-image-2.6-flare', 'gpt-image-2.6-sunburst', 'other-model'])
     expect(visible[0].models[0].pricing).toBe(price)
-    expect(groups[0].models).toHaveLength(4)
+    expect(groups[0].models).toHaveLength(7)
   })
 
   it('filters channels before searching while preserving originally empty and other-provider sections', () => {
