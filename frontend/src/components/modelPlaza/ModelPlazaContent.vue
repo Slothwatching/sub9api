@@ -78,6 +78,7 @@ import PlazaFilterBar from './PlazaFilterBar.vue'
 import PlazaGroupSection from './PlazaGroupSection.vue'
 import type { ModelPlazaGroup, ModelPlazaResponse } from '@/api/modelPlaza'
 import { useAuthStore } from '@/stores/auth'
+import { displayPlazaGroups } from '@/utils/displayModels'
 
 const props = defineProps<{
   response: ModelPlazaResponse | null
@@ -109,12 +110,14 @@ function effectiveRate(g: ModelPlazaGroup): number {
   return g.user_rate_multiplier ?? g.rate_multiplier
 }
 
+const displayGroups = computed(() => displayPlazaGroups(props.response?.groups ?? []))
+
 const platforms = computed(() =>
-  [...new Set((props.response?.groups ?? []).map((g) => g.platform).filter(Boolean))].sort()
+  [...new Set(displayGroups.value.map((g) => g.platform).filter(Boolean))].sort()
 )
 
 const groupOptions = computed(() =>
-  (props.response?.groups ?? []).map((g) => ({
+  displayGroups.value.map((g) => ({
     id: g.id,
     name: g.name,
     platform: g.platform,
@@ -124,7 +127,7 @@ const groupOptions = computed(() =>
 
 /** 全量生效倍率;当前组合下不可用的项由 FilterBar 置灰而非隐藏。 */
 const rates = computed(() =>
-  [...new Set((props.response?.groups ?? []).map(effectiveRate))].sort((a, b) => a - b)
+  [...new Set(displayGroups.value.map(effectiveRate))].sort((a, b) => a - b)
 )
 
 /** 数据刷新后选中的倍率可能不复存在,重置为全部。 */
@@ -135,7 +138,7 @@ watch(rates, (list) => {
 })
 
 const filteredGroups = computed(() => {
-  let groups = props.response?.groups ?? []
+  let groups = displayGroups.value
   if (selectedPlatform.value !== 'all') {
     groups = groups.filter((g) => g.platform === selectedPlatform.value)
   }

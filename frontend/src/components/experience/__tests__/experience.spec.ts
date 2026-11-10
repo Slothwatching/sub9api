@@ -23,7 +23,7 @@ vi.mock('@/api/channelMonitor', () => ({ list: mocks.list }))
 vi.mock('@/api/modelPlaza', () => ({ getModelPlaza: mocks.plaza }))
 vi.mock('@/api/payment', () => ({ paymentAPI: { getCheckoutInfo: mocks.plans } }))
 vi.mock('vue-router', async () => ({ ...await vi.importActual('vue-router'), useRoute: () => route }))
-const groups = [{ id: 1, name: 'GPT', rate_multiplier: 1, models: [{ name: 'configured-gpt', platform: 'openai', catalog_capabilities: { supports_vision: false }, pricing: { billing_mode: 'token', input_price: 1e-6, output_price: 2e-6, cache_read_price: 0.1e-6, cache_write_price: null, intervals: [] } }] }] as ModelPlazaGroup[]
+const groups = [{ id: 1, name: 'GPT', rate_multiplier: 1, models: [{ name: 'gpt-6.1-sol', platform: 'openai', catalog_capabilities: { supports_vision: false }, pricing: { billing_mode: 'token', input_price: 1e-6, output_price: 2e-6, cache_read_price: 0.1e-6, cache_write_price: null, intervals: [] } }] }] as ModelPlazaGroup[]
 // The test runtime omits the i18n string compiler. Supply message functions
 // while exercising actual translated content and search behavior.
 function compiledMessages(value: Record<string, unknown>): Record<string, unknown> {
@@ -96,7 +96,7 @@ describe('GPT customer experience', () => {
   })
   it('shows only matching monitor observations, marks old results and clears them on logout', async () => {
     auth.isAuthenticated = true
-    mocks.list.mockResolvedValue({ items: [{ id: 1, name: 'Correct', provider: 'openai', group_name: 'GPT', primary_model: 'configured-gpt', timeline: [{ status: 'operational', checked_at: '2020-01-01T00:00:00Z' }] }, { id: 2, name: 'Wrong group', provider: 'openai', group_name: 'Private', primary_model: 'configured-gpt', timeline: [] }] })
+    mocks.list.mockResolvedValue({ items: [{ id: 1, name: 'Correct', provider: 'openai', group_name: 'GPT', primary_model: 'gpt-6.1-sol', timeline: [{ status: 'operational', checked_at: '2020-01-01T00:00:00Z' }] }, { id: 2, name: 'Wrong group', provider: 'openai', group_name: 'Private', primary_model: 'gpt-6.1-sol', timeline: [] }] })
     const wrapper = mount(ModelGuide, { props: { groups }, ...options() }); await flushPromises()
     expect(wrapper.text()).toContain('Correct')
     expect(wrapper.text()).toContain('较旧观测')
