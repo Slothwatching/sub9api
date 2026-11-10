@@ -13,23 +13,23 @@ const snapshot = () => ({ coverage: { data_through: '', coverage_complete: false
 beforeEach(() => { vi.clearAllMocks(); mocks.dimensions.mockResolvedValue({ platforms: [], groups: [], models: [] }); mocks.matrix.mockResolvedValue(null); mocks.models.mockResolvedValue({ items: [] }) })
 describe('V2 monitoring evidence', () => {
  it('distinguishes first loading and no monitoring data', async () => { mocks.snapshot.mockResolvedValue(snapshot()); const w = mount(View, { global }); await flushPromises(); expect(w.text()).toContain('commercial.status.empty'); expect(w.text()).not.toContain('channelMonitorV2.updatedTo'); w.unmount() })
- it('hides retired model rows while retaining current model rows', async () => { mocks.snapshot.mockResolvedValue(snapshot()); mocks.models.mockResolvedValue({ items: [{ platform: 'openai', model: 'gpt-4', metrics: snapshot().metrics, health: snapshot().health }, { platform: 'openai', model: 'gpt-6-sol', metrics: snapshot().metrics, health: snapshot().health }] }); const w = mount(View, { global }); await flushPromises(); expect(w.text()).not.toContain('gpt-4'); expect(w.text()).toContain('gpt-6-sol'); w.unmount() })
+ it('hides retired model rows while retaining current model rows', async () => { mocks.snapshot.mockResolvedValue(snapshot()); mocks.models.mockResolvedValue({ items: [{ platform: 'openai', model: 'gpt-5.5', metrics: snapshot().metrics, health: snapshot().health }, { platform: 'openai', model: 'gpt-6-sol', metrics: snapshot().metrics, health: snapshot().health }] }); const w = mount(View, { global }); await flushPromises(); expect(w.text()).not.toContain('gpt-5.5'); expect(w.text()).toContain('gpt-6-sol'); w.unmount() })
  it('filters retired model options and named matrix rows without removing aggregate rows', async () => {
   mocks.snapshot.mockResolvedValue(snapshot())
   mocks.dimensions.mockResolvedValue({ platforms: [], groups: [], models: [
-   { value: 'gpt-4', label: 'gpt-4', platform: 'openai' },
+   { value: 'gpt-5.5', label: 'gpt-5.5', platform: 'openai' },
    { value: 'gpt-6-sol', label: 'gpt-6-sol', platform: 'openai' },
-   { value: 'gpt-4', label: 'gpt-4', platform: 'other' },
+   { value: 'gpt-5.5', label: 'gpt-5.5', platform: 'other' },
   ] })
   mocks.matrix.mockResolvedValue({ coverage: {}, items: [
-   { group_id: 1, platform: 'openai', model: 'gpt-4' }, { group_id: 1, platform: 'openai', model: 'gpt-6-sol' },
-   { group_id: 1, platform: 'other', model: 'gpt-4' }, { group_id: 1, platform: 'openai' },
+   { group_id: 1, platform: 'openai', model: 'gpt-5.5' }, { group_id: 1, platform: 'openai', model: 'gpt-6-sol' },
+   { group_id: 1, platform: 'other', model: 'gpt-5.5' }, { group_id: 1, platform: 'openai' },
   ] })
   const w = mount(View, { global }); await flushPromises()
   const options = w.findAllComponents({ name: 'FilterMultiSelect' })[2].props('options')
-  expect(options).toEqual([{ value: 'gpt-6-sol', label: 'openai / gpt-6-sol' }, { value: 'gpt-4', label: 'other / gpt-4' }])
+  expect(options).toEqual([{ value: 'gpt-6-sol', label: 'openai / gpt-6-sol' }, { value: 'gpt-5.5', label: 'other / gpt-5.5' }])
   expect(w.findComponent({ name: 'RelayPulseMatrix' }).props('rows')).toEqual([
-   { group_id: 1, platform: 'openai', model: 'gpt-6-sol' }, { group_id: 1, platform: 'other', model: 'gpt-4' }, { group_id: 1, platform: 'openai' },
+   { group_id: 1, platform: 'openai', model: 'gpt-6-sol' }, { group_id: 1, platform: 'other', model: 'gpt-5.5' }, { group_id: 1, platform: 'openai' },
   ])
   w.unmount()
  })

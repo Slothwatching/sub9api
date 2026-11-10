@@ -7,19 +7,11 @@ const openAIModels = new Set([
   'gpt-6-luna', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna'
 ])
 
-// OpenAI API shutdowns and ChatGPT-signed-in Codex retirements, checked 2026-11-10.
-// Sources: https://developers.openai.com/api/docs/deprecations
+// ChatGPT-signed-in Codex retirements, checked 2026-11-10.
 // https://learn.chatgpt.com/docs/models#deprecated-codex-models
-// Exact IDs avoid hiding future models or snapshots merely sharing a prefix.
+// Exact IDs avoid hiding models with only an API retirement notice.
 const retiredOpenAIModels = new Set([
-  'gpt-image-1', 'dall-e-2', 'dall-e-3',
-  'gpt-4o-realtime-preview', 'gpt-4o-realtime-preview-2025-06-03',
-  'gpt-4o-realtime-preview-2024-12-17', 'gpt-4o-realtime-preview-2024-10-01',
-  'gpt-4o-mini-realtime-preview', 'gpt-4o-audio-preview',
-  'gpt-4o-audio-preview-2024-10-01', 'gpt-4o-mini-audio-preview',
-  'gpt-audio-mini-2025-10-06', 'gpt-realtime-mini-2025-10-06',
-  'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark',
-  'gpt-4', 'gpt-4-0613', 'gpt-4-0314', 'gpt-4-0125-preview', 'gpt-4-turbo-preview'
+  'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark'
 ])
 
 export function isRetiredDisplayModel(name: string, platform = 'openai'): boolean {
