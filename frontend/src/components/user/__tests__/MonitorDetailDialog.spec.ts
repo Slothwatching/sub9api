@@ -34,6 +34,13 @@ describe('monitor detail request ownership', () => {
     expect(mocks.showError).not.toHaveBeenCalled(); expect(w.text()).toContain('common.loading')
     current.resolve(detail('current')); await flushPromises(); expect(w.text()).toContain('current')
   })
+  it('hides retired models while retaining other providers and current models', async () => {
+    mocks.status.mockResolvedValueOnce({ provider: 'openai', models: [{ model: 'gpt-5.5' }, { model: 'gpt-6-sol' }] })
+    const w = open(); await flushPromises()
+    expect(w.text()).not.toContain('gpt-5.5'); expect(w.text()).toContain('gpt-6-sol')
+    mocks.status.mockResolvedValueOnce({ provider: 'other', models: [{ model: 'gpt-5.5' }] })
+    await w.setProps({ monitorId: 2 }); await flushPromises(); expect(w.text()).toContain('gpt-5.5')
+  })
   it('reports a failure for the current monitor', async () => {
     mocks.status.mockRejectedValueOnce(new Error('current failure'))
     const w = open(); await flushPromises()

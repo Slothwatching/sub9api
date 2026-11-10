@@ -576,6 +576,8 @@ export default {
     loadError: 'Failed to load channel status',
     detailLoadError: 'Failed to load channel detail',
     detailTitle: 'Channel Detail',
+    retiredHidden: 'Some retired-model monitors are hidden. Overall status includes all monitors.',
+    allRetiredHidden: 'No current-model monitors to display. Overall status includes retired-model monitors.',
     closeDetail: 'Close',
     windowTab: {
       '7d': '7 days',

@@ -11,8 +11,12 @@
       @refresh="refresh()"
     />
 
+    <p v-if="!loading && items.length > visibleItems.length" class="mb-4 text-sm text-gray-500 dark:text-dark-300">
+      {{ t(visibleItems.length ? 'channelStatus.retiredHidden' : 'channelStatus.allRetiredHidden') }}
+    </p>
     <MonitorCardGrid
-      :items="items"
+      v-if="loading || !items.length || visibleItems.length > 0"
+      :items="visibleItems"
       :window="currentWindow"
       :countdown-seconds="countdown"
       :loading="loading"
@@ -34,6 +38,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
 import { extractApiErrorMessage } from '@/utils/apiError'
+import { isRetiredDisplayModel } from '@/utils/displayModels'
 import {
   list as listChannelMonitorViews,
   status as fetchChannelMonitorDetail,
@@ -55,6 +60,7 @@ const appStore = useAppStore()
 
 // ── State ──
 const items = ref<UserMonitorView[]>([])
+const visibleItems = computed(() => items.value.filter(item => !isRetiredDisplayModel(item.primary_model, item.provider)))
 const loading = ref(true)
 const loadFailed = ref(false)
 const displayStatus = computed(() => loading.value ? 'loading' : loadFailed.value ? 'error' : !items.value.length ? 'empty' : overallStatus.value)

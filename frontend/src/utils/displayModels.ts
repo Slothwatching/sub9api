@@ -7,8 +7,20 @@ const openAIModels = new Set([
   'gpt-6-luna', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna'
 ])
 
+// ChatGPT-signed-in Codex retirements, checked 2026-11-10.
+// https://learn.chatgpt.com/docs/models#deprecated-codex-models
+// Exact IDs avoid hiding models with only an API retirement notice.
+const retiredOpenAIModels = new Set([
+  'gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini', 'gpt-5.3-codex-spark'
+])
+
+export function isRetiredDisplayModel(name: string, platform = 'openai'): boolean {
+  return platform.toLowerCase() === 'openai' && retiredOpenAIModels.has(name.toLowerCase())
+}
+
 export function isDisplayModel(model: { name: string; platform: string }): boolean {
   const name = model.name.toLowerCase()
+  if (isRetiredDisplayModel(name, model.platform)) return false
   return model.platform.toLowerCase() !== 'openai' ||
     /^(gpt-image-|chatgpt-image-|dall-e-|gpt-audio|gpt-realtime|gpt-live|gpt-transcribe|whisper|tts-)/.test(name) ||
     /^gpt-4o.*(?:audio|realtime|transcribe|tts)/.test(name) || openAIModels.has(name)
