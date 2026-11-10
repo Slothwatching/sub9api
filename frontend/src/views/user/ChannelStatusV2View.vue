@@ -303,7 +303,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="row in modelRows"
+                  v-for="row in visibleModelRows"
                   :key="`${row.platform}:${row.model}`"
                   class="cursor-pointer"
                   @click="drillModel(row)"
@@ -475,6 +475,7 @@ import RelayPulseMatrix from '@/features/channel-monitor-v2/RelayPulseMatrix.vue
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { extractApiErrorMessage } from '@/utils/apiError'
+import { isRetiredDisplayModel } from '@/utils/displayModels'
 import { isChannelMonitorThroughputHidden, isChannelMonitorUserRankingHidden } from '@/utils/featureFlags'
 import * as api from '@/api/channelMonitorV2'
 import type {
@@ -599,6 +600,7 @@ const groupOptions = computed(() =>
 )
 const modelOptions = computed(() =>
   (dimensions.value.models || [])
+    .filter((item) => !isRetiredDisplayModel(item.value, item.platform))
     .filter(
       (item) =>
         selectedPlatforms.value.size === 0 ||
@@ -641,9 +643,10 @@ watch(
   },
   { flush: 'post' },
 )
+const visibleModelRows = computed(() => modelRows.value.filter(row => !isRetiredDisplayModel(row.model, row.platform)))
 const activeRowsEmpty = computed(() =>
   activeTab.value === 'models'
-    ? modelRows.value.length === 0
+    ? visibleModelRows.value.length === 0
     : activeTab.value === 'errors'
       ? errorRows.value.length === 0
       : userRows.value.length === 0
@@ -656,7 +659,7 @@ const bootstrapPercent = computed(() => {
   return Math.min(100, Math.max(0, Math.round(raw)))
 })
 const matrixRows = computed(() => {
-  const items = matrix.value?.items || []
+  const items = (matrix.value?.items || []).filter(row => !row.model || !isRetiredDisplayModel(row.model, row.platform))
   // platform_group views should only show real groups, never bare platform placeholders.
   if (matrixGroupBy.value === 'platform_group' || matrixGroupBy.value === 'platform_group_model') {
     return items.filter((row) => row.group_id != null && Number(row.group_id) > 0)

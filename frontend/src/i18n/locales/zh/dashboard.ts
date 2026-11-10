@@ -581,6 +581,8 @@ export default {
     loadError: '加载渠道状态失败',
     detailLoadError: '加载渠道详情失败',
     detailTitle: '渠道详情',
+    retiredHidden: '部分已退役模型的监测卡片已隐藏。总体状态包含所有监测。',
+    allRetiredHidden: '暂无可展示的现役模型监测。总体状态包含已退役模型的监测。',
     closeDetail: '关闭',
     windowTab: {
       '7d': '7 天',

@@ -26,7 +26,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="m in detail.models"
+            v-for="m in visibleModels"
             :key="m.model"
             class="border-b border-gray-100 dark:border-dark-800"
           >
@@ -60,10 +60,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
 import { extractApiErrorMessage } from '@/utils/apiError'
+import { isRetiredDisplayModel } from '@/utils/displayModels'
 import {
   status as fetchChannelMonitorDetail,
   type UserMonitorDetail,
@@ -86,6 +87,7 @@ const appStore = useAppStore()
 const { statusLabel, statusBadgeClass, formatLatency, formatPercent, formatMonitorModel } = useChannelMonitorFormat()
 
 const detail = ref<UserMonitorDetail | null>(null)
+const visibleModels = computed(() => detail.value?.models.filter(model => !isRetiredDisplayModel(model.model, detail.value?.provider)) ?? [])
 const loading = ref(false)
 let requestVersion = 0
 

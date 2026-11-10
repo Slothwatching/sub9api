@@ -85,6 +85,7 @@ import {
   providerGradient,
 } from '@/composables/useChannelMonitorFormat'
 import { isChannelMonitorQuotaVisible } from '@/utils/featureFlags'
+import { isRetiredDisplayModel } from '@/utils/displayModels'
 import ProviderIcon from './ProviderIcon.vue'
 import MonitorMetricPair from './MonitorMetricPair.vue'
 import MonitorAvailabilityRow from './MonitorAvailabilityRow.vue'
@@ -139,7 +140,7 @@ const availabilityLabel = computed(() => {
 })
 
 const extraModelsCountLabel = computed(() => {
-  const count = props.item.extra_models?.length ?? 0
+  const count = props.item.extra_models?.filter(model => !isRetiredDisplayModel(model.model, props.item.provider)).length ?? 0
   if (count === 0) return undefined
   return t('monitorCommon.extraModelsCount', { n: count })
 })

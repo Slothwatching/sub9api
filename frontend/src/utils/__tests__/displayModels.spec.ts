@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { displayChannels, displayPlazaGroups } from '../displayModels'
+import { displayChannels, displayPlazaGroups, isRetiredDisplayModel } from '../displayModels'
 import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import type { UserAvailableChannel } from '@/api/channels'
 
@@ -21,9 +21,18 @@ describe('curated model display', () => {
     ] }, { id: 2, models: [{ name: 'gpt-4', platform: 'openai' }] }] as unknown as ModelPlazaGroup[]
     const visible = displayPlazaGroups(groups)
     expect(visible).toHaveLength(1)
-    expect(visible[0].models.map(m => m.name)).toEqual(['gpt-6.1-sol', 'gpt-image-2.6-flare', 'gpt-image-2.6-sunburst', 'gpt-image-1', 'chatgpt-image-latest', 'dall-e-3', 'gpt-4o-mini-transcribe', 'other-model'])
+    expect(visible[0].models.map(m => m.name)).toEqual(['gpt-6.1-sol', 'gpt-image-2.6-flare', 'gpt-image-2.6-sunburst', 'chatgpt-image-latest', 'gpt-4o-mini-transcribe', 'other-model'])
     expect(visible[0].models[0].pricing).toBe(price)
     expect(groups[0].models).toHaveLength(11)
+  })
+
+  it('hides exact retired IDs while preserving future and other-provider models', () => {
+    expect(isRetiredDisplayModel('gpt-4o-realtime-preview-2025-06-03')).toBe(true)
+    expect(isRetiredDisplayModel('gpt-audio-mini-2025-10-06')).toBe(true)
+    expect(isRetiredDisplayModel('gpt-image-1')).toBe(true)
+    expect(isRetiredDisplayModel('gpt-image-1-mini')).toBe(false)
+    expect(isRetiredDisplayModel('gpt-4o-audio-preview-2025-06-03')).toBe(false)
+    expect(isRetiredDisplayModel('gpt-image-1', 'other')).toBe(false)
   })
 
   it('filters channels before searching while preserving originally empty and other-provider sections', () => {
