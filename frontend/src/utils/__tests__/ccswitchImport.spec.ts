@@ -60,6 +60,24 @@ describe('ccswitchImport utils', () => {
     expect(payload.config).not.toContain('[features]')
   })
 
+  it.each(['Sloth Code', '自定义 "品牌" \\ gateway'])(
+    'uses the site name for the Codex provider and import card: %s',
+    (providerName) => {
+      const params = paramsFromDeeplink(buildCcSwitchImportDeeplink({
+        ...baseInput,
+        providerName,
+        platform: 'openai',
+        clientType: 'claude'
+      }))
+      const bytes = Uint8Array.from(atob(params.get('config') || ''), (char) => char.charCodeAt(0))
+      const payload = JSON.parse(new TextDecoder().decode(bytes)) as { config: string }
+
+      expect(params.get('name')).toBe(providerName)
+      expect(payload.config).toContain(`name = ${JSON.stringify(providerName)}\n`)
+      expect(payload.config).toContain('[model_providers.sub2api]')
+    }
+  )
+
   it('encodes embedded Codex configuration as UTF-8 and escapes TOML strings', () => {
     const apiKey = 'sk-"test\\key'
     const params = paramsFromDeeplink(buildCcSwitchImportDeeplink({
