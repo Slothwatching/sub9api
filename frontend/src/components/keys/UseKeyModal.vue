@@ -12,4 +12,5 @@ import type { GroupPlatform } from '@/types'
 defineProps<{ show: boolean; apiKey: string; baseUrl: string; platform: GroupPlatform | null; claudeCodeOnly?: boolean; allowMessagesDispatch?: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 const { t } = useI18n()
+
 </script>
