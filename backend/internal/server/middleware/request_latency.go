@@ -35,20 +35,36 @@ func (w *latencyWriter) Write(p []byte) (int, error) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	n, err := w.ResponseWriter.Write(p)
+	w.observeWrite(p, n, err)
+	return n, err
+}
+
+// observeWrite runs under mu; it never calls through the writer chain.
+func (w *latencyWriter) observeWrite(p []byte, n int, err error) {
 	if n > 0 && err == nil && w.Status() >= 200 && w.Status() < 300 {
 		w.observer.SSE = strings.Contains(w.Header().Get("Content-Type"), "text/event-stream")
 		w.observer.Feed(p[:n])
 		w.contentWritten = w.observer.Visible
-		// Complete buffered JSON is already rendered. Flush it before taking the
-		// usage snapshot so the client timing has the same meaning as streaming.
-		if w.contentWritten && !w.observer.SSE && err == nil {
-			w.flush()
+		if w.contentWritten && !w.observer.SSE {
+			w.observer.Timing.Mark(requestlatency.ClientFirstContent)
+		}
+	}
+}
+func (w *latencyWriter) WriteString(s string) (int, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	n, err := w.ResponseWriter.WriteString(s)
+	if !w.observer.Stopped() && n > 0 && err == nil && w.Status() >= 200 && w.Status() < 300 {
+		w.observer.SSE = strings.Contains(w.Header().Get("Content-Type"), "text/event-stream")
+		w.observer.FeedString(s[:n])
+		w.contentWritten = w.observer.Visible
+		if w.contentWritten && !w.observer.SSE {
+			w.observer.Timing.Mark(requestlatency.ClientFirstContent)
 		}
 	}
 	return n, err
 }
-func (w *latencyWriter) WriteString(s string) (int, error) { return w.Write([]byte(s)) }
-func (w *latencyWriter) Flush()                            { w.mu.Lock(); defer w.mu.Unlock(); w.flush() }
+func (w *latencyWriter) Flush() { w.mu.Lock(); defer w.mu.Unlock(); w.flush() }
 func (w *latencyWriter) flush() {
 	w.ResponseWriter.Flush()
 	if w.contentWritten {

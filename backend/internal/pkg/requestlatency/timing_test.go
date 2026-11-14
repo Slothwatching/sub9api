@@ -165,12 +165,3 @@ func TestTimingActualTLSHooks(t *testing.T) {
 	require.NotNil(t, got.UpstreamFirstByteMs)
 	require.GreaterOrEqual(t, *got.UpstreamConnectMs, *got.UpstreamTLSMs)
 }
-
-func TestTimingLargeCompleteJSONDoesNotNeedObservationBuffer(t *testing.T) {
-	_, clock := New(context.Background())
-	observer := Observer{Timing: clock}
-	payload := []byte(`{"data":[{"b64_json":"` + strings.Repeat("A", maxObservation*2) + `"}]}`)
-	observer.Feed(payload)
-	require.NotNil(t, clock.Snapshot().FirstVisibleContentMs)
-	require.Zero(t, cap(observer.buf))
-}

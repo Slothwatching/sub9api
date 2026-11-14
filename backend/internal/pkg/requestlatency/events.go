@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"strings"
+	"unsafe"
 
 	"github.com/tidwall/gjson"
 )
@@ -15,39 +16,33 @@ func classify(data []byte, event string) (semantic, visible bool) {
 	if !gjson.ValidBytes(data) {
 		return false, false
 	}
-	r := gjson.ParseBytes(data)
-	typ := r.Get("type").String()
+	r := rawJSON(strings.TrimSpace(byteString(data)))
+	// Only the small discriminator is decoded; payload strings stay raw.
+	typ := ""
+	if v := r.get("type"); len(v) <= 256 {
+		typ = gjson.Parse(string(v)).Str
+	}
 	if typ == "" {
 		typ = event
 	}
-	if choices := r.Get("choices"); choices.IsArray() {
-		for _, choice := range choices.Array() {
+	if choices := r.get("choices"); choices.array() {
+		choices.each(func(choice rawJSON) {
 			for _, part := range []string{"delta", "message"} {
-				d := choice.Get(part)
+				d := choice.get(part)
 				for _, field := range []string{"content", "reasoning_content", "reasoning", "refusal", "audio.data", "audio.transcript", "function_call.arguments"} {
-					v := d.Get(field)
-					if v.Type == gjson.String && v.String() != "" {
-						visible = true
-					}
-					if field == "content" && v.IsArray() {
-						for _, part := range v.Array() {
-							visible = visible || itemVisible(part)
-						}
+					v := d.get(field)
+					visible = visible || v.nonempty()
+					if field == "content" {
+						v.each(func(part rawJSON) { visible = visible || itemVisible(part) })
 					}
 				}
-				if d.Get("function_call.name").String() != "" {
-					semantic = true
-				}
-				for _, tool := range d.Get("tool_calls").Array() {
-					if tool.Get("id").String() != "" || tool.Get("function.name").String() != "" {
-						semantic = true
-					}
-					if tool.Get("function.arguments").String() != "" {
-						visible = true
-					}
-				}
+				semantic = semantic || d.get("function_call.name").value()
+				d.get("tool_calls").each(func(tool rawJSON) {
+					semantic = semantic || tool.get("id").value() || tool.get("function.name").value()
+					visible = visible || tool.get("function.arguments").value()
+				})
 			}
-		}
+		})
 		return semantic || visible, visible
 	}
 	switch typ {
@@ -59,45 +54,40 @@ func classify(data []byte, event string) (semantic, visible bool) {
 	}
 	if strings.HasPrefix(typ, "response.") {
 		if strings.HasSuffix(typ, ".delta") {
-			visible = r.Get("delta").String() != ""
+			visible = r.get("delta").value()
 		}
 		for _, path := range []string{"text", "arguments", "input", "refusal", "partial_image_b64"} {
-			if r.Get(path).String() != "" {
+			if r.get(path).value() {
 				visible = true
 			}
 		}
-		if itemVisible(r.Get("item")) || itemVisible(r.Get("part")) {
+		if itemVisible(r.get("item")) || itemVisible(r.get("part")) {
 			visible = true
 		}
-		for _, item := range r.Get("response.output").Array() {
-			visible = visible || itemVisible(item)
-		}
+		r.get("response.output").each(func(item rawJSON) { visible = visible || itemVisible(item) })
 		lifecycle := typ == "response.completed" || typ == "response.done"
 		return visible || !lifecycle, visible
 	}
+	if strings.HasPrefix(typ, "image_generation.") || strings.HasPrefix(typ, "image_edit.") {
+		visible = r.get("b64_json").nonempty() || r.get("url").nonempty()
+		return visible, visible
+	}
 	// Buffered Responses and native images (successful JSON only).
-	for _, item := range r.Get("output").Array() {
-		visible = visible || itemVisible(item)
-	}
-	for _, item := range r.Get("data").Array() {
-		visible = visible || item.Get("b64_json").String() != "" || item.Get("url").String() != ""
-	}
+	r.get("output").each(func(item rawJSON) { visible = visible || itemVisible(item) })
+	r.get("data").each(func(item rawJSON) { visible = visible || item.get("b64_json").nonempty() || item.get("url").nonempty() })
 	return visible, visible
 }
-func itemVisible(r gjson.Result) bool {
+func itemVisible(r rawJSON) bool {
 	for _, key := range []string{"text", "transcript", "arguments", "input", "result", "refusal"} {
-		if r.Get(key).String() != "" {
+		if r.get(key).value() {
 			return true
 		}
 	}
+	visible := false
 	for _, key := range []string{"content", "summary"} {
-		for _, part := range r.Get(key).Array() {
-			if itemVisible(part) {
-				return true
-			}
-		}
+		r.get(key).each(func(part rawJSON) { visible = visible || itemVisible(part) })
 	}
-	return false
+	return visible
 }
 
 // Observer bounds line/event buffers to 64 KiB each and stops after content. Oversized events are
@@ -137,6 +127,14 @@ func (o *Observer) observe(data []byte) {
 		o.buf = nil
 		o.data = nil
 	}
+}
+
+// Stopped reports whether further payload inspection is unnecessary.
+func (o *Observer) Stopped() bool { return o.Timing == nil || o.done }
+
+// FeedString observes a read-only view only for this call. No view of s survives.
+func (o *Observer) FeedString(s string) {
+	o.Feed(unsafe.Slice(unsafe.StringData(s), len(s)))
 }
 func (o *Observer) Feed(p []byte) {
 	if o.Timing == nil || o.done {

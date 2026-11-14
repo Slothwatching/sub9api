@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/Wei-Shaw/sub2api/internal/config"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/requestlatency"
 	coderws "github.com/coder/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
@@ -1444,7 +1445,13 @@ func TestOpenAIGatewayService_ProxyResponsesWebSocketFromClient_HTTPBridgeModeRe
 
 	serverErrCh := make(chan error, 1)
 	resultCh := make(chan *OpenAIForwardResult, 1)
+	_, handshake := requestlatency.ForkAt(context.Background(), time.Now().Add(-time.Hour))
+	_, turnClock := requestlatency.ForkAt(context.Background(), time.Now())
 	hooks := &OpenAIWSIngressHooks{
+		TurnContext: func(parent context.Context, turn int) context.Context {
+			require.Equal(t, 1, turn)
+			return turnClock.Context(parent)
+		},
 		AfterTurn: func(_ int, result *OpenAIForwardResult, turnErr error) {
 			if turnErr == nil && result != nil {
 				resultCh <- result
@@ -1483,7 +1490,7 @@ func TestOpenAIGatewayService_ProxyResponsesWebSocketFromClient_HTTPBridgeModeRe
 			return
 		}
 
-		serverErrCh <- svc.ProxyResponsesWebSocketFromClient(r.Context(), ginCtx, conn, account, "sk-test", firstMessage, hooks)
+		serverErrCh <- svc.ProxyResponsesWebSocketFromClient(handshake.Context(r.Context()), ginCtx, conn, account, "sk-test", firstMessage, hooks)
 	}))
 	defer wsServer.Close()
 
@@ -1540,6 +1547,11 @@ func TestOpenAIGatewayService_ProxyResponsesWebSocketFromClient_HTTPBridgeModeRe
 		t.Fatal("未收到 http_bridge turn 结果回调")
 	}
 
+	require.NotNil(t, turnClock.Snapshot().UpstreamFirstByteMs)
+	require.NotNil(t, turnClock.Snapshot().FirstVisibleContentMs)
+	require.Nil(t, turnClock.Snapshot().ClientFirstContentMs, "native downstream WS frames do not pass through latencyWriter")
+	require.Equal(t, requestlatency.Snapshot{}, handshake.Snapshot(), "HTTP bridge must not observe on the connection clock")
+	require.Same(t, turnClock, requestlatency.From(upstream.lastReq.Context()))
 	require.NotNil(t, upstream.lastReq, "http_bridge 模式应调用 HTTP 上游")
 	require.Equal(t, "true", upstream.lastReq.Header.Get(responsesLiteHeader))
 	require.True(t, gjson.GetBytes(upstream.lastBody, "parallel_tool_calls").Exists())

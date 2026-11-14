@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -119,4 +121,114 @@ func TestRequestLatencySkipsLifecycleFlushAndBufferedJSON(t *testing.T) {
 	}
 	ctx, timing := requestlatency.New(context.Background())
 	require.Same(t, timing, requestlatency.From(ctx))
+}
+
+// Models Ops capture/keepalive wrappers: update their own state under a lock,
+// then unlock before calling the next writer. latencyWriter serializes the sink.
+type unlockedCaptureWriter struct {
+	gin.ResponseWriter
+	mu     sync.Mutex
+	writes int
+}
+
+func (w *unlockedCaptureWriter) Write(p []byte) (int, error) {
+	w.mu.Lock()
+	w.writes++
+	w.mu.Unlock()
+	return w.ResponseWriter.Write(p)
+}
+func (w *unlockedCaptureWriter) Flush() {
+	w.mu.Lock()
+	w.writes++
+	w.mu.Unlock()
+	w.ResponseWriter.Flush()
+}
+
+func TestRequestLatencyConcurrentWrapperWriteFlush(t *testing.T) {
+	rec := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rec)
+	c.Writer.Header().Set("Content-Type", "text/event-stream")
+	_, clock := requestlatency.New(context.Background())
+	latency := &latencyWriter{ResponseWriter: c.Writer, observer: requestlatency.Observer{Timing: clock, Client: true}}
+	outer := &unlockedCaptureWriter{ResponseWriter: latency}
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < 100; j++ {
+				_, _ = outer.Write([]byte("data: {\"type\":\"response.output_text.delta\",\"delta\":\"ok\"}\n\n"))
+				_, _ = outer.WriteString(": keepalive\n\n")
+				outer.Flush()
+			}
+		}()
+	}
+	wg.Wait()
+	require.NotNil(t, clock.Snapshot().ClientFirstContentMs)
+	require.Equal(t, 1600, outer.writes)
+}
+
+type stringSinkWriter struct{ gin.ResponseWriter }
+
+func (w *stringSinkWriter) WriteString(s string) (int, error) { return len(s), nil }
+func (w *stringSinkWriter) Write(p []byte) (int, error)       { return len(p), nil }
+
+func TestRequestLatencyStoppedWriteStringDoesNotCopy(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Writer.Header().Set("Content-Type", "text/event-stream")
+	_, clock := requestlatency.New(context.Background())
+	writer := &latencyWriter{ResponseWriter: &stringSinkWriter{c.Writer}, observer: requestlatency.Observer{Timing: clock, Client: true}}
+	_, err := writer.WriteString("data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\n")
+	require.NoError(t, err)
+	payload := strings.Repeat("A", 2<<20)
+	result := testing.Benchmark(func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			_, _ = writer.WriteString(payload)
+		}
+	})
+	require.Less(t, result.AllocedBytesPerOp(), int64(1024))
+}
+
+func TestRequestLatencyBufferedJSONDoesNotFlush(t *testing.T) {
+	for _, stringWrite := range []bool{false, true} {
+		t.Run(fmt.Sprint(stringWrite), func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(rec)
+			_, clock := requestlatency.New(context.Background())
+			writer := &latencyWriter{ResponseWriter: c.Writer, observer: requestlatency.Observer{Timing: clock, Client: true}}
+			writer.Header().Set("Content-Type", "application/json")
+			payload := `{"data":[{"b64_json":"ok"}]}`
+			var err error
+			if stringWrite {
+				_, err = writer.WriteString(payload)
+			} else {
+				_, err = writer.Write([]byte(payload))
+			}
+			require.NoError(t, err)
+			require.False(t, rec.Flushed, "instrumentation must preserve buffered JSON transport behavior")
+			require.NotNil(t, clock.Snapshot().ClientFirstContentMs)
+		})
+	}
+}
+
+type failedLatencyWriter struct{ gin.ResponseWriter }
+
+func (w *failedLatencyWriter) Write(p []byte) (int, error)       { return len(p), io.ErrClosedPipe }
+func (w *failedLatencyWriter) WriteString(s string) (int, error) { return len(s), io.ErrClosedPipe }
+
+func TestRequestLatencyFailedWritesDoNotMarkContent(t *testing.T) {
+	for _, stringWrite := range []bool{false, true} {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		_, clock := requestlatency.New(context.Background())
+		w := &latencyWriter{ResponseWriter: &failedLatencyWriter{c.Writer}, observer: requestlatency.Observer{Timing: clock, Client: true}}
+		payload := `{"data":[{"b64_json":"ok"}]}`
+		if stringWrite {
+			_, _ = w.WriteString(payload)
+		} else {
+			_, _ = w.Write([]byte(payload))
+		}
+		w.Flush()
+		require.Nil(t, clock.Snapshot().ClientFirstContentMs)
+	}
 }

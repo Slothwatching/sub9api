@@ -26,29 +26,35 @@ within the first millisecond; NULL means no supported observation, never zero.
 | `first_data_ms` | Ingress → first nonempty upstream SSE data event, excluding `[DONE]`; may be role/lifecycle/usage. For buffered JSON, first complete observed envelope. |
 | `first_semantic_ms` | Ingress → first semantic upstream event. Responses structural output progress qualifies; Chat needs content/tool progress. Lifecycle, metadata, role-only, usage-only and keepalive events do not qualify. |
 | `first_visible_content_ms` | Ingress → first observed usable upstream text/reasoning/refusal, tool arguments/input, audio or image content. Structural events with empty content do not qualify. |
-| `client_first_content_ms` | Ingress → first downstream Flush after a successful write carrying usable content. Measures the gateway flush, not network delivery or rendering on the user's device. |
+| `client_first_content_ms` | Ingress → first downstream Flush after a successful content write for SSE, or successful usable-content write for non-SSE JSON. Measures gateway output, not network delivery or rendering on the user's device. |
 | `user_duration_ms` | Ingress → completion of forwarding and synchronous handler bookkeeping, captured before enqueueing usage. Includes failover; excludes asynchronous billing/storage. |
 | `attempt_count` | Outer handler Forward invocations, including failed invocations; internal protocol repair/HTTP retries within Forward are part of the same attempt. |
 | `last_attempt_ms` | Duration of the last outer Forward invocation. Existing duration_ms remains available too. |
 | `last_failed_attempt_ms` | Duration of the last outer Forward returning an error, or NULL if none. |
 
 The first visible event and first flush are independent observations: suppressed,
-rewritten or buffered upstream content is not proof of a client flush. Completed
-buffered JSON content is flushed after its successful write so its usage snapshot
-can include the same client metric. SSE heartbeat/lifecycle flushes never count.
+rewritten or buffered upstream content is not proof of a client flush. Buffered
+JSON records the client metric on its successful content write, without adding a
+Flush. SSE heartbeat/lifecycle flushes never count.
 Definitions are independent of the administrator's legacy TTFT-mode setting.
 
 HTTP observability uses composed httptrace hooks on the actual native/plugin
 outbound request plus response-body observation. Unsupported transports/plugins
 leave connection/TLS NULL. WebSocket frames and Anthropic/Gemini event formats
 are not covered by the new content/flush metrics; existing metrics remain intact.
-Images use the same observer when their payload fits its bounds.
+Native image_generation.* and image_edit.* events with root b64_json/url use
+the same observer when their payload fits its bounds. Each WebSocket turn has an
+independent clock starting at turn admission, retained across retries of that
+logical turn. HTTP-bridge upstream observation and usage submission use that clock. Native WS content/flush can stay NULL.
 
 Observers use bounded 64 KiB line/event buffers and stop after the first
-usable content. Complete JSON writes/reads are inspected in place without copying, including
-large buffered image responses. Oversized fragmented events/envelopes are skipped rather than copying entire
-image/tool payloads; a later qualifying event can still be measured. An oversized fragmented
-buffered response or a stream with only oversized content can therefore have NULL
+usable content. Complete JSON writes/reads are inspected through call-scoped
+read-only views, without copying the payload into Observer.buf or a parse string.
+Raw string checks do not materialize/unescape large image or tool values. After
+observation stops, WriteString delegates directly to the underlying string writer.
+Fragmented SSE retains the 64 KiB bound; oversized fragmented events/envelopes
+are skipped rather than copying entire image/tool payloads; a later qualifying
+event can still be measured. An oversized fragmented buffered response or a stream with only oversized content can therefore have NULL
 content/flush timestamps. SSE event names and fragmented/multiline data are
 supported. No payload is logged. New usage fields only attach to existing usage
 records: failures that never produce a usage record do not gain one.
@@ -70,7 +76,8 @@ GROUP BY model;
 ```
 
 Migration 251 uses only `ADD COLUMN IF NOT EXISTS ... INTEGER`, with no defaults,
-backfill or billing changes. The generated ent schema and all raw SQL insert,
-batch/CTE and scan paths include these fields. Deploy compatibility fingerprints
+backfill or billing changes. Transaction-local lock_timeout is 5s and
+statement_timeout is 10min, matching existing migration conventions. The generated
+ent schema and all raw SQL insert, batch/CTE and scan paths include these fields. Deploy compatibility fingerprints
 must be computed using the existing migration_review process; a fingerprint alone
 does not prove PostgreSQL baseline/upgrade/rollback/reupgrade compatibility.

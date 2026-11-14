@@ -66,6 +66,21 @@ func New(ctx context.Context) (context.Context, *Timing) {
 	t := &Timing{start: time.Now()}
 	return context.WithValue(ctx, key{}, t), t
 }
+
+// ForkAt installs an independent turn clock without changing the parent clock.
+// HTTP retries should keep using New, which preserves the ingress clock.
+func ForkAt(ctx context.Context, start time.Time) (context.Context, *Timing) {
+	if start.IsZero() {
+		start = time.Now()
+	}
+	t := &Timing{start: start}
+	return t.Context(ctx), t
+}
+
+// Context installs this clock while retaining the caller's other context values.
+func (t *Timing) Context(ctx context.Context) context.Context {
+	return context.WithValue(ctx, key{}, t)
+}
 func From(ctx context.Context) *Timing {
 	if ctx == nil {
 		return nil

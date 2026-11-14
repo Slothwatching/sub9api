@@ -1,3 +1,6 @@
+SET LOCAL lock_timeout = '5s';
+SET LOCAL statement_timeout = '10min';
+
 -- Fork-local observability only. Old rows stay NULL; legacy first_token_ms is unchanged.
 ALTER TABLE usage_logs
     ADD COLUMN IF NOT EXISTS user_queue_ms INTEGER,
