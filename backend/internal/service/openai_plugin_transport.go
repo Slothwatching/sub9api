@@ -1,13 +1,23 @@
 package service
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
 	"github.com/Wei-Shaw/sub2api/internal/pkg/requestlatency"
 )
 
+type openAIPluginManager interface {
+	RoundTripOpenAIOAuth(context.Context, *http.Request, string, *Account) (*http.Response, bool, error)
+	ShouldRouteOpenAIOAuth(*Account) bool
+}
+
 func (s *OpenAIGatewayService) SetPluginManager(manager *PluginManager) {
+	if manager == nil {
+		s.pluginManager = nil
+		return
+	}
 	s.pluginManager = manager
 }
 
@@ -27,7 +37,8 @@ func (s *OpenAIGatewayService) doOpenAIUpstream(request *http.Request, proxyURL 
 		}
 	}()
 	if s.pluginManager != nil {
-		response, handled, err := s.pluginManager.RoundTripOpenAIOAuth(request.Context(), request, proxyURL, account)
+		var handled bool
+		response, handled, err = s.pluginManager.RoundTripOpenAIOAuth(request.Context(), request, proxyURL, account)
 		if handled {
 			return response, err
 		}

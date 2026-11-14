@@ -68,3 +68,52 @@ func TestOpenAIUpstreamSegmentedTimingObservation(t *testing.T) {
 		require.Nil(t, got.UpstreamConnectMs, "stub transport emits no trace callbacks")
 	}
 }
+
+type segmentedTimingPluginManagerStub struct {
+	response *http.Response
+	calls    int
+}
+
+func (p *segmentedTimingPluginManagerStub) RoundTripOpenAIOAuth(context.Context, *http.Request, string, *Account) (*http.Response, bool, error) {
+	p.calls++
+	return p.response, true, nil
+}
+
+func (*segmentedTimingPluginManagerStub) ShouldRouteOpenAIOAuth(*Account) bool {
+	return true
+}
+
+func TestOpenAIUpstreamSegmentedTimingPluginObservation(t *testing.T) {
+	for name, payload := range map[string]string{
+		"responses": "data: {\"type\":\"response.created\"}\n\ndata: {\"type\":\"response.output_text.delta\",\"delta\":\"ok\"}\n\n",
+		"chat":      "data: {\"choices\":[{\"delta\":{\"role\":\"assistant\"}}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\n",
+	} {
+		t.Run(name, func(t *testing.T) {
+			ctx, clock := requestlatency.New(context.Background())
+			req, err := http.NewRequestWithContext(ctx, http.MethodPost, "http://mock.invalid", nil)
+			require.NoError(t, err)
+			plugin := &segmentedTimingPluginManagerStub{response: &http.Response{
+				StatusCode: http.StatusOK,
+				Header:     http.Header{"Content-Type": []string{"text/event-stream"}},
+				Body:       io.NopCloser(strings.NewReader(payload)),
+			}}
+			upstream := &httpUpstreamRecorder{}
+			svc := &OpenAIGatewayService{pluginManager: plugin, httpUpstream: upstream}
+			resp, err := svc.doOpenAIUpstream(req, "", &Account{ID: 1, Platform: PlatformOpenAI, Type: AccountTypeOAuth})
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			defer resp.Body.Close()
+			require.Same(t, plugin.response, resp)
+			require.Equal(t, 1, plugin.calls)
+			require.Empty(t, upstream.requests, "handled plugin request must bypass HTTP upstream")
+			body, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			require.Equal(t, payload, string(body))
+			got := clock.Snapshot()
+			require.NotNil(t, got.UpstreamFirstByteMs)
+			require.NotNil(t, got.FirstDataMs)
+			require.NotNil(t, got.FirstSemanticMs)
+			require.NotNil(t, got.FirstVisibleContentMs)
+		})
+	}
+}
