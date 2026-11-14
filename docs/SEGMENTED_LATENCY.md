@@ -50,12 +50,16 @@ logical turn. HTTP-bridge upstream observation and usage submission use that clo
 Observers use bounded 64 KiB line/event buffers and stop after the first
 usable content. Complete JSON writes/reads are inspected through call-scoped
 read-only views, without copying the payload into Observer.buf or a parse string.
+Leading whitespace-only JSON keepalive writes leave the buffer empty so a later
+complete large JSON body can still be inspected in place.
 Raw string checks do not materialize/unescape large image or tool values. After
 observation stops, WriteString delegates directly to the underlying string writer.
 Fragmented SSE retains the 64 KiB bound; oversized fragmented events/envelopes
 are skipped rather than copying entire image/tool payloads; a later qualifying
-event can still be measured. An oversized fragmented buffered response or a stream with only oversized content can therefore have NULL
-content/flush timestamps. SSE event names and fragmented/multiline data are
+event can still be measured after an LF or CRLF blank event delimiter, including
+a delimiter split across reads. Recovery clears the skipped event name. An oversized
+fragmented buffered response or a stream with only oversized content can therefore
+have NULL content/flush timestamps. SSE event names and fragmented/multiline data are
 supported. No payload is logged. New usage fields only attach to existing usage
 records: failures that never produce a usage record do not gain one.
 

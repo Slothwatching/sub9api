@@ -2,6 +2,7 @@ package requestlatency
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -147,6 +148,46 @@ func TestTimingObserverBoundedAndUsageOnly(t *testing.T) {
 	require.Nil(t, timing.Snapshot().FirstSemanticMs)
 	o.Feed([]byte("data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\n"))
 	require.NotNil(t, timing.Snapshot().FirstVisibleContentMs)
+}
+
+func TestTimingObserverOversizedEventRecovery(t *testing.T) {
+	for _, ending := range []string{"\n", "\r\n"} {
+		for _, split := range []bool{false, true} {
+			for _, content := range []string{
+				`event: image_generation.completed` + ending + `data: {"b64_json":"ok"}`,
+				`event: response.output_text.delta` + ending + `data: {"delta":"ok"}`,
+			} {
+				t.Run(fmt.Sprintf("ending=%q/split=%t/%s", ending, split, content[:20]), func(t *testing.T) {
+					_, clock := New(context.Background())
+					o := Observer{Timing: clock, SSE: true}
+					o.Feed([]byte("event: response.output_text.delta" + ending))
+					o.Feed([]byte("data: " + strings.Repeat("x", maxObservation+1) + ending))
+					require.True(t, o.dropping, "nonempty CRLF line must not end the dropped event")
+					o.Feed([]byte(`data: {"delta":"still inside oversized event"}` + ending))
+					require.True(t, o.dropping)
+					require.Nil(t, clock.Snapshot().FirstVisibleContentMs)
+					if split {
+						// CR and LF of the blank delimiter arrive in separate calls.
+						o.Feed([]byte(strings.TrimSuffix(ending, "\n")))
+						require.True(t, o.dropping, "an incomplete line cannot recover")
+						o.Feed([]byte("\n"))
+					} else {
+						o.Feed([]byte(ending))
+					}
+					require.False(t, o.dropping)
+					require.Empty(t, o.event)
+					// No event name or type: the old delta event must not leak.
+					o.Feed([]byte(`data: {"delta":"untyped"}` + ending + ending))
+					require.Nil(t, clock.Snapshot().FirstSemanticMs)
+					require.Nil(t, clock.Snapshot().FirstVisibleContentMs)
+					o.Feed([]byte(content + ending + ending))
+					require.True(t, o.Visible, "a later qualifying event must still be observed")
+					require.NotNil(t, clock.Snapshot().FirstVisibleContentMs)
+					require.LessOrEqual(t, cap(o.buf), maxObservation)
+				})
+			}
+		}
+	}
 }
 
 func TestTimingActualTLSHooks(t *testing.T) {

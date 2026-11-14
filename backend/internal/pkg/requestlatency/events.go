@@ -141,6 +141,11 @@ func (o *Observer) Feed(p []byte) {
 		return
 	}
 	if !o.SSE {
+		// Image JSON keepalives precede a complete body in a separate write.
+		// Keep the buffer empty so that body can still be inspected in place.
+		if len(o.buf) == 0 && len(bytes.TrimSpace(p)) == 0 {
+			return
+		}
 		// A complete buffered JSON write/read already has storage owned by its caller.
 		// Inspect it in place, including large images, without a second payload copy.
 		if len(o.buf) == 0 && gjson.ValidBytes(p) {
@@ -173,6 +178,7 @@ func (o *Observer) Feed(p []byte) {
 		if !o.dropping {
 			o.buf = append(o.buf, p[:n]...)
 		}
+		skippedLine := p[:n]
 		p = p[n:]
 		if i < 0 {
 			return
@@ -180,8 +186,9 @@ func (o *Observer) Feed(p []byte) {
 		p = p[1:]
 		line := bytes.TrimSpace(o.buf)
 		if o.dropping {
-			if n == 0 {
+			if len(bytes.TrimSpace(skippedLine)) == 0 {
 				o.dropping = false
+				o.event = ""
 			}
 		} else if len(line) == 0 {
 			if len(o.data) > 0 {

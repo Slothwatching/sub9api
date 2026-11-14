@@ -349,7 +349,7 @@ export default {
       first_data_ms: '首个数据事件 (ms)',
       first_semantic_ms: '首个语义事件 (ms)',
       first_visible_content_ms: '首个可见内容 (ms)',
-      client_first_content_ms: '客户端首内容刷新 (ms)',
+      client_first_content_ms: '客户端首内容 (ms)',
       user_duration_ms: '入口总耗时 (ms)',
       attempt_count: '尝试次数',
       last_attempt_ms: '末次尝试 (ms)',

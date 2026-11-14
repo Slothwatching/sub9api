@@ -75,6 +75,15 @@ func TestOpenAISegmentedTimingHandlerRetryUsage(t *testing.T) {
 	}
 }
 
+func TestOpenAISegmentedTimingWebSocketSelectionUsage(t *testing.T) {
+	// Exercise the real handler context replacements, scheduler, AfterTurn and
+	// usage persistence. Discarding ForkAt's context loses this selection mark.
+	got := runOpenAIResponsesWebSocketUsageLogCase(t, openAIResponsesWSUsageLogCase{
+		firstPayload: `{"type":"response.create","model":"gpt-5.4","stream":false}`,
+	})
+	require.NotNil(t, got.log.Snapshot.AccountSelectionMs)
+}
+
 // Covers the same turn registry and submit path used by AfterTurn. Explicit
 // starts avoid timing thresholds or sleeps while detecting handshake reuse and
 // first-wins marks shared between turns. Native WS content remains unmeasured.
@@ -92,6 +101,8 @@ func TestOpenAISegmentedTimingWebSocketTurnsSubmit(t *testing.T) {
 		parent := turns.context(handshakeCtx, turn)
 		clock := requestlatency.From(parent)
 		require.NotSame(t, handshake, clock)
+		// Same context lookup and Segment as SelectAccountWithSchedulerForCapability.
+		requestlatency.From(parent).Segment(requestlatency.AccountSelection)()
 		clock.Mark(requestlatency.UpstreamFirstByte)
 		result := &service.OpenAIForwardResult{}
 		h.submitOpenAIUsageRecordTask(parent, result, func(context.Context) {
@@ -104,6 +115,7 @@ func TestOpenAISegmentedTimingWebSocketTurnsSubmit(t *testing.T) {
 	require.Greater(t, *snapshots[0].UserDurationMs, *snapshots[1].UserDurationMs+5000)
 	require.Greater(t, *snapshots[0].UpstreamFirstByteMs, *snapshots[1].UpstreamFirstByteMs+5000)
 	for _, got := range snapshots {
+		require.NotNil(t, got.AccountSelectionMs)
 		require.Less(t, *got.UserDurationMs, *original.UserDurationMs)
 		require.Nil(t, got.FirstVisibleContentMs)
 		require.Nil(t, got.ClientFirstContentMs)
@@ -124,6 +136,10 @@ func TestOpenAISegmentedTimingWebSocketLaterTurnRetry(t *testing.T) {
 	second.Mark(requestlatency.UpstreamFirstByte)
 	turns.finish(2) // failed attempt; service will number the replay as turn 1
 	retryClock := turns.current()
+	// The outer failover loop must reinstall the latest logical-turn clock
+	// before selecting the replacement account, which seeds proxy turn 1.
+	selectionCtx := retryClock.Context(parent)
+	requestlatency.From(selectionCtx).Segment(requestlatency.AccountSelection)()
 	var replacementAccountTurns openAIWSTurnTimings
 	replacementAccountTurns.seed(retryClock)
 	replacementAccountTurns.begin(1, time.Now()) // admission must retain replay clock
@@ -133,6 +149,8 @@ func TestOpenAISegmentedTimingWebSocketLaterTurnRetry(t *testing.T) {
 	result := &service.OpenAIForwardResult{}
 	(&OpenAIGatewayHandler{}).submitOpenAIUsageRecordTask(retryCtx, result, nil)
 	require.NotNil(t, result.Latency.UpstreamFirstByteMs)
+	require.NotNil(t, result.Latency.AccountSelectionMs)
+	require.Nil(t, first.Snapshot().AccountSelectionMs)
 	require.Less(t, *result.Latency.UserDurationMs, *first.Snapshot().UserDurationMs)
 	replacementAccountTurns.finish(1)
 	replacementAccountTurns.begin(2, time.Now()) // a subsequent distinct turn

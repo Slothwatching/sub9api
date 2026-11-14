@@ -13,7 +13,7 @@ func largeImageJSON() []byte {
 	return []byte(`{"data":[{"b64_json":"` + strings.Repeat(`A\u0041`, 256*1024) + `"}]}`)
 }
 
-func benchmarkCompleteJSON(b *testing.B, payload []byte) {
+func benchmarkCompleteJSON(b *testing.B, payload []byte, keepalives ...[]byte) {
 	b.Helper()
 	b.ReportAllocs()
 	b.SetBytes(int64(len(payload)))
@@ -21,14 +21,35 @@ func benchmarkCompleteJSON(b *testing.B, payload []byte) {
 	for i := 0; i < b.N; i++ {
 		_, clock := New(context.Background())
 		observer := Observer{Timing: clock}
+		for _, keepalive := range keepalives {
+			observer.Feed(keepalive)
+		}
 		observer.Feed(payload)
-		if !observer.Visible || cap(observer.buf) != 0 {
+		if !observer.Visible || clock.Snapshot().FirstVisibleContentMs == nil || cap(observer.buf) != 0 {
 			b.Fatal("complete image content not observed directly")
 		}
 	}
 }
 
 func BenchmarkTimingLargeCompleteJSON(b *testing.B) { benchmarkCompleteJSON(b, largeImageJSON()) }
+
+func TestTimingLargeCompleteJSONAfterKeepaliveAllocations(t *testing.T) {
+	payload := largeImageJSON()
+	_, clock := New(context.Background())
+	observer := Observer{Timing: clock}
+	observer.Feed([]byte(" \n"))
+	require.Empty(t, observer.buf, "keepalive must leave the in-place path available")
+	require.False(t, observer.Stopped())
+	observer.Feed(payload)
+	require.True(t, observer.Visible)
+	require.NotNil(t, clock.Snapshot().FirstVisibleContentMs)
+	require.Zero(t, cap(observer.buf), "complete image JSON must not use the bounded buffer")
+	result := testing.Benchmark(func(b *testing.B) {
+		benchmarkCompleteJSON(b, payload, []byte(" \n"))
+	})
+	require.Less(t, result.AllocedBytesPerOp(), int64(len(payload)/16), "keepalive must preserve in-place observation without payload-sized allocations")
+	t.Logf("payload=%d B observation=%d B/op, %d allocs/op", len(payload), result.AllocedBytesPerOp(), result.AllocsPerOp())
+}
 
 func TestTimingLargeCompleteJSONAllocations(t *testing.T) {
 	for name, payload := range map[string][]byte{

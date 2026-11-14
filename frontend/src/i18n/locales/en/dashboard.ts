@@ -344,7 +344,7 @@ export default {
       first_data_ms: 'First data (ms)',
       first_semantic_ms: 'First semantic event (ms)',
       first_visible_content_ms: 'First visible content (ms)',
-      client_first_content_ms: 'Client first content flush (ms)',
+      client_first_content_ms: 'Client first content (ms)',
       user_duration_ms: 'Ingress duration (ms)',
       attempt_count: 'Attempts',
       last_attempt_ms: 'Last attempt (ms)',

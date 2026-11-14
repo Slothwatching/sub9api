@@ -2573,7 +2573,7 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 		return
 	}
 	firstTurnStartedAt := time.Now()
-	_, wsAttemptTiming := requestlatency.ForkAt(ctx, firstTurnStartedAt)
+	ctx, wsAttemptTiming := requestlatency.ForkAt(ctx, firstTurnStartedAt)
 	if msgType != coderws.MessageText && msgType != coderws.MessageBinary {
 		closeOpenAIClientWS(wsConn, coderws.StatusPolicyViolation, "unsupported websocket message type")
 		return
@@ -2617,7 +2617,7 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 			wsRouteModel = decision.UpstreamModel
 		}
 	}
-	ctx = c.Request.Context()
+	ctx = wsAttemptTiming.Context(c.Request.Context())
 	if apiKey.Group != nil && apiKey.Group.Platform == service.PlatformComposite {
 		platform, ok := service.ResolvedTargetPlatformFromContext(ctx)
 		if !ok || !isResponsesWebSocketCompositePlatform(platform) {
@@ -2751,7 +2751,7 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 		return
 	}
 	defer inflightDone()
-	ctx = inflightCtx
+	ctx = wsAttemptTiming.Context(inflightCtx)
 
 	// A WebSocket may outlive a key's remaining spending window. Recheck
 	// after acquiring turn slots, including the first account-selection wait.
@@ -2857,9 +2857,11 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 	// 继续按建连时刻的谷价计费。生图意图只影响能力路由与图片计费，不关门。
 	// 建连时刻只用于选号/准入，不作为任何 turn 的计费定价时刻。
 	wsPricingCtx, _ := h.gatewayService.WithOpenAIRequestPricingContext(ctx, apiKey.GroupID)
-	ctx = wsPricingCtx
+	ctx = wsAttemptTiming.Context(wsPricingCtx)
 
 	for {
+		// Re-selection after failover belongs to the current logical turn.
+		ctx = wsAttemptTiming.Context(ctx)
 		if ctx.Err() != nil {
 			return
 		}
@@ -2965,7 +2967,7 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 			accountReleaseFunc = fastReleaseFunc
 		}
 		// 准入完成：门并入连接 ctx，turn 级复核与 failover 重选共用。
-		ctx = admissionCtx
+		ctx = wsAttemptTiming.Context(admissionCtx)
 		// Account selection starts a fresh upstream attempt. Clear any model
 		// captured by the previous failover account before credential lookup.
 		setOpsSelectedAccount(c, account.ID, account.Platform)
@@ -3286,14 +3288,16 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 		// WebSocket 首包可能很大，hash 必须在 hooks 外算成字符串，避免 AfterTurn 闭包保活请求体。
 		requestPayloadHash = service.HashUsageRequestPayload(wsFirstMessage)
 		if preemptCtx, cleanupPreempt, armed := h.gatewayService.BeginOpenAIWSIngressSessionPreemptionWithClient(ctx, c, account, wsFirstMessage, wsConn); armed {
-			ctx = preemptCtx
+			ctx = turnTimings.current().Context(preemptCtx)
 			defer cleanupPreempt()
 		}
 
 		for {
 			turnTimings.seed(wsAttemptTiming)
+			ctx = wsAttemptTiming.Context(ctx)
 			err := h.gatewayService.ProxyResponsesWebSocketFromClient(ctx, c, wsConn, account, token, wsFirstMessage, hooks)
 			wsAttemptTiming = turnTimings.current()
+			ctx = wsAttemptTiming.Context(ctx)
 			if err == nil {
 				reqLog.Info("openai.websocket_ingress_closed", zap.Int64("account_id", account.ID))
 				return
