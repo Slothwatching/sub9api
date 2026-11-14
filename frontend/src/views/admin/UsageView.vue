@@ -589,6 +589,21 @@ const exportToExcel = async () => {
       t('admin.usage.cacheReadCost'), t('admin.usage.cacheCreationCost'),
       t('usage.rate'), t('usage.accountMultiplier'), t('usage.original'), t('usage.userBilled'), t('usage.accountBilled'),
       t('usage.firstToken'), t('usage.duration'),
+      t('usage.segmentedTiming.user_queue_ms'),
+      t('usage.segmentedTiming.account_queue_ms'),
+      t('usage.segmentedTiming.account_selection_ms'),
+      t('usage.segmentedTiming.upstream_connect_ms'),
+      t('usage.segmentedTiming.upstream_tls_ms'),
+      t('usage.segmentedTiming.upstream_first_byte_ms'),
+      t('usage.segmentedTiming.first_data_ms'),
+      t('usage.segmentedTiming.first_semantic_ms'),
+      t('usage.segmentedTiming.first_visible_content_ms'),
+      t('usage.segmentedTiming.client_first_content_ms'),
+      t('usage.segmentedTiming.user_duration_ms'),
+      t('usage.segmentedTiming.attempt_count'),
+      t('usage.segmentedTiming.last_attempt_ms'),
+      t('usage.segmentedTiming.last_failed_attempt_ms'),
+
       t('admin.usage.requestId'), t('admin.usage.upstreamRequestId'), t('usage.userAgent'), t('admin.usage.ipAddress')
     ]
     const ws = XLSX.utils.aoa_to_sheet([headers])
@@ -608,6 +623,21 @@ const exportToExcel = async () => {
         log.rate_multiplier?.toPrecision(4) || '1.00', (log.account_rate_multiplier ?? 1).toPrecision(4),
         log.total_cost?.toFixed(6) || '0.000000', log.actual_cost?.toFixed(6) || '0.000000',
         ((log.account_stats_cost ?? log.total_cost) * (log.account_rate_multiplier ?? 1)).toFixed(6), log.first_token_ms ?? '', log.duration_ms,
+        log.user_queue_ms ?? '',
+        log.account_queue_ms ?? '',
+        log.account_selection_ms ?? '',
+        log.upstream_connect_ms ?? '',
+        log.upstream_tls_ms ?? '',
+        log.upstream_first_byte_ms ?? '',
+        log.first_data_ms ?? '',
+        log.first_semantic_ms ?? '',
+        log.first_visible_content_ms ?? '',
+        log.client_first_content_ms ?? '',
+        log.user_duration_ms ?? '',
+        log.attempt_count ?? '',
+        log.last_attempt_ms ?? '',
+        log.last_failed_attempt_ms ?? '',
+
         log.request_id || '', log.upstream_request_id || '', log.user_agent || '', log.ip_address || ''
       ])
       if (rows.length) {

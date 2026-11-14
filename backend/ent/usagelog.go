@@ -93,6 +93,34 @@ type UsageLog struct {
 	Stream bool `json:"stream,omitempty"`
 	// DurationMs holds the value of the "duration_ms" field.
 	DurationMs *int `json:"duration_ms,omitempty"`
+	// UserQueueMs holds the value of the "user_queue_ms" field.
+	UserQueueMs *int `json:"user_queue_ms,omitempty"`
+	// AccountQueueMs holds the value of the "account_queue_ms" field.
+	AccountQueueMs *int `json:"account_queue_ms,omitempty"`
+	// AccountSelectionMs holds the value of the "account_selection_ms" field.
+	AccountSelectionMs *int `json:"account_selection_ms,omitempty"`
+	// UpstreamConnectMs holds the value of the "upstream_connect_ms" field.
+	UpstreamConnectMs *int `json:"upstream_connect_ms,omitempty"`
+	// UpstreamTLSMs holds the value of the "upstream_tls_ms" field.
+	UpstreamTLSMs *int `json:"upstream_tls_ms,omitempty"`
+	// UpstreamFirstByteMs holds the value of the "upstream_first_byte_ms" field.
+	UpstreamFirstByteMs *int `json:"upstream_first_byte_ms,omitempty"`
+	// FirstDataMs holds the value of the "first_data_ms" field.
+	FirstDataMs *int `json:"first_data_ms,omitempty"`
+	// FirstSemanticMs holds the value of the "first_semantic_ms" field.
+	FirstSemanticMs *int `json:"first_semantic_ms,omitempty"`
+	// FirstVisibleContentMs holds the value of the "first_visible_content_ms" field.
+	FirstVisibleContentMs *int `json:"first_visible_content_ms,omitempty"`
+	// ClientFirstContentMs holds the value of the "client_first_content_ms" field.
+	ClientFirstContentMs *int `json:"client_first_content_ms,omitempty"`
+	// UserDurationMs holds the value of the "user_duration_ms" field.
+	UserDurationMs *int `json:"user_duration_ms,omitempty"`
+	// AttemptCount holds the value of the "attempt_count" field.
+	AttemptCount *int `json:"attempt_count,omitempty"`
+	// LastAttemptMs holds the value of the "last_attempt_ms" field.
+	LastAttemptMs *int `json:"last_attempt_ms,omitempty"`
+	// LastFailedAttemptMs holds the value of the "last_failed_attempt_ms" field.
+	LastFailedAttemptMs *int `json:"last_failed_attempt_ms,omitempty"`
 	// FirstTokenMs holds the value of the "first_token_ms" field.
 	FirstTokenMs *int `json:"first_token_ms,omitempty"`
 	// UserAgent holds the value of the "user_agent" field.
@@ -210,7 +238,7 @@ func (*UsageLog) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case usagelog.FieldInputCost, usagelog.FieldOutputCost, usagelog.FieldCacheCreationCost, usagelog.FieldCacheReadCost, usagelog.FieldTotalCost, usagelog.FieldActualCost, usagelog.FieldRateMultiplier, usagelog.FieldAccountRateMultiplier:
 			values[i] = new(sql.NullFloat64)
-		case usagelog.FieldID, usagelog.FieldUserID, usagelog.FieldAPIKeyID, usagelog.FieldAccountID, usagelog.FieldChannelID, usagelog.FieldGroupID, usagelog.FieldSubscriptionID, usagelog.FieldInputTokens, usagelog.FieldOutputTokens, usagelog.FieldCacheCreationTokens, usagelog.FieldCacheReadTokens, usagelog.FieldCacheCreation5mTokens, usagelog.FieldCacheCreation1hTokens, usagelog.FieldCacheCreation30mTokens, usagelog.FieldCacheCreation12hTokens, usagelog.FieldBillingType, usagelog.FieldDurationMs, usagelog.FieldFirstTokenMs, usagelog.FieldImageCount, usagelog.FieldVideoCount, usagelog.FieldVideoDurationSeconds:
+		case usagelog.FieldID, usagelog.FieldUserID, usagelog.FieldAPIKeyID, usagelog.FieldAccountID, usagelog.FieldChannelID, usagelog.FieldGroupID, usagelog.FieldSubscriptionID, usagelog.FieldInputTokens, usagelog.FieldOutputTokens, usagelog.FieldCacheCreationTokens, usagelog.FieldCacheReadTokens, usagelog.FieldCacheCreation5mTokens, usagelog.FieldCacheCreation1hTokens, usagelog.FieldCacheCreation30mTokens, usagelog.FieldCacheCreation12hTokens, usagelog.FieldBillingType, usagelog.FieldDurationMs, usagelog.FieldUserQueueMs, usagelog.FieldAccountQueueMs, usagelog.FieldAccountSelectionMs, usagelog.FieldUpstreamConnectMs, usagelog.FieldUpstreamTLSMs, usagelog.FieldUpstreamFirstByteMs, usagelog.FieldFirstDataMs, usagelog.FieldFirstSemanticMs, usagelog.FieldFirstVisibleContentMs, usagelog.FieldClientFirstContentMs, usagelog.FieldUserDurationMs, usagelog.FieldAttemptCount, usagelog.FieldLastAttemptMs, usagelog.FieldLastFailedAttemptMs, usagelog.FieldFirstTokenMs, usagelog.FieldImageCount, usagelog.FieldVideoCount, usagelog.FieldVideoDurationSeconds:
 			values[i] = new(sql.NullInt64)
 		case usagelog.FieldRequestID, usagelog.FieldModel, usagelog.FieldRequestedModel, usagelog.FieldUpstreamModel, usagelog.FieldUpstreamResponseModel, usagelog.FieldModelMappingChain, usagelog.FieldBillingTier, usagelog.FieldBillingMode, usagelog.FieldUserAgent, usagelog.FieldIPAddress, usagelog.FieldImageSize, usagelog.FieldImageInputSize, usagelog.FieldImageOutputSize, usagelog.FieldImageSizeSource, usagelog.FieldVideoResolution:
 			values[i] = new(sql.NullString)
@@ -458,6 +486,104 @@ func (_m *UsageLog) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DurationMs = new(int)
 				*_m.DurationMs = int(value.Int64)
+			}
+		case usagelog.FieldUserQueueMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_queue_ms", values[i])
+			} else if value.Valid {
+				_m.UserQueueMs = new(int)
+				*_m.UserQueueMs = int(value.Int64)
+			}
+		case usagelog.FieldAccountQueueMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field account_queue_ms", values[i])
+			} else if value.Valid {
+				_m.AccountQueueMs = new(int)
+				*_m.AccountQueueMs = int(value.Int64)
+			}
+		case usagelog.FieldAccountSelectionMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field account_selection_ms", values[i])
+			} else if value.Valid {
+				_m.AccountSelectionMs = new(int)
+				*_m.AccountSelectionMs = int(value.Int64)
+			}
+		case usagelog.FieldUpstreamConnectMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field upstream_connect_ms", values[i])
+			} else if value.Valid {
+				_m.UpstreamConnectMs = new(int)
+				*_m.UpstreamConnectMs = int(value.Int64)
+			}
+		case usagelog.FieldUpstreamTLSMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field upstream_tls_ms", values[i])
+			} else if value.Valid {
+				_m.UpstreamTLSMs = new(int)
+				*_m.UpstreamTLSMs = int(value.Int64)
+			}
+		case usagelog.FieldUpstreamFirstByteMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field upstream_first_byte_ms", values[i])
+			} else if value.Valid {
+				_m.UpstreamFirstByteMs = new(int)
+				*_m.UpstreamFirstByteMs = int(value.Int64)
+			}
+		case usagelog.FieldFirstDataMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_data_ms", values[i])
+			} else if value.Valid {
+				_m.FirstDataMs = new(int)
+				*_m.FirstDataMs = int(value.Int64)
+			}
+		case usagelog.FieldFirstSemanticMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_semantic_ms", values[i])
+			} else if value.Valid {
+				_m.FirstSemanticMs = new(int)
+				*_m.FirstSemanticMs = int(value.Int64)
+			}
+		case usagelog.FieldFirstVisibleContentMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_visible_content_ms", values[i])
+			} else if value.Valid {
+				_m.FirstVisibleContentMs = new(int)
+				*_m.FirstVisibleContentMs = int(value.Int64)
+			}
+		case usagelog.FieldClientFirstContentMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field client_first_content_ms", values[i])
+			} else if value.Valid {
+				_m.ClientFirstContentMs = new(int)
+				*_m.ClientFirstContentMs = int(value.Int64)
+			}
+		case usagelog.FieldUserDurationMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_duration_ms", values[i])
+			} else if value.Valid {
+				_m.UserDurationMs = new(int)
+				*_m.UserDurationMs = int(value.Int64)
+			}
+		case usagelog.FieldAttemptCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field attempt_count", values[i])
+			} else if value.Valid {
+				_m.AttemptCount = new(int)
+				*_m.AttemptCount = int(value.Int64)
+			}
+		case usagelog.FieldLastAttemptMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field last_attempt_ms", values[i])
+			} else if value.Valid {
+				_m.LastAttemptMs = new(int)
+				*_m.LastAttemptMs = int(value.Int64)
+			}
+		case usagelog.FieldLastFailedAttemptMs:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field last_failed_attempt_ms", values[i])
+			} else if value.Valid {
+				_m.LastFailedAttemptMs = new(int)
+				*_m.LastFailedAttemptMs = int(value.Int64)
 			}
 		case usagelog.FieldFirstTokenMs:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -741,6 +867,76 @@ func (_m *UsageLog) String() string {
 	builder.WriteString(", ")
 	if v := _m.DurationMs; v != nil {
 		builder.WriteString("duration_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UserQueueMs; v != nil {
+		builder.WriteString("user_queue_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AccountQueueMs; v != nil {
+		builder.WriteString("account_queue_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AccountSelectionMs; v != nil {
+		builder.WriteString("account_selection_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpstreamConnectMs; v != nil {
+		builder.WriteString("upstream_connect_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpstreamTLSMs; v != nil {
+		builder.WriteString("upstream_tls_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UpstreamFirstByteMs; v != nil {
+		builder.WriteString("upstream_first_byte_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.FirstDataMs; v != nil {
+		builder.WriteString("first_data_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.FirstSemanticMs; v != nil {
+		builder.WriteString("first_semantic_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.FirstVisibleContentMs; v != nil {
+		builder.WriteString("first_visible_content_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ClientFirstContentMs; v != nil {
+		builder.WriteString("client_first_content_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UserDurationMs; v != nil {
+		builder.WriteString("user_duration_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.AttemptCount; v != nil {
+		builder.WriteString("attempt_count=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.LastAttemptMs; v != nil {
+		builder.WriteString("last_attempt_ms=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.LastFailedAttemptMs; v != nil {
+		builder.WriteString("last_failed_attempt_ms=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

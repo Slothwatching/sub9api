@@ -104,6 +104,20 @@ func TestUsageLogRepositoryCreateSyncRequestTypeAndLegacyFields(t *testing.T) {
 			log.NativeCompactionV2,
 			log.CacheCreation30mTokens,
 			log.CacheCreation12hTokens,
+			sqlmock.AnyArg(), // user_queue_ms
+			sqlmock.AnyArg(), // account_queue_ms
+			sqlmock.AnyArg(), // account_selection_ms
+			sqlmock.AnyArg(), // upstream_connect_ms
+			sqlmock.AnyArg(), // upstream_tls_ms
+			sqlmock.AnyArg(), // upstream_first_byte_ms
+			sqlmock.AnyArg(), // first_data_ms
+			sqlmock.AnyArg(), // first_semantic_ms
+			sqlmock.AnyArg(), // first_visible_content_ms
+			sqlmock.AnyArg(), // client_first_content_ms
+			sqlmock.AnyArg(), // user_duration_ms
+			sqlmock.AnyArg(), // attempt_count
+			sqlmock.AnyArg(), // last_attempt_ms
+			sqlmock.AnyArg(), // last_failed_attempt_ms
 			createdAt,
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).AddRow(int64(99), createdAt))
@@ -201,6 +215,20 @@ func TestUsageLogRepositoryCreate_PersistsServiceTier(t *testing.T) {
 			log.NativeCompactionV2,
 			log.CacheCreation30mTokens,
 			log.CacheCreation12hTokens,
+			sqlmock.AnyArg(), // user_queue_ms
+			sqlmock.AnyArg(), // account_queue_ms
+			sqlmock.AnyArg(), // account_selection_ms
+			sqlmock.AnyArg(), // upstream_connect_ms
+			sqlmock.AnyArg(), // upstream_tls_ms
+			sqlmock.AnyArg(), // upstream_first_byte_ms
+			sqlmock.AnyArg(), // first_data_ms
+			sqlmock.AnyArg(), // first_semantic_ms
+			sqlmock.AnyArg(), // first_visible_content_ms
+			sqlmock.AnyArg(), // client_first_content_ms
+			sqlmock.AnyArg(), // user_duration_ms
+			sqlmock.AnyArg(), // attempt_count
+			sqlmock.AnyArg(), // last_attempt_ms
+			sqlmock.AnyArg(), // last_failed_attempt_ms
 			createdAt,
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).AddRow(int64(100), createdAt))
@@ -282,8 +310,8 @@ func TestPrepareUsageLogInsert_PersistsNativeCompactionV2WithoutChangingRequestT
 	prepared := prepareUsageLogInsert(log)
 
 	require.Len(t, prepared.args, len(usageLogInsertArgTypes))
-	require.Equal(t, "boolean", usageLogInsertArgTypes[len(usageLogInsertArgTypes)-4])
-	require.Equal(t, true, prepared.args[len(prepared.args)-4])
+	require.Equal(t, "boolean", usageLogInsertArgTypes[len(usageLogInsertArgTypes)-18])
+	require.Equal(t, true, prepared.args[len(prepared.args)-18])
 	require.Equal(t, int16(service.RequestTypeStream), prepared.args[30])
 	require.Equal(t, service.RequestTypeStream, log.RequestType)
 	require.True(t, log.Stream)
@@ -963,9 +991,23 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			sql.NullFloat64{},
 			sql.NullString{}, // upstream_request_id
 			sql.NullString{},
-			false, // native_compaction_v2
-			0,     // cache_creation_30m_tokens
-			0,     // cache_creation_12h_tokens
+			false,           // native_compaction_v2
+			0,               // cache_creation_30m_tokens
+			0,               // cache_creation_12h_tokens
+			sql.NullInt64{}, // user_queue_ms
+			sql.NullInt64{}, // account_queue_ms
+			sql.NullInt64{}, // account_selection_ms
+			sql.NullInt64{}, // upstream_connect_ms
+			sql.NullInt64{}, // upstream_tls_ms
+			sql.NullInt64{}, // upstream_first_byte_ms
+			sql.NullInt64{}, // first_data_ms
+			sql.NullInt64{}, // first_semantic_ms
+			sql.NullInt64{}, // first_visible_content_ms
+			sql.NullInt64{}, // client_first_content_ms
+			sql.NullInt64{}, // user_duration_ms
+			sql.NullInt64{}, // attempt_count
+			sql.NullInt64{}, // last_attempt_ms
+			sql.NullInt64{}, // last_failed_attempt_ms
 			now,
 		}})
 		require.NoError(t, err)
@@ -1048,6 +1090,20 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			false,             // native_compaction_v2
 			0,                 // cache_creation_30m_tokens
 			0,                 // cache_creation_12h_tokens
+			sql.NullInt64{},   // user_queue_ms
+			sql.NullInt64{},   // account_queue_ms
+			sql.NullInt64{},   // account_selection_ms
+			sql.NullInt64{},   // upstream_connect_ms
+			sql.NullInt64{},   // upstream_tls_ms
+			sql.NullInt64{},   // upstream_first_byte_ms
+			sql.NullInt64{},   // first_data_ms
+			sql.NullInt64{},   // first_semantic_ms
+			sql.NullInt64{},   // first_visible_content_ms
+			sql.NullInt64{},   // client_first_content_ms
+			sql.NullInt64{},   // user_duration_ms
+			sql.NullInt64{},   // attempt_count
+			sql.NullInt64{},   // last_attempt_ms
+			sql.NullInt64{},   // last_failed_attempt_ms
 			now,
 		}})
 		require.NoError(t, err)
@@ -1113,6 +1169,20 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			true,              // native_compaction_v2
 			0,                 // cache_creation_30m_tokens
 			0,                 // cache_creation_12h_tokens
+			sql.NullInt64{},   // user_queue_ms
+			sql.NullInt64{},   // account_queue_ms
+			sql.NullInt64{},   // account_selection_ms
+			sql.NullInt64{},   // upstream_connect_ms
+			sql.NullInt64{},   // upstream_tls_ms
+			sql.NullInt64{},   // upstream_first_byte_ms
+			sql.NullInt64{},   // first_data_ms
+			sql.NullInt64{},   // first_semantic_ms
+			sql.NullInt64{},   // first_visible_content_ms
+			sql.NullInt64{},   // client_first_content_ms
+			sql.NullInt64{},   // user_duration_ms
+			sql.NullInt64{},   // attempt_count
+			sql.NullInt64{},   // last_attempt_ms
+			sql.NullInt64{},   // last_failed_attempt_ms
 			now,
 		}})
 		require.NoError(t, err)
@@ -1179,6 +1249,20 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			false,             // native_compaction_v2
 			0,                 // cache_creation_30m_tokens
 			0,                 // cache_creation_12h_tokens
+			sql.NullInt64{},   // user_queue_ms
+			sql.NullInt64{},   // account_queue_ms
+			sql.NullInt64{},   // account_selection_ms
+			sql.NullInt64{},   // upstream_connect_ms
+			sql.NullInt64{},   // upstream_tls_ms
+			sql.NullInt64{},   // upstream_first_byte_ms
+			sql.NullInt64{},   // first_data_ms
+			sql.NullInt64{},   // first_semantic_ms
+			sql.NullInt64{},   // first_visible_content_ms
+			sql.NullInt64{},   // client_first_content_ms
+			sql.NullInt64{},   // user_duration_ms
+			sql.NullInt64{},   // attempt_count
+			sql.NullInt64{},   // last_attempt_ms
+			sql.NullInt64{},   // last_failed_attempt_ms
 			now,
 		}})
 		require.NoError(t, err)

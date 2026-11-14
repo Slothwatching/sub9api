@@ -339,6 +339,22 @@ export default {
 
   // Usage
   usage: {
+    segmentedTiming: {
+      user_queue_ms: '用户并发等待 (ms)',
+      account_queue_ms: '账号并发等待 (ms)',
+      account_selection_ms: '账号选择 (ms)',
+      upstream_connect_ms: '上游连接 (ms)',
+      upstream_tls_ms: '上游 TLS (ms)',
+      upstream_first_byte_ms: '上游首字节 (ms)',
+      first_data_ms: '首个数据事件 (ms)',
+      first_semantic_ms: '首个语义事件 (ms)',
+      first_visible_content_ms: '首个可见内容 (ms)',
+      client_first_content_ms: '客户端首内容 (ms)',
+      user_duration_ms: '入口总耗时 (ms)',
+      attempt_count: '尝试次数',
+      last_attempt_ms: '末次尝试 (ms)',
+      last_failed_attempt_ms: '末次失败尝试 (ms)',
+    },
     title: '使用记录',
     description: '查看和分析您的 API 使用历史',
     costDetails: '费用明细',

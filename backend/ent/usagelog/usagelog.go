@@ -84,6 +84,34 @@ const (
 	FieldStream = "stream"
 	// FieldDurationMs holds the string denoting the duration_ms field in the database.
 	FieldDurationMs = "duration_ms"
+	// FieldUserQueueMs holds the string denoting the user_queue_ms field in the database.
+	FieldUserQueueMs = "user_queue_ms"
+	// FieldAccountQueueMs holds the string denoting the account_queue_ms field in the database.
+	FieldAccountQueueMs = "account_queue_ms"
+	// FieldAccountSelectionMs holds the string denoting the account_selection_ms field in the database.
+	FieldAccountSelectionMs = "account_selection_ms"
+	// FieldUpstreamConnectMs holds the string denoting the upstream_connect_ms field in the database.
+	FieldUpstreamConnectMs = "upstream_connect_ms"
+	// FieldUpstreamTLSMs holds the string denoting the upstream_tls_ms field in the database.
+	FieldUpstreamTLSMs = "upstream_tls_ms"
+	// FieldUpstreamFirstByteMs holds the string denoting the upstream_first_byte_ms field in the database.
+	FieldUpstreamFirstByteMs = "upstream_first_byte_ms"
+	// FieldFirstDataMs holds the string denoting the first_data_ms field in the database.
+	FieldFirstDataMs = "first_data_ms"
+	// FieldFirstSemanticMs holds the string denoting the first_semantic_ms field in the database.
+	FieldFirstSemanticMs = "first_semantic_ms"
+	// FieldFirstVisibleContentMs holds the string denoting the first_visible_content_ms field in the database.
+	FieldFirstVisibleContentMs = "first_visible_content_ms"
+	// FieldClientFirstContentMs holds the string denoting the client_first_content_ms field in the database.
+	FieldClientFirstContentMs = "client_first_content_ms"
+	// FieldUserDurationMs holds the string denoting the user_duration_ms field in the database.
+	FieldUserDurationMs = "user_duration_ms"
+	// FieldAttemptCount holds the string denoting the attempt_count field in the database.
+	FieldAttemptCount = "attempt_count"
+	// FieldLastAttemptMs holds the string denoting the last_attempt_ms field in the database.
+	FieldLastAttemptMs = "last_attempt_ms"
+	// FieldLastFailedAttemptMs holds the string denoting the last_failed_attempt_ms field in the database.
+	FieldLastFailedAttemptMs = "last_failed_attempt_ms"
 	// FieldFirstTokenMs holds the string denoting the first_token_ms field in the database.
 	FieldFirstTokenMs = "first_token_ms"
 	// FieldUserAgent holds the string denoting the user_agent field in the database.
@@ -199,6 +227,20 @@ var Columns = []string{
 	FieldBillingType,
 	FieldStream,
 	FieldDurationMs,
+	FieldUserQueueMs,
+	FieldAccountQueueMs,
+	FieldAccountSelectionMs,
+	FieldUpstreamConnectMs,
+	FieldUpstreamTLSMs,
+	FieldUpstreamFirstByteMs,
+	FieldFirstDataMs,
+	FieldFirstSemanticMs,
+	FieldFirstVisibleContentMs,
+	FieldClientFirstContentMs,
+	FieldUserDurationMs,
+	FieldAttemptCount,
+	FieldLastAttemptMs,
+	FieldLastFailedAttemptMs,
 	FieldFirstTokenMs,
 	FieldUserAgent,
 	FieldIPAddress,
@@ -483,6 +525,76 @@ func ByStream(opts ...sql.OrderTermOption) OrderOption {
 // ByDurationMs orders the results by the duration_ms field.
 func ByDurationMs(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDurationMs, opts...).ToFunc()
+}
+
+// ByUserQueueMs orders the results by the user_queue_ms field.
+func ByUserQueueMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserQueueMs, opts...).ToFunc()
+}
+
+// ByAccountQueueMs orders the results by the account_queue_ms field.
+func ByAccountQueueMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountQueueMs, opts...).ToFunc()
+}
+
+// ByAccountSelectionMs orders the results by the account_selection_ms field.
+func ByAccountSelectionMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountSelectionMs, opts...).ToFunc()
+}
+
+// ByUpstreamConnectMs orders the results by the upstream_connect_ms field.
+func ByUpstreamConnectMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpstreamConnectMs, opts...).ToFunc()
+}
+
+// ByUpstreamTLSMs orders the results by the upstream_tls_ms field.
+func ByUpstreamTLSMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpstreamTLSMs, opts...).ToFunc()
+}
+
+// ByUpstreamFirstByteMs orders the results by the upstream_first_byte_ms field.
+func ByUpstreamFirstByteMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpstreamFirstByteMs, opts...).ToFunc()
+}
+
+// ByFirstDataMs orders the results by the first_data_ms field.
+func ByFirstDataMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstDataMs, opts...).ToFunc()
+}
+
+// ByFirstSemanticMs orders the results by the first_semantic_ms field.
+func ByFirstSemanticMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstSemanticMs, opts...).ToFunc()
+}
+
+// ByFirstVisibleContentMs orders the results by the first_visible_content_ms field.
+func ByFirstVisibleContentMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstVisibleContentMs, opts...).ToFunc()
+}
+
+// ByClientFirstContentMs orders the results by the client_first_content_ms field.
+func ByClientFirstContentMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClientFirstContentMs, opts...).ToFunc()
+}
+
+// ByUserDurationMs orders the results by the user_duration_ms field.
+func ByUserDurationMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserDurationMs, opts...).ToFunc()
+}
+
+// ByAttemptCount orders the results by the attempt_count field.
+func ByAttemptCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAttemptCount, opts...).ToFunc()
+}
+
+// ByLastAttemptMs orders the results by the last_attempt_ms field.
+func ByLastAttemptMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastAttemptMs, opts...).ToFunc()
+}
+
+// ByLastFailedAttemptMs orders the results by the last_failed_attempt_ms field.
+func ByLastFailedAttemptMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastFailedAttemptMs, opts...).ToFunc()
 }
 
 // ByFirstTokenMs orders the results by the first_token_ms field.

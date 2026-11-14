@@ -30,8 +30,8 @@ func RegisterGatewayRoutes(
 	cfg *config.Config,
 ) {
 	bodyMemoryBudget := pkghttputil.NewBodyMemoryBudget(cfg.Gateway.RequestBodyMemoryBudgetBytes)
-	bodyLimit := middleware.RequestBodyLimit(cfg.Gateway.MaxBodySize, bodyMemoryBudget)
-	textBodyLimit := middleware.RequestBodyLimit(cfg.Gateway.TextMaxBodySize, bodyMemoryBudget)
+	bodyLimit := middleware.WithRequestLatency(middleware.RequestBodyLimit(cfg.Gateway.MaxBodySize, bodyMemoryBudget))
+	textBodyLimit := middleware.WithRequestLatency(middleware.RequestBodyLimit(cfg.Gateway.TextMaxBodySize, bodyMemoryBudget))
 	clientRequestID := middleware.ClientRequestID()
 	opsErrorLogger := handler.OpsErrorLoggerMiddleware(opsService)
 	endpointNorm := handler.InboundEndpointMiddleware()
