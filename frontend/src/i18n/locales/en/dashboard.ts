@@ -334,6 +334,22 @@ export default {
 
   // Usage
   usage: {
+    segmentedTiming: {
+      user_queue_ms: 'User queue (ms)',
+      account_queue_ms: 'Account queue (ms)',
+      account_selection_ms: 'Account selection (ms)',
+      upstream_connect_ms: 'Upstream connection (ms)',
+      upstream_tls_ms: 'Upstream TLS (ms)',
+      upstream_first_byte_ms: 'Upstream first byte (ms)',
+      first_data_ms: 'First data (ms)',
+      first_semantic_ms: 'First semantic event (ms)',
+      first_visible_content_ms: 'First visible content (ms)',
+      client_first_content_ms: 'Client first content flush (ms)',
+      user_duration_ms: 'Ingress duration (ms)',
+      attempt_count: 'Attempts',
+      last_attempt_ms: 'Last attempt (ms)',
+      last_failed_attempt_ms: 'Last failed attempt (ms)',
+    },
     title: 'Usage Records',
     description: 'View and analyze your API usage history',
     costDetails: 'Cost Breakdown',

@@ -727,6 +727,384 @@ func (_u *UsageLogUpdate) ClearDurationMs() *UsageLogUpdate {
 	return _u
 }
 
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (_u *UsageLogUpdate) SetUserQueueMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetUserQueueMs()
+	_u.mutation.SetUserQueueMs(v)
+	return _u
+}
+
+// SetNillableUserQueueMs sets the "user_queue_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableUserQueueMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetUserQueueMs(*v)
+	}
+	return _u
+}
+
+// AddUserQueueMs adds value to the "user_queue_ms" field.
+func (_u *UsageLogUpdate) AddUserQueueMs(v int) *UsageLogUpdate {
+	_u.mutation.AddUserQueueMs(v)
+	return _u
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (_u *UsageLogUpdate) ClearUserQueueMs() *UsageLogUpdate {
+	_u.mutation.ClearUserQueueMs()
+	return _u
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (_u *UsageLogUpdate) SetAccountQueueMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetAccountQueueMs()
+	_u.mutation.SetAccountQueueMs(v)
+	return _u
+}
+
+// SetNillableAccountQueueMs sets the "account_queue_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableAccountQueueMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetAccountQueueMs(*v)
+	}
+	return _u
+}
+
+// AddAccountQueueMs adds value to the "account_queue_ms" field.
+func (_u *UsageLogUpdate) AddAccountQueueMs(v int) *UsageLogUpdate {
+	_u.mutation.AddAccountQueueMs(v)
+	return _u
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (_u *UsageLogUpdate) ClearAccountQueueMs() *UsageLogUpdate {
+	_u.mutation.ClearAccountQueueMs()
+	return _u
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (_u *UsageLogUpdate) SetAccountSelectionMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetAccountSelectionMs()
+	_u.mutation.SetAccountSelectionMs(v)
+	return _u
+}
+
+// SetNillableAccountSelectionMs sets the "account_selection_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableAccountSelectionMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetAccountSelectionMs(*v)
+	}
+	return _u
+}
+
+// AddAccountSelectionMs adds value to the "account_selection_ms" field.
+func (_u *UsageLogUpdate) AddAccountSelectionMs(v int) *UsageLogUpdate {
+	_u.mutation.AddAccountSelectionMs(v)
+	return _u
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (_u *UsageLogUpdate) ClearAccountSelectionMs() *UsageLogUpdate {
+	_u.mutation.ClearAccountSelectionMs()
+	return _u
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (_u *UsageLogUpdate) SetUpstreamConnectMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetUpstreamConnectMs()
+	_u.mutation.SetUpstreamConnectMs(v)
+	return _u
+}
+
+// SetNillableUpstreamConnectMs sets the "upstream_connect_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableUpstreamConnectMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetUpstreamConnectMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamConnectMs adds value to the "upstream_connect_ms" field.
+func (_u *UsageLogUpdate) AddUpstreamConnectMs(v int) *UsageLogUpdate {
+	_u.mutation.AddUpstreamConnectMs(v)
+	return _u
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (_u *UsageLogUpdate) ClearUpstreamConnectMs() *UsageLogUpdate {
+	_u.mutation.ClearUpstreamConnectMs()
+	return _u
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (_u *UsageLogUpdate) SetUpstreamTLSMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetUpstreamTLSMs()
+	_u.mutation.SetUpstreamTLSMs(v)
+	return _u
+}
+
+// SetNillableUpstreamTLSMs sets the "upstream_tls_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableUpstreamTLSMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetUpstreamTLSMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamTLSMs adds value to the "upstream_tls_ms" field.
+func (_u *UsageLogUpdate) AddUpstreamTLSMs(v int) *UsageLogUpdate {
+	_u.mutation.AddUpstreamTLSMs(v)
+	return _u
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (_u *UsageLogUpdate) ClearUpstreamTLSMs() *UsageLogUpdate {
+	_u.mutation.ClearUpstreamTLSMs()
+	return _u
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdate) SetUpstreamFirstByteMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetUpstreamFirstByteMs()
+	_u.mutation.SetUpstreamFirstByteMs(v)
+	return _u
+}
+
+// SetNillableUpstreamFirstByteMs sets the "upstream_first_byte_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableUpstreamFirstByteMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetUpstreamFirstByteMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamFirstByteMs adds value to the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdate) AddUpstreamFirstByteMs(v int) *UsageLogUpdate {
+	_u.mutation.AddUpstreamFirstByteMs(v)
+	return _u
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdate) ClearUpstreamFirstByteMs() *UsageLogUpdate {
+	_u.mutation.ClearUpstreamFirstByteMs()
+	return _u
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (_u *UsageLogUpdate) SetFirstDataMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetFirstDataMs()
+	_u.mutation.SetFirstDataMs(v)
+	return _u
+}
+
+// SetNillableFirstDataMs sets the "first_data_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableFirstDataMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetFirstDataMs(*v)
+	}
+	return _u
+}
+
+// AddFirstDataMs adds value to the "first_data_ms" field.
+func (_u *UsageLogUpdate) AddFirstDataMs(v int) *UsageLogUpdate {
+	_u.mutation.AddFirstDataMs(v)
+	return _u
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (_u *UsageLogUpdate) ClearFirstDataMs() *UsageLogUpdate {
+	_u.mutation.ClearFirstDataMs()
+	return _u
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (_u *UsageLogUpdate) SetFirstSemanticMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetFirstSemanticMs()
+	_u.mutation.SetFirstSemanticMs(v)
+	return _u
+}
+
+// SetNillableFirstSemanticMs sets the "first_semantic_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableFirstSemanticMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetFirstSemanticMs(*v)
+	}
+	return _u
+}
+
+// AddFirstSemanticMs adds value to the "first_semantic_ms" field.
+func (_u *UsageLogUpdate) AddFirstSemanticMs(v int) *UsageLogUpdate {
+	_u.mutation.AddFirstSemanticMs(v)
+	return _u
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (_u *UsageLogUpdate) ClearFirstSemanticMs() *UsageLogUpdate {
+	_u.mutation.ClearFirstSemanticMs()
+	return _u
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (_u *UsageLogUpdate) SetFirstVisibleContentMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetFirstVisibleContentMs()
+	_u.mutation.SetFirstVisibleContentMs(v)
+	return _u
+}
+
+// SetNillableFirstVisibleContentMs sets the "first_visible_content_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableFirstVisibleContentMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetFirstVisibleContentMs(*v)
+	}
+	return _u
+}
+
+// AddFirstVisibleContentMs adds value to the "first_visible_content_ms" field.
+func (_u *UsageLogUpdate) AddFirstVisibleContentMs(v int) *UsageLogUpdate {
+	_u.mutation.AddFirstVisibleContentMs(v)
+	return _u
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (_u *UsageLogUpdate) ClearFirstVisibleContentMs() *UsageLogUpdate {
+	_u.mutation.ClearFirstVisibleContentMs()
+	return _u
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (_u *UsageLogUpdate) SetClientFirstContentMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetClientFirstContentMs()
+	_u.mutation.SetClientFirstContentMs(v)
+	return _u
+}
+
+// SetNillableClientFirstContentMs sets the "client_first_content_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableClientFirstContentMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetClientFirstContentMs(*v)
+	}
+	return _u
+}
+
+// AddClientFirstContentMs adds value to the "client_first_content_ms" field.
+func (_u *UsageLogUpdate) AddClientFirstContentMs(v int) *UsageLogUpdate {
+	_u.mutation.AddClientFirstContentMs(v)
+	return _u
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (_u *UsageLogUpdate) ClearClientFirstContentMs() *UsageLogUpdate {
+	_u.mutation.ClearClientFirstContentMs()
+	return _u
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (_u *UsageLogUpdate) SetUserDurationMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetUserDurationMs()
+	_u.mutation.SetUserDurationMs(v)
+	return _u
+}
+
+// SetNillableUserDurationMs sets the "user_duration_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableUserDurationMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetUserDurationMs(*v)
+	}
+	return _u
+}
+
+// AddUserDurationMs adds value to the "user_duration_ms" field.
+func (_u *UsageLogUpdate) AddUserDurationMs(v int) *UsageLogUpdate {
+	_u.mutation.AddUserDurationMs(v)
+	return _u
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (_u *UsageLogUpdate) ClearUserDurationMs() *UsageLogUpdate {
+	_u.mutation.ClearUserDurationMs()
+	return _u
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (_u *UsageLogUpdate) SetAttemptCount(v int) *UsageLogUpdate {
+	_u.mutation.ResetAttemptCount()
+	_u.mutation.SetAttemptCount(v)
+	return _u
+}
+
+// SetNillableAttemptCount sets the "attempt_count" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableAttemptCount(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetAttemptCount(*v)
+	}
+	return _u
+}
+
+// AddAttemptCount adds value to the "attempt_count" field.
+func (_u *UsageLogUpdate) AddAttemptCount(v int) *UsageLogUpdate {
+	_u.mutation.AddAttemptCount(v)
+	return _u
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (_u *UsageLogUpdate) ClearAttemptCount() *UsageLogUpdate {
+	_u.mutation.ClearAttemptCount()
+	return _u
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (_u *UsageLogUpdate) SetLastAttemptMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetLastAttemptMs()
+	_u.mutation.SetLastAttemptMs(v)
+	return _u
+}
+
+// SetNillableLastAttemptMs sets the "last_attempt_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableLastAttemptMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetLastAttemptMs(*v)
+	}
+	return _u
+}
+
+// AddLastAttemptMs adds value to the "last_attempt_ms" field.
+func (_u *UsageLogUpdate) AddLastAttemptMs(v int) *UsageLogUpdate {
+	_u.mutation.AddLastAttemptMs(v)
+	return _u
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (_u *UsageLogUpdate) ClearLastAttemptMs() *UsageLogUpdate {
+	_u.mutation.ClearLastAttemptMs()
+	return _u
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdate) SetLastFailedAttemptMs(v int) *UsageLogUpdate {
+	_u.mutation.ResetLastFailedAttemptMs()
+	_u.mutation.SetLastFailedAttemptMs(v)
+	return _u
+}
+
+// SetNillableLastFailedAttemptMs sets the "last_failed_attempt_ms" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableLastFailedAttemptMs(v *int) *UsageLogUpdate {
+	if v != nil {
+		_u.SetLastFailedAttemptMs(*v)
+	}
+	return _u
+}
+
+// AddLastFailedAttemptMs adds value to the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdate) AddLastFailedAttemptMs(v int) *UsageLogUpdate {
+	_u.mutation.AddLastFailedAttemptMs(v)
+	return _u
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdate) ClearLastFailedAttemptMs() *UsageLogUpdate {
+	_u.mutation.ClearLastFailedAttemptMs()
+	return _u
+}
+
 // SetFirstTokenMs sets the "first_token_ms" field.
 func (_u *UsageLogUpdate) SetFirstTokenMs(v int) *UsageLogUpdate {
 	_u.mutation.ResetFirstTokenMs()
@@ -1353,6 +1731,132 @@ func (_u *UsageLogUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DurationMsCleared() {
 		_spec.ClearField(usagelog.FieldDurationMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UserQueueMs(); ok {
+		_spec.SetField(usagelog.FieldUserQueueMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserQueueMs(); ok {
+		_spec.AddField(usagelog.FieldUserQueueMs, field.TypeInt, value)
+	}
+	if _u.mutation.UserQueueMsCleared() {
+		_spec.ClearField(usagelog.FieldUserQueueMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AccountQueueMs(); ok {
+		_spec.SetField(usagelog.FieldAccountQueueMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAccountQueueMs(); ok {
+		_spec.AddField(usagelog.FieldAccountQueueMs, field.TypeInt, value)
+	}
+	if _u.mutation.AccountQueueMsCleared() {
+		_spec.ClearField(usagelog.FieldAccountQueueMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AccountSelectionMs(); ok {
+		_spec.SetField(usagelog.FieldAccountSelectionMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAccountSelectionMs(); ok {
+		_spec.AddField(usagelog.FieldAccountSelectionMs, field.TypeInt, value)
+	}
+	if _u.mutation.AccountSelectionMsCleared() {
+		_spec.ClearField(usagelog.FieldAccountSelectionMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamConnectMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamConnectMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamConnectMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamConnectMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamConnectMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamConnectMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamTLSMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamTLSMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamTLSMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamTLSMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamTLSMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamTLSMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamFirstByteMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamFirstByteMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamFirstByteMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstDataMs(); ok {
+		_spec.SetField(usagelog.FieldFirstDataMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstDataMs(); ok {
+		_spec.AddField(usagelog.FieldFirstDataMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstDataMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstDataMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstSemanticMs(); ok {
+		_spec.SetField(usagelog.FieldFirstSemanticMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstSemanticMs(); ok {
+		_spec.AddField(usagelog.FieldFirstSemanticMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstSemanticMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstSemanticMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstVisibleContentMs(); ok {
+		_spec.SetField(usagelog.FieldFirstVisibleContentMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstVisibleContentMs(); ok {
+		_spec.AddField(usagelog.FieldFirstVisibleContentMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstVisibleContentMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstVisibleContentMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.ClientFirstContentMs(); ok {
+		_spec.SetField(usagelog.FieldClientFirstContentMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedClientFirstContentMs(); ok {
+		_spec.AddField(usagelog.FieldClientFirstContentMs, field.TypeInt, value)
+	}
+	if _u.mutation.ClientFirstContentMsCleared() {
+		_spec.ClearField(usagelog.FieldClientFirstContentMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UserDurationMs(); ok {
+		_spec.SetField(usagelog.FieldUserDurationMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserDurationMs(); ok {
+		_spec.AddField(usagelog.FieldUserDurationMs, field.TypeInt, value)
+	}
+	if _u.mutation.UserDurationMsCleared() {
+		_spec.ClearField(usagelog.FieldUserDurationMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AttemptCount(); ok {
+		_spec.SetField(usagelog.FieldAttemptCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAttemptCount(); ok {
+		_spec.AddField(usagelog.FieldAttemptCount, field.TypeInt, value)
+	}
+	if _u.mutation.AttemptCountCleared() {
+		_spec.ClearField(usagelog.FieldAttemptCount, field.TypeInt)
+	}
+	if value, ok := _u.mutation.LastAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastAttemptMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastAttemptMs(); ok {
+		_spec.AddField(usagelog.FieldLastAttemptMs, field.TypeInt, value)
+	}
+	if _u.mutation.LastAttemptMsCleared() {
+		_spec.ClearField(usagelog.FieldLastAttemptMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.LastFailedAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastFailedAttemptMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastFailedAttemptMs(); ok {
+		_spec.AddField(usagelog.FieldLastFailedAttemptMs, field.TypeInt, value)
+	}
+	if _u.mutation.LastFailedAttemptMsCleared() {
+		_spec.ClearField(usagelog.FieldLastFailedAttemptMs, field.TypeInt)
 	}
 	if value, ok := _u.mutation.FirstTokenMs(); ok {
 		_spec.SetField(usagelog.FieldFirstTokenMs, field.TypeInt, value)
@@ -2295,6 +2799,384 @@ func (_u *UsageLogUpdateOne) ClearDurationMs() *UsageLogUpdateOne {
 	return _u
 }
 
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (_u *UsageLogUpdateOne) SetUserQueueMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetUserQueueMs()
+	_u.mutation.SetUserQueueMs(v)
+	return _u
+}
+
+// SetNillableUserQueueMs sets the "user_queue_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableUserQueueMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetUserQueueMs(*v)
+	}
+	return _u
+}
+
+// AddUserQueueMs adds value to the "user_queue_ms" field.
+func (_u *UsageLogUpdateOne) AddUserQueueMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddUserQueueMs(v)
+	return _u
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (_u *UsageLogUpdateOne) ClearUserQueueMs() *UsageLogUpdateOne {
+	_u.mutation.ClearUserQueueMs()
+	return _u
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (_u *UsageLogUpdateOne) SetAccountQueueMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetAccountQueueMs()
+	_u.mutation.SetAccountQueueMs(v)
+	return _u
+}
+
+// SetNillableAccountQueueMs sets the "account_queue_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableAccountQueueMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetAccountQueueMs(*v)
+	}
+	return _u
+}
+
+// AddAccountQueueMs adds value to the "account_queue_ms" field.
+func (_u *UsageLogUpdateOne) AddAccountQueueMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddAccountQueueMs(v)
+	return _u
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (_u *UsageLogUpdateOne) ClearAccountQueueMs() *UsageLogUpdateOne {
+	_u.mutation.ClearAccountQueueMs()
+	return _u
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (_u *UsageLogUpdateOne) SetAccountSelectionMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetAccountSelectionMs()
+	_u.mutation.SetAccountSelectionMs(v)
+	return _u
+}
+
+// SetNillableAccountSelectionMs sets the "account_selection_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableAccountSelectionMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetAccountSelectionMs(*v)
+	}
+	return _u
+}
+
+// AddAccountSelectionMs adds value to the "account_selection_ms" field.
+func (_u *UsageLogUpdateOne) AddAccountSelectionMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddAccountSelectionMs(v)
+	return _u
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (_u *UsageLogUpdateOne) ClearAccountSelectionMs() *UsageLogUpdateOne {
+	_u.mutation.ClearAccountSelectionMs()
+	return _u
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (_u *UsageLogUpdateOne) SetUpstreamConnectMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetUpstreamConnectMs()
+	_u.mutation.SetUpstreamConnectMs(v)
+	return _u
+}
+
+// SetNillableUpstreamConnectMs sets the "upstream_connect_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableUpstreamConnectMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetUpstreamConnectMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamConnectMs adds value to the "upstream_connect_ms" field.
+func (_u *UsageLogUpdateOne) AddUpstreamConnectMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddUpstreamConnectMs(v)
+	return _u
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (_u *UsageLogUpdateOne) ClearUpstreamConnectMs() *UsageLogUpdateOne {
+	_u.mutation.ClearUpstreamConnectMs()
+	return _u
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (_u *UsageLogUpdateOne) SetUpstreamTLSMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetUpstreamTLSMs()
+	_u.mutation.SetUpstreamTLSMs(v)
+	return _u
+}
+
+// SetNillableUpstreamTLSMs sets the "upstream_tls_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableUpstreamTLSMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetUpstreamTLSMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamTLSMs adds value to the "upstream_tls_ms" field.
+func (_u *UsageLogUpdateOne) AddUpstreamTLSMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddUpstreamTLSMs(v)
+	return _u
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (_u *UsageLogUpdateOne) ClearUpstreamTLSMs() *UsageLogUpdateOne {
+	_u.mutation.ClearUpstreamTLSMs()
+	return _u
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdateOne) SetUpstreamFirstByteMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetUpstreamFirstByteMs()
+	_u.mutation.SetUpstreamFirstByteMs(v)
+	return _u
+}
+
+// SetNillableUpstreamFirstByteMs sets the "upstream_first_byte_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableUpstreamFirstByteMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetUpstreamFirstByteMs(*v)
+	}
+	return _u
+}
+
+// AddUpstreamFirstByteMs adds value to the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdateOne) AddUpstreamFirstByteMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddUpstreamFirstByteMs(v)
+	return _u
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (_u *UsageLogUpdateOne) ClearUpstreamFirstByteMs() *UsageLogUpdateOne {
+	_u.mutation.ClearUpstreamFirstByteMs()
+	return _u
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (_u *UsageLogUpdateOne) SetFirstDataMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetFirstDataMs()
+	_u.mutation.SetFirstDataMs(v)
+	return _u
+}
+
+// SetNillableFirstDataMs sets the "first_data_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableFirstDataMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetFirstDataMs(*v)
+	}
+	return _u
+}
+
+// AddFirstDataMs adds value to the "first_data_ms" field.
+func (_u *UsageLogUpdateOne) AddFirstDataMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddFirstDataMs(v)
+	return _u
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (_u *UsageLogUpdateOne) ClearFirstDataMs() *UsageLogUpdateOne {
+	_u.mutation.ClearFirstDataMs()
+	return _u
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (_u *UsageLogUpdateOne) SetFirstSemanticMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetFirstSemanticMs()
+	_u.mutation.SetFirstSemanticMs(v)
+	return _u
+}
+
+// SetNillableFirstSemanticMs sets the "first_semantic_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableFirstSemanticMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetFirstSemanticMs(*v)
+	}
+	return _u
+}
+
+// AddFirstSemanticMs adds value to the "first_semantic_ms" field.
+func (_u *UsageLogUpdateOne) AddFirstSemanticMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddFirstSemanticMs(v)
+	return _u
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (_u *UsageLogUpdateOne) ClearFirstSemanticMs() *UsageLogUpdateOne {
+	_u.mutation.ClearFirstSemanticMs()
+	return _u
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (_u *UsageLogUpdateOne) SetFirstVisibleContentMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetFirstVisibleContentMs()
+	_u.mutation.SetFirstVisibleContentMs(v)
+	return _u
+}
+
+// SetNillableFirstVisibleContentMs sets the "first_visible_content_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableFirstVisibleContentMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetFirstVisibleContentMs(*v)
+	}
+	return _u
+}
+
+// AddFirstVisibleContentMs adds value to the "first_visible_content_ms" field.
+func (_u *UsageLogUpdateOne) AddFirstVisibleContentMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddFirstVisibleContentMs(v)
+	return _u
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (_u *UsageLogUpdateOne) ClearFirstVisibleContentMs() *UsageLogUpdateOne {
+	_u.mutation.ClearFirstVisibleContentMs()
+	return _u
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (_u *UsageLogUpdateOne) SetClientFirstContentMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetClientFirstContentMs()
+	_u.mutation.SetClientFirstContentMs(v)
+	return _u
+}
+
+// SetNillableClientFirstContentMs sets the "client_first_content_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableClientFirstContentMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetClientFirstContentMs(*v)
+	}
+	return _u
+}
+
+// AddClientFirstContentMs adds value to the "client_first_content_ms" field.
+func (_u *UsageLogUpdateOne) AddClientFirstContentMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddClientFirstContentMs(v)
+	return _u
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (_u *UsageLogUpdateOne) ClearClientFirstContentMs() *UsageLogUpdateOne {
+	_u.mutation.ClearClientFirstContentMs()
+	return _u
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (_u *UsageLogUpdateOne) SetUserDurationMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetUserDurationMs()
+	_u.mutation.SetUserDurationMs(v)
+	return _u
+}
+
+// SetNillableUserDurationMs sets the "user_duration_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableUserDurationMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetUserDurationMs(*v)
+	}
+	return _u
+}
+
+// AddUserDurationMs adds value to the "user_duration_ms" field.
+func (_u *UsageLogUpdateOne) AddUserDurationMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddUserDurationMs(v)
+	return _u
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (_u *UsageLogUpdateOne) ClearUserDurationMs() *UsageLogUpdateOne {
+	_u.mutation.ClearUserDurationMs()
+	return _u
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (_u *UsageLogUpdateOne) SetAttemptCount(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetAttemptCount()
+	_u.mutation.SetAttemptCount(v)
+	return _u
+}
+
+// SetNillableAttemptCount sets the "attempt_count" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableAttemptCount(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetAttemptCount(*v)
+	}
+	return _u
+}
+
+// AddAttemptCount adds value to the "attempt_count" field.
+func (_u *UsageLogUpdateOne) AddAttemptCount(v int) *UsageLogUpdateOne {
+	_u.mutation.AddAttemptCount(v)
+	return _u
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (_u *UsageLogUpdateOne) ClearAttemptCount() *UsageLogUpdateOne {
+	_u.mutation.ClearAttemptCount()
+	return _u
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (_u *UsageLogUpdateOne) SetLastAttemptMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetLastAttemptMs()
+	_u.mutation.SetLastAttemptMs(v)
+	return _u
+}
+
+// SetNillableLastAttemptMs sets the "last_attempt_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableLastAttemptMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetLastAttemptMs(*v)
+	}
+	return _u
+}
+
+// AddLastAttemptMs adds value to the "last_attempt_ms" field.
+func (_u *UsageLogUpdateOne) AddLastAttemptMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddLastAttemptMs(v)
+	return _u
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (_u *UsageLogUpdateOne) ClearLastAttemptMs() *UsageLogUpdateOne {
+	_u.mutation.ClearLastAttemptMs()
+	return _u
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdateOne) SetLastFailedAttemptMs(v int) *UsageLogUpdateOne {
+	_u.mutation.ResetLastFailedAttemptMs()
+	_u.mutation.SetLastFailedAttemptMs(v)
+	return _u
+}
+
+// SetNillableLastFailedAttemptMs sets the "last_failed_attempt_ms" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableLastFailedAttemptMs(v *int) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetLastFailedAttemptMs(*v)
+	}
+	return _u
+}
+
+// AddLastFailedAttemptMs adds value to the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdateOne) AddLastFailedAttemptMs(v int) *UsageLogUpdateOne {
+	_u.mutation.AddLastFailedAttemptMs(v)
+	return _u
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (_u *UsageLogUpdateOne) ClearLastFailedAttemptMs() *UsageLogUpdateOne {
+	_u.mutation.ClearLastFailedAttemptMs()
+	return _u
+}
+
 // SetFirstTokenMs sets the "first_token_ms" field.
 func (_u *UsageLogUpdateOne) SetFirstTokenMs(v int) *UsageLogUpdateOne {
 	_u.mutation.ResetFirstTokenMs()
@@ -2951,6 +3833,132 @@ func (_u *UsageLogUpdateOne) sqlSave(ctx context.Context) (_node *UsageLog, err 
 	}
 	if _u.mutation.DurationMsCleared() {
 		_spec.ClearField(usagelog.FieldDurationMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UserQueueMs(); ok {
+		_spec.SetField(usagelog.FieldUserQueueMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserQueueMs(); ok {
+		_spec.AddField(usagelog.FieldUserQueueMs, field.TypeInt, value)
+	}
+	if _u.mutation.UserQueueMsCleared() {
+		_spec.ClearField(usagelog.FieldUserQueueMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AccountQueueMs(); ok {
+		_spec.SetField(usagelog.FieldAccountQueueMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAccountQueueMs(); ok {
+		_spec.AddField(usagelog.FieldAccountQueueMs, field.TypeInt, value)
+	}
+	if _u.mutation.AccountQueueMsCleared() {
+		_spec.ClearField(usagelog.FieldAccountQueueMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AccountSelectionMs(); ok {
+		_spec.SetField(usagelog.FieldAccountSelectionMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAccountSelectionMs(); ok {
+		_spec.AddField(usagelog.FieldAccountSelectionMs, field.TypeInt, value)
+	}
+	if _u.mutation.AccountSelectionMsCleared() {
+		_spec.ClearField(usagelog.FieldAccountSelectionMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamConnectMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamConnectMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamConnectMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamConnectMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamConnectMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamConnectMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamTLSMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamTLSMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamTLSMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamTLSMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamTLSMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamTLSMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpstreamFirstByteMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUpstreamFirstByteMs(); ok {
+		_spec.AddField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt, value)
+	}
+	if _u.mutation.UpstreamFirstByteMsCleared() {
+		_spec.ClearField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstDataMs(); ok {
+		_spec.SetField(usagelog.FieldFirstDataMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstDataMs(); ok {
+		_spec.AddField(usagelog.FieldFirstDataMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstDataMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstDataMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstSemanticMs(); ok {
+		_spec.SetField(usagelog.FieldFirstSemanticMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstSemanticMs(); ok {
+		_spec.AddField(usagelog.FieldFirstSemanticMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstSemanticMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstSemanticMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.FirstVisibleContentMs(); ok {
+		_spec.SetField(usagelog.FieldFirstVisibleContentMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedFirstVisibleContentMs(); ok {
+		_spec.AddField(usagelog.FieldFirstVisibleContentMs, field.TypeInt, value)
+	}
+	if _u.mutation.FirstVisibleContentMsCleared() {
+		_spec.ClearField(usagelog.FieldFirstVisibleContentMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.ClientFirstContentMs(); ok {
+		_spec.SetField(usagelog.FieldClientFirstContentMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedClientFirstContentMs(); ok {
+		_spec.AddField(usagelog.FieldClientFirstContentMs, field.TypeInt, value)
+	}
+	if _u.mutation.ClientFirstContentMsCleared() {
+		_spec.ClearField(usagelog.FieldClientFirstContentMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UserDurationMs(); ok {
+		_spec.SetField(usagelog.FieldUserDurationMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedUserDurationMs(); ok {
+		_spec.AddField(usagelog.FieldUserDurationMs, field.TypeInt, value)
+	}
+	if _u.mutation.UserDurationMsCleared() {
+		_spec.ClearField(usagelog.FieldUserDurationMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.AttemptCount(); ok {
+		_spec.SetField(usagelog.FieldAttemptCount, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAttemptCount(); ok {
+		_spec.AddField(usagelog.FieldAttemptCount, field.TypeInt, value)
+	}
+	if _u.mutation.AttemptCountCleared() {
+		_spec.ClearField(usagelog.FieldAttemptCount, field.TypeInt)
+	}
+	if value, ok := _u.mutation.LastAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastAttemptMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastAttemptMs(); ok {
+		_spec.AddField(usagelog.FieldLastAttemptMs, field.TypeInt, value)
+	}
+	if _u.mutation.LastAttemptMsCleared() {
+		_spec.ClearField(usagelog.FieldLastAttemptMs, field.TypeInt)
+	}
+	if value, ok := _u.mutation.LastFailedAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastFailedAttemptMs, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastFailedAttemptMs(); ok {
+		_spec.AddField(usagelog.FieldLastFailedAttemptMs, field.TypeInt, value)
+	}
+	if _u.mutation.LastFailedAttemptMsCleared() {
+		_spec.ClearField(usagelog.FieldLastFailedAttemptMs, field.TypeInt)
 	}
 	if value, ok := _u.mutation.FirstTokenMs(); ok {
 		_spec.SetField(usagelog.FieldFirstTokenMs, field.TypeInt, value)

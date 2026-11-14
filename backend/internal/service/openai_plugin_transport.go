@@ -1,6 +1,11 @@
 package service
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+
+	"github.com/Wei-Shaw/sub2api/internal/pkg/requestlatency"
+)
 
 func (s *OpenAIGatewayService) SetPluginManager(manager *PluginManager) {
 	s.pluginManager = manager
@@ -8,7 +13,19 @@ func (s *OpenAIGatewayService) SetPluginManager(manager *PluginManager) {
 
 // doOpenAIUpstream 只在 OpenAI OAuth 能力绑定已启用时把真实请求交给插件。
 // 插件返回标准 http.Response，响应解析、错误映射、SSE 和计费仍由现有核心链处理。
-func (s *OpenAIGatewayService) doOpenAIUpstream(request *http.Request, proxyURL string, account *Account) (*http.Response, error) {
+func (s *OpenAIGatewayService) doOpenAIUpstream(request *http.Request, proxyURL string, account *Account) (response *http.Response, err error) {
+	timing := requestlatency.From(request.Context())
+	if timing != nil {
+		request = request.WithContext(timing.Trace(request.Context()))
+	}
+	defer func() {
+		if response != nil {
+			timing.Mark(requestlatency.UpstreamFirstByte)
+		} // header fallback for transports without httptrace
+		if response != nil && response.Body != nil && response.StatusCode >= 200 && response.StatusCode < 300 {
+			response.Body = requestlatency.ObserveBody(response.Body, timing, strings.Contains(response.Header.Get("Content-Type"), "text/event-stream"))
+		}
+	}()
 	if s.pluginManager != nil {
 		response, handled, err := s.pluginManager.RoundTripOpenAIOAuth(request.Context(), request, proxyURL, account)
 		if handled {

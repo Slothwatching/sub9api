@@ -477,6 +477,202 @@ func (_c *UsageLogCreate) SetNillableDurationMs(v *int) *UsageLogCreate {
 	return _c
 }
 
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (_c *UsageLogCreate) SetUserQueueMs(v int) *UsageLogCreate {
+	_c.mutation.SetUserQueueMs(v)
+	return _c
+}
+
+// SetNillableUserQueueMs sets the "user_queue_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableUserQueueMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetUserQueueMs(*v)
+	}
+	return _c
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (_c *UsageLogCreate) SetAccountQueueMs(v int) *UsageLogCreate {
+	_c.mutation.SetAccountQueueMs(v)
+	return _c
+}
+
+// SetNillableAccountQueueMs sets the "account_queue_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableAccountQueueMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetAccountQueueMs(*v)
+	}
+	return _c
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (_c *UsageLogCreate) SetAccountSelectionMs(v int) *UsageLogCreate {
+	_c.mutation.SetAccountSelectionMs(v)
+	return _c
+}
+
+// SetNillableAccountSelectionMs sets the "account_selection_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableAccountSelectionMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetAccountSelectionMs(*v)
+	}
+	return _c
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (_c *UsageLogCreate) SetUpstreamConnectMs(v int) *UsageLogCreate {
+	_c.mutation.SetUpstreamConnectMs(v)
+	return _c
+}
+
+// SetNillableUpstreamConnectMs sets the "upstream_connect_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableUpstreamConnectMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetUpstreamConnectMs(*v)
+	}
+	return _c
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (_c *UsageLogCreate) SetUpstreamTLSMs(v int) *UsageLogCreate {
+	_c.mutation.SetUpstreamTLSMs(v)
+	return _c
+}
+
+// SetNillableUpstreamTLSMs sets the "upstream_tls_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableUpstreamTLSMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetUpstreamTLSMs(*v)
+	}
+	return _c
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (_c *UsageLogCreate) SetUpstreamFirstByteMs(v int) *UsageLogCreate {
+	_c.mutation.SetUpstreamFirstByteMs(v)
+	return _c
+}
+
+// SetNillableUpstreamFirstByteMs sets the "upstream_first_byte_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableUpstreamFirstByteMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetUpstreamFirstByteMs(*v)
+	}
+	return _c
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (_c *UsageLogCreate) SetFirstDataMs(v int) *UsageLogCreate {
+	_c.mutation.SetFirstDataMs(v)
+	return _c
+}
+
+// SetNillableFirstDataMs sets the "first_data_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableFirstDataMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetFirstDataMs(*v)
+	}
+	return _c
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (_c *UsageLogCreate) SetFirstSemanticMs(v int) *UsageLogCreate {
+	_c.mutation.SetFirstSemanticMs(v)
+	return _c
+}
+
+// SetNillableFirstSemanticMs sets the "first_semantic_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableFirstSemanticMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetFirstSemanticMs(*v)
+	}
+	return _c
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (_c *UsageLogCreate) SetFirstVisibleContentMs(v int) *UsageLogCreate {
+	_c.mutation.SetFirstVisibleContentMs(v)
+	return _c
+}
+
+// SetNillableFirstVisibleContentMs sets the "first_visible_content_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableFirstVisibleContentMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetFirstVisibleContentMs(*v)
+	}
+	return _c
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (_c *UsageLogCreate) SetClientFirstContentMs(v int) *UsageLogCreate {
+	_c.mutation.SetClientFirstContentMs(v)
+	return _c
+}
+
+// SetNillableClientFirstContentMs sets the "client_first_content_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableClientFirstContentMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetClientFirstContentMs(*v)
+	}
+	return _c
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (_c *UsageLogCreate) SetUserDurationMs(v int) *UsageLogCreate {
+	_c.mutation.SetUserDurationMs(v)
+	return _c
+}
+
+// SetNillableUserDurationMs sets the "user_duration_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableUserDurationMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetUserDurationMs(*v)
+	}
+	return _c
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (_c *UsageLogCreate) SetAttemptCount(v int) *UsageLogCreate {
+	_c.mutation.SetAttemptCount(v)
+	return _c
+}
+
+// SetNillableAttemptCount sets the "attempt_count" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableAttemptCount(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetAttemptCount(*v)
+	}
+	return _c
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (_c *UsageLogCreate) SetLastAttemptMs(v int) *UsageLogCreate {
+	_c.mutation.SetLastAttemptMs(v)
+	return _c
+}
+
+// SetNillableLastAttemptMs sets the "last_attempt_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableLastAttemptMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetLastAttemptMs(*v)
+	}
+	return _c
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (_c *UsageLogCreate) SetLastFailedAttemptMs(v int) *UsageLogCreate {
+	_c.mutation.SetLastFailedAttemptMs(v)
+	return _c
+}
+
+// SetNillableLastFailedAttemptMs sets the "last_failed_attempt_ms" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableLastFailedAttemptMs(v *int) *UsageLogCreate {
+	if v != nil {
+		_c.SetLastFailedAttemptMs(*v)
+	}
+	return _c
+}
+
 // SetFirstTokenMs sets the "first_token_ms" field.
 func (_c *UsageLogCreate) SetFirstTokenMs(v int) *UsageLogCreate {
 	_c.mutation.SetFirstTokenMs(v)
@@ -1128,6 +1324,62 @@ func (_c *UsageLogCreate) createSpec() (*UsageLog, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DurationMs(); ok {
 		_spec.SetField(usagelog.FieldDurationMs, field.TypeInt, value)
 		_node.DurationMs = &value
+	}
+	if value, ok := _c.mutation.UserQueueMs(); ok {
+		_spec.SetField(usagelog.FieldUserQueueMs, field.TypeInt, value)
+		_node.UserQueueMs = &value
+	}
+	if value, ok := _c.mutation.AccountQueueMs(); ok {
+		_spec.SetField(usagelog.FieldAccountQueueMs, field.TypeInt, value)
+		_node.AccountQueueMs = &value
+	}
+	if value, ok := _c.mutation.AccountSelectionMs(); ok {
+		_spec.SetField(usagelog.FieldAccountSelectionMs, field.TypeInt, value)
+		_node.AccountSelectionMs = &value
+	}
+	if value, ok := _c.mutation.UpstreamConnectMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamConnectMs, field.TypeInt, value)
+		_node.UpstreamConnectMs = &value
+	}
+	if value, ok := _c.mutation.UpstreamTLSMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamTLSMs, field.TypeInt, value)
+		_node.UpstreamTLSMs = &value
+	}
+	if value, ok := _c.mutation.UpstreamFirstByteMs(); ok {
+		_spec.SetField(usagelog.FieldUpstreamFirstByteMs, field.TypeInt, value)
+		_node.UpstreamFirstByteMs = &value
+	}
+	if value, ok := _c.mutation.FirstDataMs(); ok {
+		_spec.SetField(usagelog.FieldFirstDataMs, field.TypeInt, value)
+		_node.FirstDataMs = &value
+	}
+	if value, ok := _c.mutation.FirstSemanticMs(); ok {
+		_spec.SetField(usagelog.FieldFirstSemanticMs, field.TypeInt, value)
+		_node.FirstSemanticMs = &value
+	}
+	if value, ok := _c.mutation.FirstVisibleContentMs(); ok {
+		_spec.SetField(usagelog.FieldFirstVisibleContentMs, field.TypeInt, value)
+		_node.FirstVisibleContentMs = &value
+	}
+	if value, ok := _c.mutation.ClientFirstContentMs(); ok {
+		_spec.SetField(usagelog.FieldClientFirstContentMs, field.TypeInt, value)
+		_node.ClientFirstContentMs = &value
+	}
+	if value, ok := _c.mutation.UserDurationMs(); ok {
+		_spec.SetField(usagelog.FieldUserDurationMs, field.TypeInt, value)
+		_node.UserDurationMs = &value
+	}
+	if value, ok := _c.mutation.AttemptCount(); ok {
+		_spec.SetField(usagelog.FieldAttemptCount, field.TypeInt, value)
+		_node.AttemptCount = &value
+	}
+	if value, ok := _c.mutation.LastAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastAttemptMs, field.TypeInt, value)
+		_node.LastAttemptMs = &value
+	}
+	if value, ok := _c.mutation.LastFailedAttemptMs(); ok {
+		_spec.SetField(usagelog.FieldLastFailedAttemptMs, field.TypeInt, value)
+		_node.LastFailedAttemptMs = &value
 	}
 	if value, ok := _c.mutation.FirstTokenMs(); ok {
 		_spec.SetField(usagelog.FieldFirstTokenMs, field.TypeInt, value)
@@ -1925,6 +2177,342 @@ func (u *UsageLogUpsert) AddDurationMs(v int) *UsageLogUpsert {
 // ClearDurationMs clears the value of the "duration_ms" field.
 func (u *UsageLogUpsert) ClearDurationMs() *UsageLogUpsert {
 	u.SetNull(usagelog.FieldDurationMs)
+	return u
+}
+
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (u *UsageLogUpsert) SetUserQueueMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldUserQueueMs, v)
+	return u
+}
+
+// UpdateUserQueueMs sets the "user_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateUserQueueMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldUserQueueMs)
+	return u
+}
+
+// AddUserQueueMs adds v to the "user_queue_ms" field.
+func (u *UsageLogUpsert) AddUserQueueMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldUserQueueMs, v)
+	return u
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (u *UsageLogUpsert) ClearUserQueueMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldUserQueueMs)
+	return u
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (u *UsageLogUpsert) SetAccountQueueMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldAccountQueueMs, v)
+	return u
+}
+
+// UpdateAccountQueueMs sets the "account_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateAccountQueueMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldAccountQueueMs)
+	return u
+}
+
+// AddAccountQueueMs adds v to the "account_queue_ms" field.
+func (u *UsageLogUpsert) AddAccountQueueMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldAccountQueueMs, v)
+	return u
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (u *UsageLogUpsert) ClearAccountQueueMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldAccountQueueMs)
+	return u
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (u *UsageLogUpsert) SetAccountSelectionMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldAccountSelectionMs, v)
+	return u
+}
+
+// UpdateAccountSelectionMs sets the "account_selection_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateAccountSelectionMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldAccountSelectionMs)
+	return u
+}
+
+// AddAccountSelectionMs adds v to the "account_selection_ms" field.
+func (u *UsageLogUpsert) AddAccountSelectionMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldAccountSelectionMs, v)
+	return u
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (u *UsageLogUpsert) ClearAccountSelectionMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldAccountSelectionMs)
+	return u
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (u *UsageLogUpsert) SetUpstreamConnectMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldUpstreamConnectMs, v)
+	return u
+}
+
+// UpdateUpstreamConnectMs sets the "upstream_connect_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateUpstreamConnectMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldUpstreamConnectMs)
+	return u
+}
+
+// AddUpstreamConnectMs adds v to the "upstream_connect_ms" field.
+func (u *UsageLogUpsert) AddUpstreamConnectMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldUpstreamConnectMs, v)
+	return u
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (u *UsageLogUpsert) ClearUpstreamConnectMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldUpstreamConnectMs)
+	return u
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (u *UsageLogUpsert) SetUpstreamTLSMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldUpstreamTLSMs, v)
+	return u
+}
+
+// UpdateUpstreamTLSMs sets the "upstream_tls_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateUpstreamTLSMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldUpstreamTLSMs)
+	return u
+}
+
+// AddUpstreamTLSMs adds v to the "upstream_tls_ms" field.
+func (u *UsageLogUpsert) AddUpstreamTLSMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldUpstreamTLSMs, v)
+	return u
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (u *UsageLogUpsert) ClearUpstreamTLSMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldUpstreamTLSMs)
+	return u
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsert) SetUpstreamFirstByteMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldUpstreamFirstByteMs, v)
+	return u
+}
+
+// UpdateUpstreamFirstByteMs sets the "upstream_first_byte_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateUpstreamFirstByteMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldUpstreamFirstByteMs)
+	return u
+}
+
+// AddUpstreamFirstByteMs adds v to the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsert) AddUpstreamFirstByteMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldUpstreamFirstByteMs, v)
+	return u
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsert) ClearUpstreamFirstByteMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldUpstreamFirstByteMs)
+	return u
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (u *UsageLogUpsert) SetFirstDataMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldFirstDataMs, v)
+	return u
+}
+
+// UpdateFirstDataMs sets the "first_data_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateFirstDataMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldFirstDataMs)
+	return u
+}
+
+// AddFirstDataMs adds v to the "first_data_ms" field.
+func (u *UsageLogUpsert) AddFirstDataMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldFirstDataMs, v)
+	return u
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (u *UsageLogUpsert) ClearFirstDataMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldFirstDataMs)
+	return u
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (u *UsageLogUpsert) SetFirstSemanticMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldFirstSemanticMs, v)
+	return u
+}
+
+// UpdateFirstSemanticMs sets the "first_semantic_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateFirstSemanticMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldFirstSemanticMs)
+	return u
+}
+
+// AddFirstSemanticMs adds v to the "first_semantic_ms" field.
+func (u *UsageLogUpsert) AddFirstSemanticMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldFirstSemanticMs, v)
+	return u
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (u *UsageLogUpsert) ClearFirstSemanticMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldFirstSemanticMs)
+	return u
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (u *UsageLogUpsert) SetFirstVisibleContentMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldFirstVisibleContentMs, v)
+	return u
+}
+
+// UpdateFirstVisibleContentMs sets the "first_visible_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateFirstVisibleContentMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldFirstVisibleContentMs)
+	return u
+}
+
+// AddFirstVisibleContentMs adds v to the "first_visible_content_ms" field.
+func (u *UsageLogUpsert) AddFirstVisibleContentMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldFirstVisibleContentMs, v)
+	return u
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (u *UsageLogUpsert) ClearFirstVisibleContentMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldFirstVisibleContentMs)
+	return u
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (u *UsageLogUpsert) SetClientFirstContentMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldClientFirstContentMs, v)
+	return u
+}
+
+// UpdateClientFirstContentMs sets the "client_first_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateClientFirstContentMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldClientFirstContentMs)
+	return u
+}
+
+// AddClientFirstContentMs adds v to the "client_first_content_ms" field.
+func (u *UsageLogUpsert) AddClientFirstContentMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldClientFirstContentMs, v)
+	return u
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (u *UsageLogUpsert) ClearClientFirstContentMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldClientFirstContentMs)
+	return u
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (u *UsageLogUpsert) SetUserDurationMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldUserDurationMs, v)
+	return u
+}
+
+// UpdateUserDurationMs sets the "user_duration_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateUserDurationMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldUserDurationMs)
+	return u
+}
+
+// AddUserDurationMs adds v to the "user_duration_ms" field.
+func (u *UsageLogUpsert) AddUserDurationMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldUserDurationMs, v)
+	return u
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (u *UsageLogUpsert) ClearUserDurationMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldUserDurationMs)
+	return u
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (u *UsageLogUpsert) SetAttemptCount(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldAttemptCount, v)
+	return u
+}
+
+// UpdateAttemptCount sets the "attempt_count" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateAttemptCount() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldAttemptCount)
+	return u
+}
+
+// AddAttemptCount adds v to the "attempt_count" field.
+func (u *UsageLogUpsert) AddAttemptCount(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldAttemptCount, v)
+	return u
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (u *UsageLogUpsert) ClearAttemptCount() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldAttemptCount)
+	return u
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (u *UsageLogUpsert) SetLastAttemptMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldLastAttemptMs, v)
+	return u
+}
+
+// UpdateLastAttemptMs sets the "last_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateLastAttemptMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldLastAttemptMs)
+	return u
+}
+
+// AddLastAttemptMs adds v to the "last_attempt_ms" field.
+func (u *UsageLogUpsert) AddLastAttemptMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldLastAttemptMs, v)
+	return u
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (u *UsageLogUpsert) ClearLastAttemptMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldLastAttemptMs)
+	return u
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsert) SetLastFailedAttemptMs(v int) *UsageLogUpsert {
+	u.Set(usagelog.FieldLastFailedAttemptMs, v)
+	return u
+}
+
+// UpdateLastFailedAttemptMs sets the "last_failed_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateLastFailedAttemptMs() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldLastFailedAttemptMs)
+	return u
+}
+
+// AddLastFailedAttemptMs adds v to the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsert) AddLastFailedAttemptMs(v int) *UsageLogUpsert {
+	u.Add(usagelog.FieldLastFailedAttemptMs, v)
+	return u
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsert) ClearLastFailedAttemptMs() *UsageLogUpsert {
+	u.SetNull(usagelog.FieldLastFailedAttemptMs)
 	return u
 }
 
@@ -2917,6 +3505,398 @@ func (u *UsageLogUpsertOne) UpdateDurationMs() *UsageLogUpsertOne {
 func (u *UsageLogUpsertOne) ClearDurationMs() *UsageLogUpsertOne {
 	return u.Update(func(s *UsageLogUpsert) {
 		s.ClearDurationMs()
+	})
+}
+
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (u *UsageLogUpsertOne) SetUserQueueMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUserQueueMs(v)
+	})
+}
+
+// AddUserQueueMs adds v to the "user_queue_ms" field.
+func (u *UsageLogUpsertOne) AddUserQueueMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUserQueueMs(v)
+	})
+}
+
+// UpdateUserQueueMs sets the "user_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateUserQueueMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUserQueueMs()
+	})
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (u *UsageLogUpsertOne) ClearUserQueueMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUserQueueMs()
+	})
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (u *UsageLogUpsertOne) SetAccountQueueMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAccountQueueMs(v)
+	})
+}
+
+// AddAccountQueueMs adds v to the "account_queue_ms" field.
+func (u *UsageLogUpsertOne) AddAccountQueueMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAccountQueueMs(v)
+	})
+}
+
+// UpdateAccountQueueMs sets the "account_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateAccountQueueMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAccountQueueMs()
+	})
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (u *UsageLogUpsertOne) ClearAccountQueueMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAccountQueueMs()
+	})
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (u *UsageLogUpsertOne) SetAccountSelectionMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAccountSelectionMs(v)
+	})
+}
+
+// AddAccountSelectionMs adds v to the "account_selection_ms" field.
+func (u *UsageLogUpsertOne) AddAccountSelectionMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAccountSelectionMs(v)
+	})
+}
+
+// UpdateAccountSelectionMs sets the "account_selection_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateAccountSelectionMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAccountSelectionMs()
+	})
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (u *UsageLogUpsertOne) ClearAccountSelectionMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAccountSelectionMs()
+	})
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (u *UsageLogUpsertOne) SetUpstreamConnectMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamConnectMs(v)
+	})
+}
+
+// AddUpstreamConnectMs adds v to the "upstream_connect_ms" field.
+func (u *UsageLogUpsertOne) AddUpstreamConnectMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamConnectMs(v)
+	})
+}
+
+// UpdateUpstreamConnectMs sets the "upstream_connect_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateUpstreamConnectMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamConnectMs()
+	})
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (u *UsageLogUpsertOne) ClearUpstreamConnectMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamConnectMs()
+	})
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (u *UsageLogUpsertOne) SetUpstreamTLSMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamTLSMs(v)
+	})
+}
+
+// AddUpstreamTLSMs adds v to the "upstream_tls_ms" field.
+func (u *UsageLogUpsertOne) AddUpstreamTLSMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamTLSMs(v)
+	})
+}
+
+// UpdateUpstreamTLSMs sets the "upstream_tls_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateUpstreamTLSMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamTLSMs()
+	})
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (u *UsageLogUpsertOne) ClearUpstreamTLSMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamTLSMs()
+	})
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertOne) SetUpstreamFirstByteMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamFirstByteMs(v)
+	})
+}
+
+// AddUpstreamFirstByteMs adds v to the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertOne) AddUpstreamFirstByteMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamFirstByteMs(v)
+	})
+}
+
+// UpdateUpstreamFirstByteMs sets the "upstream_first_byte_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateUpstreamFirstByteMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamFirstByteMs()
+	})
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertOne) ClearUpstreamFirstByteMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamFirstByteMs()
+	})
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (u *UsageLogUpsertOne) SetFirstDataMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstDataMs(v)
+	})
+}
+
+// AddFirstDataMs adds v to the "first_data_ms" field.
+func (u *UsageLogUpsertOne) AddFirstDataMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstDataMs(v)
+	})
+}
+
+// UpdateFirstDataMs sets the "first_data_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateFirstDataMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstDataMs()
+	})
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (u *UsageLogUpsertOne) ClearFirstDataMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstDataMs()
+	})
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (u *UsageLogUpsertOne) SetFirstSemanticMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstSemanticMs(v)
+	})
+}
+
+// AddFirstSemanticMs adds v to the "first_semantic_ms" field.
+func (u *UsageLogUpsertOne) AddFirstSemanticMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstSemanticMs(v)
+	})
+}
+
+// UpdateFirstSemanticMs sets the "first_semantic_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateFirstSemanticMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstSemanticMs()
+	})
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (u *UsageLogUpsertOne) ClearFirstSemanticMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstSemanticMs()
+	})
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (u *UsageLogUpsertOne) SetFirstVisibleContentMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstVisibleContentMs(v)
+	})
+}
+
+// AddFirstVisibleContentMs adds v to the "first_visible_content_ms" field.
+func (u *UsageLogUpsertOne) AddFirstVisibleContentMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstVisibleContentMs(v)
+	})
+}
+
+// UpdateFirstVisibleContentMs sets the "first_visible_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateFirstVisibleContentMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstVisibleContentMs()
+	})
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (u *UsageLogUpsertOne) ClearFirstVisibleContentMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstVisibleContentMs()
+	})
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (u *UsageLogUpsertOne) SetClientFirstContentMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetClientFirstContentMs(v)
+	})
+}
+
+// AddClientFirstContentMs adds v to the "client_first_content_ms" field.
+func (u *UsageLogUpsertOne) AddClientFirstContentMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddClientFirstContentMs(v)
+	})
+}
+
+// UpdateClientFirstContentMs sets the "client_first_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateClientFirstContentMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateClientFirstContentMs()
+	})
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (u *UsageLogUpsertOne) ClearClientFirstContentMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearClientFirstContentMs()
+	})
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (u *UsageLogUpsertOne) SetUserDurationMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUserDurationMs(v)
+	})
+}
+
+// AddUserDurationMs adds v to the "user_duration_ms" field.
+func (u *UsageLogUpsertOne) AddUserDurationMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUserDurationMs(v)
+	})
+}
+
+// UpdateUserDurationMs sets the "user_duration_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateUserDurationMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUserDurationMs()
+	})
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (u *UsageLogUpsertOne) ClearUserDurationMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUserDurationMs()
+	})
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (u *UsageLogUpsertOne) SetAttemptCount(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAttemptCount(v)
+	})
+}
+
+// AddAttemptCount adds v to the "attempt_count" field.
+func (u *UsageLogUpsertOne) AddAttemptCount(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAttemptCount(v)
+	})
+}
+
+// UpdateAttemptCount sets the "attempt_count" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateAttemptCount() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAttemptCount()
+	})
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (u *UsageLogUpsertOne) ClearAttemptCount() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAttemptCount()
+	})
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (u *UsageLogUpsertOne) SetLastAttemptMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetLastAttemptMs(v)
+	})
+}
+
+// AddLastAttemptMs adds v to the "last_attempt_ms" field.
+func (u *UsageLogUpsertOne) AddLastAttemptMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddLastAttemptMs(v)
+	})
+}
+
+// UpdateLastAttemptMs sets the "last_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateLastAttemptMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateLastAttemptMs()
+	})
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (u *UsageLogUpsertOne) ClearLastAttemptMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearLastAttemptMs()
+	})
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertOne) SetLastFailedAttemptMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetLastFailedAttemptMs(v)
+	})
+}
+
+// AddLastFailedAttemptMs adds v to the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertOne) AddLastFailedAttemptMs(v int) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddLastFailedAttemptMs(v)
+	})
+}
+
+// UpdateLastFailedAttemptMs sets the "last_failed_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateLastFailedAttemptMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateLastFailedAttemptMs()
+	})
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertOne) ClearLastFailedAttemptMs() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearLastFailedAttemptMs()
 	})
 }
 
@@ -4115,6 +5095,398 @@ func (u *UsageLogUpsertBulk) UpdateDurationMs() *UsageLogUpsertBulk {
 func (u *UsageLogUpsertBulk) ClearDurationMs() *UsageLogUpsertBulk {
 	return u.Update(func(s *UsageLogUpsert) {
 		s.ClearDurationMs()
+	})
+}
+
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (u *UsageLogUpsertBulk) SetUserQueueMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUserQueueMs(v)
+	})
+}
+
+// AddUserQueueMs adds v to the "user_queue_ms" field.
+func (u *UsageLogUpsertBulk) AddUserQueueMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUserQueueMs(v)
+	})
+}
+
+// UpdateUserQueueMs sets the "user_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateUserQueueMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUserQueueMs()
+	})
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (u *UsageLogUpsertBulk) ClearUserQueueMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUserQueueMs()
+	})
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (u *UsageLogUpsertBulk) SetAccountQueueMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAccountQueueMs(v)
+	})
+}
+
+// AddAccountQueueMs adds v to the "account_queue_ms" field.
+func (u *UsageLogUpsertBulk) AddAccountQueueMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAccountQueueMs(v)
+	})
+}
+
+// UpdateAccountQueueMs sets the "account_queue_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateAccountQueueMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAccountQueueMs()
+	})
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (u *UsageLogUpsertBulk) ClearAccountQueueMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAccountQueueMs()
+	})
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (u *UsageLogUpsertBulk) SetAccountSelectionMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAccountSelectionMs(v)
+	})
+}
+
+// AddAccountSelectionMs adds v to the "account_selection_ms" field.
+func (u *UsageLogUpsertBulk) AddAccountSelectionMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAccountSelectionMs(v)
+	})
+}
+
+// UpdateAccountSelectionMs sets the "account_selection_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateAccountSelectionMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAccountSelectionMs()
+	})
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (u *UsageLogUpsertBulk) ClearAccountSelectionMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAccountSelectionMs()
+	})
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (u *UsageLogUpsertBulk) SetUpstreamConnectMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamConnectMs(v)
+	})
+}
+
+// AddUpstreamConnectMs adds v to the "upstream_connect_ms" field.
+func (u *UsageLogUpsertBulk) AddUpstreamConnectMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamConnectMs(v)
+	})
+}
+
+// UpdateUpstreamConnectMs sets the "upstream_connect_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateUpstreamConnectMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamConnectMs()
+	})
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (u *UsageLogUpsertBulk) ClearUpstreamConnectMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamConnectMs()
+	})
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (u *UsageLogUpsertBulk) SetUpstreamTLSMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamTLSMs(v)
+	})
+}
+
+// AddUpstreamTLSMs adds v to the "upstream_tls_ms" field.
+func (u *UsageLogUpsertBulk) AddUpstreamTLSMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamTLSMs(v)
+	})
+}
+
+// UpdateUpstreamTLSMs sets the "upstream_tls_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateUpstreamTLSMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamTLSMs()
+	})
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (u *UsageLogUpsertBulk) ClearUpstreamTLSMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamTLSMs()
+	})
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertBulk) SetUpstreamFirstByteMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUpstreamFirstByteMs(v)
+	})
+}
+
+// AddUpstreamFirstByteMs adds v to the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertBulk) AddUpstreamFirstByteMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUpstreamFirstByteMs(v)
+	})
+}
+
+// UpdateUpstreamFirstByteMs sets the "upstream_first_byte_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateUpstreamFirstByteMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUpstreamFirstByteMs()
+	})
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (u *UsageLogUpsertBulk) ClearUpstreamFirstByteMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUpstreamFirstByteMs()
+	})
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (u *UsageLogUpsertBulk) SetFirstDataMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstDataMs(v)
+	})
+}
+
+// AddFirstDataMs adds v to the "first_data_ms" field.
+func (u *UsageLogUpsertBulk) AddFirstDataMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstDataMs(v)
+	})
+}
+
+// UpdateFirstDataMs sets the "first_data_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateFirstDataMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstDataMs()
+	})
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (u *UsageLogUpsertBulk) ClearFirstDataMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstDataMs()
+	})
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (u *UsageLogUpsertBulk) SetFirstSemanticMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstSemanticMs(v)
+	})
+}
+
+// AddFirstSemanticMs adds v to the "first_semantic_ms" field.
+func (u *UsageLogUpsertBulk) AddFirstSemanticMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstSemanticMs(v)
+	})
+}
+
+// UpdateFirstSemanticMs sets the "first_semantic_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateFirstSemanticMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstSemanticMs()
+	})
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (u *UsageLogUpsertBulk) ClearFirstSemanticMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstSemanticMs()
+	})
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (u *UsageLogUpsertBulk) SetFirstVisibleContentMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetFirstVisibleContentMs(v)
+	})
+}
+
+// AddFirstVisibleContentMs adds v to the "first_visible_content_ms" field.
+func (u *UsageLogUpsertBulk) AddFirstVisibleContentMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddFirstVisibleContentMs(v)
+	})
+}
+
+// UpdateFirstVisibleContentMs sets the "first_visible_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateFirstVisibleContentMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateFirstVisibleContentMs()
+	})
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (u *UsageLogUpsertBulk) ClearFirstVisibleContentMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearFirstVisibleContentMs()
+	})
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (u *UsageLogUpsertBulk) SetClientFirstContentMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetClientFirstContentMs(v)
+	})
+}
+
+// AddClientFirstContentMs adds v to the "client_first_content_ms" field.
+func (u *UsageLogUpsertBulk) AddClientFirstContentMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddClientFirstContentMs(v)
+	})
+}
+
+// UpdateClientFirstContentMs sets the "client_first_content_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateClientFirstContentMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateClientFirstContentMs()
+	})
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (u *UsageLogUpsertBulk) ClearClientFirstContentMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearClientFirstContentMs()
+	})
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (u *UsageLogUpsertBulk) SetUserDurationMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetUserDurationMs(v)
+	})
+}
+
+// AddUserDurationMs adds v to the "user_duration_ms" field.
+func (u *UsageLogUpsertBulk) AddUserDurationMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddUserDurationMs(v)
+	})
+}
+
+// UpdateUserDurationMs sets the "user_duration_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateUserDurationMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateUserDurationMs()
+	})
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (u *UsageLogUpsertBulk) ClearUserDurationMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearUserDurationMs()
+	})
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (u *UsageLogUpsertBulk) SetAttemptCount(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetAttemptCount(v)
+	})
+}
+
+// AddAttemptCount adds v to the "attempt_count" field.
+func (u *UsageLogUpsertBulk) AddAttemptCount(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddAttemptCount(v)
+	})
+}
+
+// UpdateAttemptCount sets the "attempt_count" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateAttemptCount() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateAttemptCount()
+	})
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (u *UsageLogUpsertBulk) ClearAttemptCount() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearAttemptCount()
+	})
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (u *UsageLogUpsertBulk) SetLastAttemptMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetLastAttemptMs(v)
+	})
+}
+
+// AddLastAttemptMs adds v to the "last_attempt_ms" field.
+func (u *UsageLogUpsertBulk) AddLastAttemptMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddLastAttemptMs(v)
+	})
+}
+
+// UpdateLastAttemptMs sets the "last_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateLastAttemptMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateLastAttemptMs()
+	})
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (u *UsageLogUpsertBulk) ClearLastAttemptMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearLastAttemptMs()
+	})
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertBulk) SetLastFailedAttemptMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetLastFailedAttemptMs(v)
+	})
+}
+
+// AddLastFailedAttemptMs adds v to the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertBulk) AddLastFailedAttemptMs(v int) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.AddLastFailedAttemptMs(v)
+	})
+}
+
+// UpdateLastFailedAttemptMs sets the "last_failed_attempt_ms" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateLastFailedAttemptMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateLastFailedAttemptMs()
+	})
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (u *UsageLogUpsertBulk) ClearLastFailedAttemptMs() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.ClearLastFailedAttemptMs()
 	})
 }
 

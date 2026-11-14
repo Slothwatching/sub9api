@@ -1908,6 +1908,20 @@ export interface UsageLog {
   native_compaction_v2: boolean
   duration_ms: number | null
   first_token_ms: number | null
+  user_queue_ms?: number | null
+  account_queue_ms?: number | null
+  account_selection_ms?: number | null
+  upstream_connect_ms?: number | null
+  upstream_tls_ms?: number | null
+  upstream_first_byte_ms?: number | null
+  first_data_ms?: number | null
+  first_semantic_ms?: number | null
+  first_visible_content_ms?: number | null
+  client_first_content_ms?: number | null
+  user_duration_ms?: number | null
+  attempt_count?: number | null
+  last_attempt_ms?: number | null
+  last_failed_attempt_ms?: number | null
 
   // 图片生成字段
   image_count: number

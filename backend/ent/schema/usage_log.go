@@ -133,6 +133,21 @@ func (UsageLog) Fields() []ent.Field {
 		field.Int("duration_ms").
 			Optional().
 			Nillable(),
+		// Legacy attempt-local/protocol-specific TTFT; new ingress timings are separate.
+		field.Int("user_queue_ms").Optional().Nillable(),
+		field.Int("account_queue_ms").Optional().Nillable(),
+		field.Int("account_selection_ms").Optional().Nillable(),
+		field.Int("upstream_connect_ms").Optional().Nillable(),
+		field.Int("upstream_tls_ms").Optional().Nillable(),
+		field.Int("upstream_first_byte_ms").Optional().Nillable(),
+		field.Int("first_data_ms").Optional().Nillable(),
+		field.Int("first_semantic_ms").Optional().Nillable(),
+		field.Int("first_visible_content_ms").Optional().Nillable(),
+		field.Int("client_first_content_ms").Optional().Nillable(),
+		field.Int("user_duration_ms").Optional().Nillable(),
+		field.Int("attempt_count").Optional().Nillable(),
+		field.Int("last_attempt_ms").Optional().Nillable(),
+		field.Int("last_failed_attempt_ms").Optional().Nillable(),
 		field.Int("first_token_ms").
 			Optional().
 			Nillable(),

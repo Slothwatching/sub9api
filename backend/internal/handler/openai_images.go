@@ -11,6 +11,7 @@ import (
 	pkghttputil "github.com/Wei-Shaw/sub2api/internal/pkg/httputil"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/ip"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/logger"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/requestlatency"
 	middleware2 "github.com/Wei-Shaw/sub2api/internal/server/middleware"
 	"github.com/Wei-Shaw/sub2api/internal/service"
 	"github.com/gin-gonic/gin"
@@ -260,12 +261,15 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		forwardStart := time.Now()
 		writerSizeBeforeForward := service.OpenAIImagesJSONKeepaliveAdjustedWrittenSize(c)
 		result, err := func() (*service.OpenAIForwardResult, error) {
+			endAttempt := requestlatency.From(c.Request.Context()).BeginAttempt()
 			defer func() {
 				if accountReleaseFunc != nil {
 					accountReleaseFunc()
 				}
 			}()
-			return h.gatewayService.ForwardImages(requestCtx, c, account, body, parsed, channelMapping.MappedModel)
+			forwardResult, forwardErr := h.gatewayService.ForwardImages(requestCtx, c, account, body, parsed, channelMapping.MappedModel)
+			endAttempt(forwardErr != nil)
+			return forwardResult, forwardErr
 		}()
 		forwardDurationMs := time.Since(forwardStart).Milliseconds()
 		upstreamLatencyMs, _ := getContextInt64(c, service.OpsUpstreamLatencyMsKey)
@@ -410,6 +414,11 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		}
 		sessionID := service.ExtractClientSessionID(c)
 		channelUsageFields := clientRequestedUsageFields(c, channelMapping, requestModel, upstreamModel)
+		if result != nil {
+			timing := requestlatency.From(c.Request.Context())
+			timing.Mark(requestlatency.UserDuration)
+			result.Latency = timing.Snapshot()
+		}
 		h.submitMandatoryUsageRecordTask(c.Request.Context(), func(ctx context.Context) {
 			if err := h.gatewayService.RecordUsage(ctx, &service.OpenAIRecordUsageInput{
 				Result:             result,

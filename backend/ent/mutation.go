@@ -44828,6 +44828,34 @@ type UsageLogMutation struct {
 	stream                       *bool
 	duration_ms                  *int
 	addduration_ms               *int
+	user_queue_ms                *int
+	adduser_queue_ms             *int
+	account_queue_ms             *int
+	addaccount_queue_ms          *int
+	account_selection_ms         *int
+	addaccount_selection_ms      *int
+	upstream_connect_ms          *int
+	addupstream_connect_ms       *int
+	upstream_tls_ms              *int
+	addupstream_tls_ms           *int
+	upstream_first_byte_ms       *int
+	addupstream_first_byte_ms    *int
+	first_data_ms                *int
+	addfirst_data_ms             *int
+	first_semantic_ms            *int
+	addfirst_semantic_ms         *int
+	first_visible_content_ms     *int
+	addfirst_visible_content_ms  *int
+	client_first_content_ms      *int
+	addclient_first_content_ms   *int
+	user_duration_ms             *int
+	adduser_duration_ms          *int
+	attempt_count                *int
+	addattempt_count             *int
+	last_attempt_ms              *int
+	addlast_attempt_ms           *int
+	last_failed_attempt_ms       *int
+	addlast_failed_attempt_ms    *int
 	first_token_ms               *int
 	addfirst_token_ms            *int
 	user_agent                   *string
@@ -46759,6 +46787,986 @@ func (m *UsageLogMutation) ResetDurationMs() {
 	delete(m.clearedFields, usagelog.FieldDurationMs)
 }
 
+// SetUserQueueMs sets the "user_queue_ms" field.
+func (m *UsageLogMutation) SetUserQueueMs(i int) {
+	m.user_queue_ms = &i
+	m.adduser_queue_ms = nil
+}
+
+// UserQueueMs returns the value of the "user_queue_ms" field in the mutation.
+func (m *UsageLogMutation) UserQueueMs() (r int, exists bool) {
+	v := m.user_queue_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserQueueMs returns the old "user_queue_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldUserQueueMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserQueueMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserQueueMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserQueueMs: %w", err)
+	}
+	return oldValue.UserQueueMs, nil
+}
+
+// AddUserQueueMs adds i to the "user_queue_ms" field.
+func (m *UsageLogMutation) AddUserQueueMs(i int) {
+	if m.adduser_queue_ms != nil {
+		*m.adduser_queue_ms += i
+	} else {
+		m.adduser_queue_ms = &i
+	}
+}
+
+// AddedUserQueueMs returns the value that was added to the "user_queue_ms" field in this mutation.
+func (m *UsageLogMutation) AddedUserQueueMs() (r int, exists bool) {
+	v := m.adduser_queue_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserQueueMs clears the value of the "user_queue_ms" field.
+func (m *UsageLogMutation) ClearUserQueueMs() {
+	m.user_queue_ms = nil
+	m.adduser_queue_ms = nil
+	m.clearedFields[usagelog.FieldUserQueueMs] = struct{}{}
+}
+
+// UserQueueMsCleared returns if the "user_queue_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) UserQueueMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldUserQueueMs]
+	return ok
+}
+
+// ResetUserQueueMs resets all changes to the "user_queue_ms" field.
+func (m *UsageLogMutation) ResetUserQueueMs() {
+	m.user_queue_ms = nil
+	m.adduser_queue_ms = nil
+	delete(m.clearedFields, usagelog.FieldUserQueueMs)
+}
+
+// SetAccountQueueMs sets the "account_queue_ms" field.
+func (m *UsageLogMutation) SetAccountQueueMs(i int) {
+	m.account_queue_ms = &i
+	m.addaccount_queue_ms = nil
+}
+
+// AccountQueueMs returns the value of the "account_queue_ms" field in the mutation.
+func (m *UsageLogMutation) AccountQueueMs() (r int, exists bool) {
+	v := m.account_queue_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccountQueueMs returns the old "account_queue_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldAccountQueueMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccountQueueMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccountQueueMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccountQueueMs: %w", err)
+	}
+	return oldValue.AccountQueueMs, nil
+}
+
+// AddAccountQueueMs adds i to the "account_queue_ms" field.
+func (m *UsageLogMutation) AddAccountQueueMs(i int) {
+	if m.addaccount_queue_ms != nil {
+		*m.addaccount_queue_ms += i
+	} else {
+		m.addaccount_queue_ms = &i
+	}
+}
+
+// AddedAccountQueueMs returns the value that was added to the "account_queue_ms" field in this mutation.
+func (m *UsageLogMutation) AddedAccountQueueMs() (r int, exists bool) {
+	v := m.addaccount_queue_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAccountQueueMs clears the value of the "account_queue_ms" field.
+func (m *UsageLogMutation) ClearAccountQueueMs() {
+	m.account_queue_ms = nil
+	m.addaccount_queue_ms = nil
+	m.clearedFields[usagelog.FieldAccountQueueMs] = struct{}{}
+}
+
+// AccountQueueMsCleared returns if the "account_queue_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) AccountQueueMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldAccountQueueMs]
+	return ok
+}
+
+// ResetAccountQueueMs resets all changes to the "account_queue_ms" field.
+func (m *UsageLogMutation) ResetAccountQueueMs() {
+	m.account_queue_ms = nil
+	m.addaccount_queue_ms = nil
+	delete(m.clearedFields, usagelog.FieldAccountQueueMs)
+}
+
+// SetAccountSelectionMs sets the "account_selection_ms" field.
+func (m *UsageLogMutation) SetAccountSelectionMs(i int) {
+	m.account_selection_ms = &i
+	m.addaccount_selection_ms = nil
+}
+
+// AccountSelectionMs returns the value of the "account_selection_ms" field in the mutation.
+func (m *UsageLogMutation) AccountSelectionMs() (r int, exists bool) {
+	v := m.account_selection_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccountSelectionMs returns the old "account_selection_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldAccountSelectionMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccountSelectionMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccountSelectionMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccountSelectionMs: %w", err)
+	}
+	return oldValue.AccountSelectionMs, nil
+}
+
+// AddAccountSelectionMs adds i to the "account_selection_ms" field.
+func (m *UsageLogMutation) AddAccountSelectionMs(i int) {
+	if m.addaccount_selection_ms != nil {
+		*m.addaccount_selection_ms += i
+	} else {
+		m.addaccount_selection_ms = &i
+	}
+}
+
+// AddedAccountSelectionMs returns the value that was added to the "account_selection_ms" field in this mutation.
+func (m *UsageLogMutation) AddedAccountSelectionMs() (r int, exists bool) {
+	v := m.addaccount_selection_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAccountSelectionMs clears the value of the "account_selection_ms" field.
+func (m *UsageLogMutation) ClearAccountSelectionMs() {
+	m.account_selection_ms = nil
+	m.addaccount_selection_ms = nil
+	m.clearedFields[usagelog.FieldAccountSelectionMs] = struct{}{}
+}
+
+// AccountSelectionMsCleared returns if the "account_selection_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) AccountSelectionMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldAccountSelectionMs]
+	return ok
+}
+
+// ResetAccountSelectionMs resets all changes to the "account_selection_ms" field.
+func (m *UsageLogMutation) ResetAccountSelectionMs() {
+	m.account_selection_ms = nil
+	m.addaccount_selection_ms = nil
+	delete(m.clearedFields, usagelog.FieldAccountSelectionMs)
+}
+
+// SetUpstreamConnectMs sets the "upstream_connect_ms" field.
+func (m *UsageLogMutation) SetUpstreamConnectMs(i int) {
+	m.upstream_connect_ms = &i
+	m.addupstream_connect_ms = nil
+}
+
+// UpstreamConnectMs returns the value of the "upstream_connect_ms" field in the mutation.
+func (m *UsageLogMutation) UpstreamConnectMs() (r int, exists bool) {
+	v := m.upstream_connect_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpstreamConnectMs returns the old "upstream_connect_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldUpstreamConnectMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpstreamConnectMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpstreamConnectMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpstreamConnectMs: %w", err)
+	}
+	return oldValue.UpstreamConnectMs, nil
+}
+
+// AddUpstreamConnectMs adds i to the "upstream_connect_ms" field.
+func (m *UsageLogMutation) AddUpstreamConnectMs(i int) {
+	if m.addupstream_connect_ms != nil {
+		*m.addupstream_connect_ms += i
+	} else {
+		m.addupstream_connect_ms = &i
+	}
+}
+
+// AddedUpstreamConnectMs returns the value that was added to the "upstream_connect_ms" field in this mutation.
+func (m *UsageLogMutation) AddedUpstreamConnectMs() (r int, exists bool) {
+	v := m.addupstream_connect_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpstreamConnectMs clears the value of the "upstream_connect_ms" field.
+func (m *UsageLogMutation) ClearUpstreamConnectMs() {
+	m.upstream_connect_ms = nil
+	m.addupstream_connect_ms = nil
+	m.clearedFields[usagelog.FieldUpstreamConnectMs] = struct{}{}
+}
+
+// UpstreamConnectMsCleared returns if the "upstream_connect_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) UpstreamConnectMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldUpstreamConnectMs]
+	return ok
+}
+
+// ResetUpstreamConnectMs resets all changes to the "upstream_connect_ms" field.
+func (m *UsageLogMutation) ResetUpstreamConnectMs() {
+	m.upstream_connect_ms = nil
+	m.addupstream_connect_ms = nil
+	delete(m.clearedFields, usagelog.FieldUpstreamConnectMs)
+}
+
+// SetUpstreamTLSMs sets the "upstream_tls_ms" field.
+func (m *UsageLogMutation) SetUpstreamTLSMs(i int) {
+	m.upstream_tls_ms = &i
+	m.addupstream_tls_ms = nil
+}
+
+// UpstreamTLSMs returns the value of the "upstream_tls_ms" field in the mutation.
+func (m *UsageLogMutation) UpstreamTLSMs() (r int, exists bool) {
+	v := m.upstream_tls_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpstreamTLSMs returns the old "upstream_tls_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldUpstreamTLSMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpstreamTLSMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpstreamTLSMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpstreamTLSMs: %w", err)
+	}
+	return oldValue.UpstreamTLSMs, nil
+}
+
+// AddUpstreamTLSMs adds i to the "upstream_tls_ms" field.
+func (m *UsageLogMutation) AddUpstreamTLSMs(i int) {
+	if m.addupstream_tls_ms != nil {
+		*m.addupstream_tls_ms += i
+	} else {
+		m.addupstream_tls_ms = &i
+	}
+}
+
+// AddedUpstreamTLSMs returns the value that was added to the "upstream_tls_ms" field in this mutation.
+func (m *UsageLogMutation) AddedUpstreamTLSMs() (r int, exists bool) {
+	v := m.addupstream_tls_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpstreamTLSMs clears the value of the "upstream_tls_ms" field.
+func (m *UsageLogMutation) ClearUpstreamTLSMs() {
+	m.upstream_tls_ms = nil
+	m.addupstream_tls_ms = nil
+	m.clearedFields[usagelog.FieldUpstreamTLSMs] = struct{}{}
+}
+
+// UpstreamTLSMsCleared returns if the "upstream_tls_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) UpstreamTLSMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldUpstreamTLSMs]
+	return ok
+}
+
+// ResetUpstreamTLSMs resets all changes to the "upstream_tls_ms" field.
+func (m *UsageLogMutation) ResetUpstreamTLSMs() {
+	m.upstream_tls_ms = nil
+	m.addupstream_tls_ms = nil
+	delete(m.clearedFields, usagelog.FieldUpstreamTLSMs)
+}
+
+// SetUpstreamFirstByteMs sets the "upstream_first_byte_ms" field.
+func (m *UsageLogMutation) SetUpstreamFirstByteMs(i int) {
+	m.upstream_first_byte_ms = &i
+	m.addupstream_first_byte_ms = nil
+}
+
+// UpstreamFirstByteMs returns the value of the "upstream_first_byte_ms" field in the mutation.
+func (m *UsageLogMutation) UpstreamFirstByteMs() (r int, exists bool) {
+	v := m.upstream_first_byte_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpstreamFirstByteMs returns the old "upstream_first_byte_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldUpstreamFirstByteMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpstreamFirstByteMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpstreamFirstByteMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpstreamFirstByteMs: %w", err)
+	}
+	return oldValue.UpstreamFirstByteMs, nil
+}
+
+// AddUpstreamFirstByteMs adds i to the "upstream_first_byte_ms" field.
+func (m *UsageLogMutation) AddUpstreamFirstByteMs(i int) {
+	if m.addupstream_first_byte_ms != nil {
+		*m.addupstream_first_byte_ms += i
+	} else {
+		m.addupstream_first_byte_ms = &i
+	}
+}
+
+// AddedUpstreamFirstByteMs returns the value that was added to the "upstream_first_byte_ms" field in this mutation.
+func (m *UsageLogMutation) AddedUpstreamFirstByteMs() (r int, exists bool) {
+	v := m.addupstream_first_byte_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpstreamFirstByteMs clears the value of the "upstream_first_byte_ms" field.
+func (m *UsageLogMutation) ClearUpstreamFirstByteMs() {
+	m.upstream_first_byte_ms = nil
+	m.addupstream_first_byte_ms = nil
+	m.clearedFields[usagelog.FieldUpstreamFirstByteMs] = struct{}{}
+}
+
+// UpstreamFirstByteMsCleared returns if the "upstream_first_byte_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) UpstreamFirstByteMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldUpstreamFirstByteMs]
+	return ok
+}
+
+// ResetUpstreamFirstByteMs resets all changes to the "upstream_first_byte_ms" field.
+func (m *UsageLogMutation) ResetUpstreamFirstByteMs() {
+	m.upstream_first_byte_ms = nil
+	m.addupstream_first_byte_ms = nil
+	delete(m.clearedFields, usagelog.FieldUpstreamFirstByteMs)
+}
+
+// SetFirstDataMs sets the "first_data_ms" field.
+func (m *UsageLogMutation) SetFirstDataMs(i int) {
+	m.first_data_ms = &i
+	m.addfirst_data_ms = nil
+}
+
+// FirstDataMs returns the value of the "first_data_ms" field in the mutation.
+func (m *UsageLogMutation) FirstDataMs() (r int, exists bool) {
+	v := m.first_data_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstDataMs returns the old "first_data_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldFirstDataMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstDataMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstDataMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstDataMs: %w", err)
+	}
+	return oldValue.FirstDataMs, nil
+}
+
+// AddFirstDataMs adds i to the "first_data_ms" field.
+func (m *UsageLogMutation) AddFirstDataMs(i int) {
+	if m.addfirst_data_ms != nil {
+		*m.addfirst_data_ms += i
+	} else {
+		m.addfirst_data_ms = &i
+	}
+}
+
+// AddedFirstDataMs returns the value that was added to the "first_data_ms" field in this mutation.
+func (m *UsageLogMutation) AddedFirstDataMs() (r int, exists bool) {
+	v := m.addfirst_data_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearFirstDataMs clears the value of the "first_data_ms" field.
+func (m *UsageLogMutation) ClearFirstDataMs() {
+	m.first_data_ms = nil
+	m.addfirst_data_ms = nil
+	m.clearedFields[usagelog.FieldFirstDataMs] = struct{}{}
+}
+
+// FirstDataMsCleared returns if the "first_data_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) FirstDataMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldFirstDataMs]
+	return ok
+}
+
+// ResetFirstDataMs resets all changes to the "first_data_ms" field.
+func (m *UsageLogMutation) ResetFirstDataMs() {
+	m.first_data_ms = nil
+	m.addfirst_data_ms = nil
+	delete(m.clearedFields, usagelog.FieldFirstDataMs)
+}
+
+// SetFirstSemanticMs sets the "first_semantic_ms" field.
+func (m *UsageLogMutation) SetFirstSemanticMs(i int) {
+	m.first_semantic_ms = &i
+	m.addfirst_semantic_ms = nil
+}
+
+// FirstSemanticMs returns the value of the "first_semantic_ms" field in the mutation.
+func (m *UsageLogMutation) FirstSemanticMs() (r int, exists bool) {
+	v := m.first_semantic_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstSemanticMs returns the old "first_semantic_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldFirstSemanticMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstSemanticMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstSemanticMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstSemanticMs: %w", err)
+	}
+	return oldValue.FirstSemanticMs, nil
+}
+
+// AddFirstSemanticMs adds i to the "first_semantic_ms" field.
+func (m *UsageLogMutation) AddFirstSemanticMs(i int) {
+	if m.addfirst_semantic_ms != nil {
+		*m.addfirst_semantic_ms += i
+	} else {
+		m.addfirst_semantic_ms = &i
+	}
+}
+
+// AddedFirstSemanticMs returns the value that was added to the "first_semantic_ms" field in this mutation.
+func (m *UsageLogMutation) AddedFirstSemanticMs() (r int, exists bool) {
+	v := m.addfirst_semantic_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearFirstSemanticMs clears the value of the "first_semantic_ms" field.
+func (m *UsageLogMutation) ClearFirstSemanticMs() {
+	m.first_semantic_ms = nil
+	m.addfirst_semantic_ms = nil
+	m.clearedFields[usagelog.FieldFirstSemanticMs] = struct{}{}
+}
+
+// FirstSemanticMsCleared returns if the "first_semantic_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) FirstSemanticMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldFirstSemanticMs]
+	return ok
+}
+
+// ResetFirstSemanticMs resets all changes to the "first_semantic_ms" field.
+func (m *UsageLogMutation) ResetFirstSemanticMs() {
+	m.first_semantic_ms = nil
+	m.addfirst_semantic_ms = nil
+	delete(m.clearedFields, usagelog.FieldFirstSemanticMs)
+}
+
+// SetFirstVisibleContentMs sets the "first_visible_content_ms" field.
+func (m *UsageLogMutation) SetFirstVisibleContentMs(i int) {
+	m.first_visible_content_ms = &i
+	m.addfirst_visible_content_ms = nil
+}
+
+// FirstVisibleContentMs returns the value of the "first_visible_content_ms" field in the mutation.
+func (m *UsageLogMutation) FirstVisibleContentMs() (r int, exists bool) {
+	v := m.first_visible_content_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstVisibleContentMs returns the old "first_visible_content_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldFirstVisibleContentMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstVisibleContentMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstVisibleContentMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstVisibleContentMs: %w", err)
+	}
+	return oldValue.FirstVisibleContentMs, nil
+}
+
+// AddFirstVisibleContentMs adds i to the "first_visible_content_ms" field.
+func (m *UsageLogMutation) AddFirstVisibleContentMs(i int) {
+	if m.addfirst_visible_content_ms != nil {
+		*m.addfirst_visible_content_ms += i
+	} else {
+		m.addfirst_visible_content_ms = &i
+	}
+}
+
+// AddedFirstVisibleContentMs returns the value that was added to the "first_visible_content_ms" field in this mutation.
+func (m *UsageLogMutation) AddedFirstVisibleContentMs() (r int, exists bool) {
+	v := m.addfirst_visible_content_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearFirstVisibleContentMs clears the value of the "first_visible_content_ms" field.
+func (m *UsageLogMutation) ClearFirstVisibleContentMs() {
+	m.first_visible_content_ms = nil
+	m.addfirst_visible_content_ms = nil
+	m.clearedFields[usagelog.FieldFirstVisibleContentMs] = struct{}{}
+}
+
+// FirstVisibleContentMsCleared returns if the "first_visible_content_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) FirstVisibleContentMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldFirstVisibleContentMs]
+	return ok
+}
+
+// ResetFirstVisibleContentMs resets all changes to the "first_visible_content_ms" field.
+func (m *UsageLogMutation) ResetFirstVisibleContentMs() {
+	m.first_visible_content_ms = nil
+	m.addfirst_visible_content_ms = nil
+	delete(m.clearedFields, usagelog.FieldFirstVisibleContentMs)
+}
+
+// SetClientFirstContentMs sets the "client_first_content_ms" field.
+func (m *UsageLogMutation) SetClientFirstContentMs(i int) {
+	m.client_first_content_ms = &i
+	m.addclient_first_content_ms = nil
+}
+
+// ClientFirstContentMs returns the value of the "client_first_content_ms" field in the mutation.
+func (m *UsageLogMutation) ClientFirstContentMs() (r int, exists bool) {
+	v := m.client_first_content_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientFirstContentMs returns the old "client_first_content_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldClientFirstContentMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientFirstContentMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientFirstContentMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientFirstContentMs: %w", err)
+	}
+	return oldValue.ClientFirstContentMs, nil
+}
+
+// AddClientFirstContentMs adds i to the "client_first_content_ms" field.
+func (m *UsageLogMutation) AddClientFirstContentMs(i int) {
+	if m.addclient_first_content_ms != nil {
+		*m.addclient_first_content_ms += i
+	} else {
+		m.addclient_first_content_ms = &i
+	}
+}
+
+// AddedClientFirstContentMs returns the value that was added to the "client_first_content_ms" field in this mutation.
+func (m *UsageLogMutation) AddedClientFirstContentMs() (r int, exists bool) {
+	v := m.addclient_first_content_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearClientFirstContentMs clears the value of the "client_first_content_ms" field.
+func (m *UsageLogMutation) ClearClientFirstContentMs() {
+	m.client_first_content_ms = nil
+	m.addclient_first_content_ms = nil
+	m.clearedFields[usagelog.FieldClientFirstContentMs] = struct{}{}
+}
+
+// ClientFirstContentMsCleared returns if the "client_first_content_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) ClientFirstContentMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldClientFirstContentMs]
+	return ok
+}
+
+// ResetClientFirstContentMs resets all changes to the "client_first_content_ms" field.
+func (m *UsageLogMutation) ResetClientFirstContentMs() {
+	m.client_first_content_ms = nil
+	m.addclient_first_content_ms = nil
+	delete(m.clearedFields, usagelog.FieldClientFirstContentMs)
+}
+
+// SetUserDurationMs sets the "user_duration_ms" field.
+func (m *UsageLogMutation) SetUserDurationMs(i int) {
+	m.user_duration_ms = &i
+	m.adduser_duration_ms = nil
+}
+
+// UserDurationMs returns the value of the "user_duration_ms" field in the mutation.
+func (m *UsageLogMutation) UserDurationMs() (r int, exists bool) {
+	v := m.user_duration_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserDurationMs returns the old "user_duration_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldUserDurationMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserDurationMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserDurationMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserDurationMs: %w", err)
+	}
+	return oldValue.UserDurationMs, nil
+}
+
+// AddUserDurationMs adds i to the "user_duration_ms" field.
+func (m *UsageLogMutation) AddUserDurationMs(i int) {
+	if m.adduser_duration_ms != nil {
+		*m.adduser_duration_ms += i
+	} else {
+		m.adduser_duration_ms = &i
+	}
+}
+
+// AddedUserDurationMs returns the value that was added to the "user_duration_ms" field in this mutation.
+func (m *UsageLogMutation) AddedUserDurationMs() (r int, exists bool) {
+	v := m.adduser_duration_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserDurationMs clears the value of the "user_duration_ms" field.
+func (m *UsageLogMutation) ClearUserDurationMs() {
+	m.user_duration_ms = nil
+	m.adduser_duration_ms = nil
+	m.clearedFields[usagelog.FieldUserDurationMs] = struct{}{}
+}
+
+// UserDurationMsCleared returns if the "user_duration_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) UserDurationMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldUserDurationMs]
+	return ok
+}
+
+// ResetUserDurationMs resets all changes to the "user_duration_ms" field.
+func (m *UsageLogMutation) ResetUserDurationMs() {
+	m.user_duration_ms = nil
+	m.adduser_duration_ms = nil
+	delete(m.clearedFields, usagelog.FieldUserDurationMs)
+}
+
+// SetAttemptCount sets the "attempt_count" field.
+func (m *UsageLogMutation) SetAttemptCount(i int) {
+	m.attempt_count = &i
+	m.addattempt_count = nil
+}
+
+// AttemptCount returns the value of the "attempt_count" field in the mutation.
+func (m *UsageLogMutation) AttemptCount() (r int, exists bool) {
+	v := m.attempt_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAttemptCount returns the old "attempt_count" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldAttemptCount(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAttemptCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAttemptCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAttemptCount: %w", err)
+	}
+	return oldValue.AttemptCount, nil
+}
+
+// AddAttemptCount adds i to the "attempt_count" field.
+func (m *UsageLogMutation) AddAttemptCount(i int) {
+	if m.addattempt_count != nil {
+		*m.addattempt_count += i
+	} else {
+		m.addattempt_count = &i
+	}
+}
+
+// AddedAttemptCount returns the value that was added to the "attempt_count" field in this mutation.
+func (m *UsageLogMutation) AddedAttemptCount() (r int, exists bool) {
+	v := m.addattempt_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAttemptCount clears the value of the "attempt_count" field.
+func (m *UsageLogMutation) ClearAttemptCount() {
+	m.attempt_count = nil
+	m.addattempt_count = nil
+	m.clearedFields[usagelog.FieldAttemptCount] = struct{}{}
+}
+
+// AttemptCountCleared returns if the "attempt_count" field was cleared in this mutation.
+func (m *UsageLogMutation) AttemptCountCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldAttemptCount]
+	return ok
+}
+
+// ResetAttemptCount resets all changes to the "attempt_count" field.
+func (m *UsageLogMutation) ResetAttemptCount() {
+	m.attempt_count = nil
+	m.addattempt_count = nil
+	delete(m.clearedFields, usagelog.FieldAttemptCount)
+}
+
+// SetLastAttemptMs sets the "last_attempt_ms" field.
+func (m *UsageLogMutation) SetLastAttemptMs(i int) {
+	m.last_attempt_ms = &i
+	m.addlast_attempt_ms = nil
+}
+
+// LastAttemptMs returns the value of the "last_attempt_ms" field in the mutation.
+func (m *UsageLogMutation) LastAttemptMs() (r int, exists bool) {
+	v := m.last_attempt_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastAttemptMs returns the old "last_attempt_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldLastAttemptMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastAttemptMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastAttemptMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastAttemptMs: %w", err)
+	}
+	return oldValue.LastAttemptMs, nil
+}
+
+// AddLastAttemptMs adds i to the "last_attempt_ms" field.
+func (m *UsageLogMutation) AddLastAttemptMs(i int) {
+	if m.addlast_attempt_ms != nil {
+		*m.addlast_attempt_ms += i
+	} else {
+		m.addlast_attempt_ms = &i
+	}
+}
+
+// AddedLastAttemptMs returns the value that was added to the "last_attempt_ms" field in this mutation.
+func (m *UsageLogMutation) AddedLastAttemptMs() (r int, exists bool) {
+	v := m.addlast_attempt_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLastAttemptMs clears the value of the "last_attempt_ms" field.
+func (m *UsageLogMutation) ClearLastAttemptMs() {
+	m.last_attempt_ms = nil
+	m.addlast_attempt_ms = nil
+	m.clearedFields[usagelog.FieldLastAttemptMs] = struct{}{}
+}
+
+// LastAttemptMsCleared returns if the "last_attempt_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) LastAttemptMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldLastAttemptMs]
+	return ok
+}
+
+// ResetLastAttemptMs resets all changes to the "last_attempt_ms" field.
+func (m *UsageLogMutation) ResetLastAttemptMs() {
+	m.last_attempt_ms = nil
+	m.addlast_attempt_ms = nil
+	delete(m.clearedFields, usagelog.FieldLastAttemptMs)
+}
+
+// SetLastFailedAttemptMs sets the "last_failed_attempt_ms" field.
+func (m *UsageLogMutation) SetLastFailedAttemptMs(i int) {
+	m.last_failed_attempt_ms = &i
+	m.addlast_failed_attempt_ms = nil
+}
+
+// LastFailedAttemptMs returns the value of the "last_failed_attempt_ms" field in the mutation.
+func (m *UsageLogMutation) LastFailedAttemptMs() (r int, exists bool) {
+	v := m.last_failed_attempt_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastFailedAttemptMs returns the old "last_failed_attempt_ms" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldLastFailedAttemptMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastFailedAttemptMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastFailedAttemptMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastFailedAttemptMs: %w", err)
+	}
+	return oldValue.LastFailedAttemptMs, nil
+}
+
+// AddLastFailedAttemptMs adds i to the "last_failed_attempt_ms" field.
+func (m *UsageLogMutation) AddLastFailedAttemptMs(i int) {
+	if m.addlast_failed_attempt_ms != nil {
+		*m.addlast_failed_attempt_ms += i
+	} else {
+		m.addlast_failed_attempt_ms = &i
+	}
+}
+
+// AddedLastFailedAttemptMs returns the value that was added to the "last_failed_attempt_ms" field in this mutation.
+func (m *UsageLogMutation) AddedLastFailedAttemptMs() (r int, exists bool) {
+	v := m.addlast_failed_attempt_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLastFailedAttemptMs clears the value of the "last_failed_attempt_ms" field.
+func (m *UsageLogMutation) ClearLastFailedAttemptMs() {
+	m.last_failed_attempt_ms = nil
+	m.addlast_failed_attempt_ms = nil
+	m.clearedFields[usagelog.FieldLastFailedAttemptMs] = struct{}{}
+}
+
+// LastFailedAttemptMsCleared returns if the "last_failed_attempt_ms" field was cleared in this mutation.
+func (m *UsageLogMutation) LastFailedAttemptMsCleared() bool {
+	_, ok := m.clearedFields[usagelog.FieldLastFailedAttemptMs]
+	return ok
+}
+
+// ResetLastFailedAttemptMs resets all changes to the "last_failed_attempt_ms" field.
+func (m *UsageLogMutation) ResetLastFailedAttemptMs() {
+	m.last_failed_attempt_ms = nil
+	m.addlast_failed_attempt_ms = nil
+	delete(m.clearedFields, usagelog.FieldLastFailedAttemptMs)
+}
+
 // SetFirstTokenMs sets the "first_token_ms" field.
 func (m *UsageLogMutation) SetFirstTokenMs(i int) {
 	m.first_token_ms = &i
@@ -47644,7 +48652,7 @@ func (m *UsageLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsageLogMutation) Fields() []string {
-	fields := make([]string, 0, 49)
+	fields := make([]string, 0, 63)
 	if m.user != nil {
 		fields = append(fields, usagelog.FieldUserID)
 	}
@@ -47749,6 +48757,48 @@ func (m *UsageLogMutation) Fields() []string {
 	}
 	if m.duration_ms != nil {
 		fields = append(fields, usagelog.FieldDurationMs)
+	}
+	if m.user_queue_ms != nil {
+		fields = append(fields, usagelog.FieldUserQueueMs)
+	}
+	if m.account_queue_ms != nil {
+		fields = append(fields, usagelog.FieldAccountQueueMs)
+	}
+	if m.account_selection_ms != nil {
+		fields = append(fields, usagelog.FieldAccountSelectionMs)
+	}
+	if m.upstream_connect_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamConnectMs)
+	}
+	if m.upstream_tls_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamTLSMs)
+	}
+	if m.upstream_first_byte_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamFirstByteMs)
+	}
+	if m.first_data_ms != nil {
+		fields = append(fields, usagelog.FieldFirstDataMs)
+	}
+	if m.first_semantic_ms != nil {
+		fields = append(fields, usagelog.FieldFirstSemanticMs)
+	}
+	if m.first_visible_content_ms != nil {
+		fields = append(fields, usagelog.FieldFirstVisibleContentMs)
+	}
+	if m.client_first_content_ms != nil {
+		fields = append(fields, usagelog.FieldClientFirstContentMs)
+	}
+	if m.user_duration_ms != nil {
+		fields = append(fields, usagelog.FieldUserDurationMs)
+	}
+	if m.attempt_count != nil {
+		fields = append(fields, usagelog.FieldAttemptCount)
+	}
+	if m.last_attempt_ms != nil {
+		fields = append(fields, usagelog.FieldLastAttemptMs)
+	}
+	if m.last_failed_attempt_ms != nil {
+		fields = append(fields, usagelog.FieldLastFailedAttemptMs)
 	}
 	if m.first_token_ms != nil {
 		fields = append(fields, usagelog.FieldFirstTokenMs)
@@ -47870,6 +48920,34 @@ func (m *UsageLogMutation) Field(name string) (ent.Value, bool) {
 		return m.Stream()
 	case usagelog.FieldDurationMs:
 		return m.DurationMs()
+	case usagelog.FieldUserQueueMs:
+		return m.UserQueueMs()
+	case usagelog.FieldAccountQueueMs:
+		return m.AccountQueueMs()
+	case usagelog.FieldAccountSelectionMs:
+		return m.AccountSelectionMs()
+	case usagelog.FieldUpstreamConnectMs:
+		return m.UpstreamConnectMs()
+	case usagelog.FieldUpstreamTLSMs:
+		return m.UpstreamTLSMs()
+	case usagelog.FieldUpstreamFirstByteMs:
+		return m.UpstreamFirstByteMs()
+	case usagelog.FieldFirstDataMs:
+		return m.FirstDataMs()
+	case usagelog.FieldFirstSemanticMs:
+		return m.FirstSemanticMs()
+	case usagelog.FieldFirstVisibleContentMs:
+		return m.FirstVisibleContentMs()
+	case usagelog.FieldClientFirstContentMs:
+		return m.ClientFirstContentMs()
+	case usagelog.FieldUserDurationMs:
+		return m.UserDurationMs()
+	case usagelog.FieldAttemptCount:
+		return m.AttemptCount()
+	case usagelog.FieldLastAttemptMs:
+		return m.LastAttemptMs()
+	case usagelog.FieldLastFailedAttemptMs:
+		return m.LastFailedAttemptMs()
 	case usagelog.FieldFirstTokenMs:
 		return m.FirstTokenMs()
 	case usagelog.FieldUserAgent:
@@ -47977,6 +49055,34 @@ func (m *UsageLogMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldStream(ctx)
 	case usagelog.FieldDurationMs:
 		return m.OldDurationMs(ctx)
+	case usagelog.FieldUserQueueMs:
+		return m.OldUserQueueMs(ctx)
+	case usagelog.FieldAccountQueueMs:
+		return m.OldAccountQueueMs(ctx)
+	case usagelog.FieldAccountSelectionMs:
+		return m.OldAccountSelectionMs(ctx)
+	case usagelog.FieldUpstreamConnectMs:
+		return m.OldUpstreamConnectMs(ctx)
+	case usagelog.FieldUpstreamTLSMs:
+		return m.OldUpstreamTLSMs(ctx)
+	case usagelog.FieldUpstreamFirstByteMs:
+		return m.OldUpstreamFirstByteMs(ctx)
+	case usagelog.FieldFirstDataMs:
+		return m.OldFirstDataMs(ctx)
+	case usagelog.FieldFirstSemanticMs:
+		return m.OldFirstSemanticMs(ctx)
+	case usagelog.FieldFirstVisibleContentMs:
+		return m.OldFirstVisibleContentMs(ctx)
+	case usagelog.FieldClientFirstContentMs:
+		return m.OldClientFirstContentMs(ctx)
+	case usagelog.FieldUserDurationMs:
+		return m.OldUserDurationMs(ctx)
+	case usagelog.FieldAttemptCount:
+		return m.OldAttemptCount(ctx)
+	case usagelog.FieldLastAttemptMs:
+		return m.OldLastAttemptMs(ctx)
+	case usagelog.FieldLastFailedAttemptMs:
+		return m.OldLastFailedAttemptMs(ctx)
 	case usagelog.FieldFirstTokenMs:
 		return m.OldFirstTokenMs(ctx)
 	case usagelog.FieldUserAgent:
@@ -48259,6 +49365,104 @@ func (m *UsageLogMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDurationMs(v)
 		return nil
+	case usagelog.FieldUserQueueMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserQueueMs(v)
+		return nil
+	case usagelog.FieldAccountQueueMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccountQueueMs(v)
+		return nil
+	case usagelog.FieldAccountSelectionMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccountSelectionMs(v)
+		return nil
+	case usagelog.FieldUpstreamConnectMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpstreamConnectMs(v)
+		return nil
+	case usagelog.FieldUpstreamTLSMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpstreamTLSMs(v)
+		return nil
+	case usagelog.FieldUpstreamFirstByteMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpstreamFirstByteMs(v)
+		return nil
+	case usagelog.FieldFirstDataMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstDataMs(v)
+		return nil
+	case usagelog.FieldFirstSemanticMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstSemanticMs(v)
+		return nil
+	case usagelog.FieldFirstVisibleContentMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstVisibleContentMs(v)
+		return nil
+	case usagelog.FieldClientFirstContentMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientFirstContentMs(v)
+		return nil
+	case usagelog.FieldUserDurationMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserDurationMs(v)
+		return nil
+	case usagelog.FieldAttemptCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAttemptCount(v)
+		return nil
+	case usagelog.FieldLastAttemptMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastAttemptMs(v)
+		return nil
+	case usagelog.FieldLastFailedAttemptMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastFailedAttemptMs(v)
+		return nil
 	case usagelog.FieldFirstTokenMs:
 		v, ok := value.(int)
 		if !ok {
@@ -48422,6 +49626,48 @@ func (m *UsageLogMutation) AddedFields() []string {
 	if m.addduration_ms != nil {
 		fields = append(fields, usagelog.FieldDurationMs)
 	}
+	if m.adduser_queue_ms != nil {
+		fields = append(fields, usagelog.FieldUserQueueMs)
+	}
+	if m.addaccount_queue_ms != nil {
+		fields = append(fields, usagelog.FieldAccountQueueMs)
+	}
+	if m.addaccount_selection_ms != nil {
+		fields = append(fields, usagelog.FieldAccountSelectionMs)
+	}
+	if m.addupstream_connect_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamConnectMs)
+	}
+	if m.addupstream_tls_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamTLSMs)
+	}
+	if m.addupstream_first_byte_ms != nil {
+		fields = append(fields, usagelog.FieldUpstreamFirstByteMs)
+	}
+	if m.addfirst_data_ms != nil {
+		fields = append(fields, usagelog.FieldFirstDataMs)
+	}
+	if m.addfirst_semantic_ms != nil {
+		fields = append(fields, usagelog.FieldFirstSemanticMs)
+	}
+	if m.addfirst_visible_content_ms != nil {
+		fields = append(fields, usagelog.FieldFirstVisibleContentMs)
+	}
+	if m.addclient_first_content_ms != nil {
+		fields = append(fields, usagelog.FieldClientFirstContentMs)
+	}
+	if m.adduser_duration_ms != nil {
+		fields = append(fields, usagelog.FieldUserDurationMs)
+	}
+	if m.addattempt_count != nil {
+		fields = append(fields, usagelog.FieldAttemptCount)
+	}
+	if m.addlast_attempt_ms != nil {
+		fields = append(fields, usagelog.FieldLastAttemptMs)
+	}
+	if m.addlast_failed_attempt_ms != nil {
+		fields = append(fields, usagelog.FieldLastFailedAttemptMs)
+	}
 	if m.addfirst_token_ms != nil {
 		fields = append(fields, usagelog.FieldFirstTokenMs)
 	}
@@ -48480,6 +49726,34 @@ func (m *UsageLogMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedBillingType()
 	case usagelog.FieldDurationMs:
 		return m.AddedDurationMs()
+	case usagelog.FieldUserQueueMs:
+		return m.AddedUserQueueMs()
+	case usagelog.FieldAccountQueueMs:
+		return m.AddedAccountQueueMs()
+	case usagelog.FieldAccountSelectionMs:
+		return m.AddedAccountSelectionMs()
+	case usagelog.FieldUpstreamConnectMs:
+		return m.AddedUpstreamConnectMs()
+	case usagelog.FieldUpstreamTLSMs:
+		return m.AddedUpstreamTLSMs()
+	case usagelog.FieldUpstreamFirstByteMs:
+		return m.AddedUpstreamFirstByteMs()
+	case usagelog.FieldFirstDataMs:
+		return m.AddedFirstDataMs()
+	case usagelog.FieldFirstSemanticMs:
+		return m.AddedFirstSemanticMs()
+	case usagelog.FieldFirstVisibleContentMs:
+		return m.AddedFirstVisibleContentMs()
+	case usagelog.FieldClientFirstContentMs:
+		return m.AddedClientFirstContentMs()
+	case usagelog.FieldUserDurationMs:
+		return m.AddedUserDurationMs()
+	case usagelog.FieldAttemptCount:
+		return m.AddedAttemptCount()
+	case usagelog.FieldLastAttemptMs:
+		return m.AddedLastAttemptMs()
+	case usagelog.FieldLastFailedAttemptMs:
+		return m.AddedLastFailedAttemptMs()
 	case usagelog.FieldFirstTokenMs:
 		return m.AddedFirstTokenMs()
 	case usagelog.FieldImageCount:
@@ -48630,6 +49904,104 @@ func (m *UsageLogMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDurationMs(v)
 		return nil
+	case usagelog.FieldUserQueueMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserQueueMs(v)
+		return nil
+	case usagelog.FieldAccountQueueMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccountQueueMs(v)
+		return nil
+	case usagelog.FieldAccountSelectionMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccountSelectionMs(v)
+		return nil
+	case usagelog.FieldUpstreamConnectMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpstreamConnectMs(v)
+		return nil
+	case usagelog.FieldUpstreamTLSMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpstreamTLSMs(v)
+		return nil
+	case usagelog.FieldUpstreamFirstByteMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpstreamFirstByteMs(v)
+		return nil
+	case usagelog.FieldFirstDataMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstDataMs(v)
+		return nil
+	case usagelog.FieldFirstSemanticMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstSemanticMs(v)
+		return nil
+	case usagelog.FieldFirstVisibleContentMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstVisibleContentMs(v)
+		return nil
+	case usagelog.FieldClientFirstContentMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddClientFirstContentMs(v)
+		return nil
+	case usagelog.FieldUserDurationMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserDurationMs(v)
+		return nil
+	case usagelog.FieldAttemptCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAttemptCount(v)
+		return nil
+	case usagelog.FieldLastAttemptMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLastAttemptMs(v)
+		return nil
+	case usagelog.FieldLastFailedAttemptMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLastFailedAttemptMs(v)
+		return nil
 	case usagelog.FieldFirstTokenMs:
 		v, ok := value.(int)
 		if !ok {
@@ -48701,6 +50073,48 @@ func (m *UsageLogMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(usagelog.FieldDurationMs) {
 		fields = append(fields, usagelog.FieldDurationMs)
+	}
+	if m.FieldCleared(usagelog.FieldUserQueueMs) {
+		fields = append(fields, usagelog.FieldUserQueueMs)
+	}
+	if m.FieldCleared(usagelog.FieldAccountQueueMs) {
+		fields = append(fields, usagelog.FieldAccountQueueMs)
+	}
+	if m.FieldCleared(usagelog.FieldAccountSelectionMs) {
+		fields = append(fields, usagelog.FieldAccountSelectionMs)
+	}
+	if m.FieldCleared(usagelog.FieldUpstreamConnectMs) {
+		fields = append(fields, usagelog.FieldUpstreamConnectMs)
+	}
+	if m.FieldCleared(usagelog.FieldUpstreamTLSMs) {
+		fields = append(fields, usagelog.FieldUpstreamTLSMs)
+	}
+	if m.FieldCleared(usagelog.FieldUpstreamFirstByteMs) {
+		fields = append(fields, usagelog.FieldUpstreamFirstByteMs)
+	}
+	if m.FieldCleared(usagelog.FieldFirstDataMs) {
+		fields = append(fields, usagelog.FieldFirstDataMs)
+	}
+	if m.FieldCleared(usagelog.FieldFirstSemanticMs) {
+		fields = append(fields, usagelog.FieldFirstSemanticMs)
+	}
+	if m.FieldCleared(usagelog.FieldFirstVisibleContentMs) {
+		fields = append(fields, usagelog.FieldFirstVisibleContentMs)
+	}
+	if m.FieldCleared(usagelog.FieldClientFirstContentMs) {
+		fields = append(fields, usagelog.FieldClientFirstContentMs)
+	}
+	if m.FieldCleared(usagelog.FieldUserDurationMs) {
+		fields = append(fields, usagelog.FieldUserDurationMs)
+	}
+	if m.FieldCleared(usagelog.FieldAttemptCount) {
+		fields = append(fields, usagelog.FieldAttemptCount)
+	}
+	if m.FieldCleared(usagelog.FieldLastAttemptMs) {
+		fields = append(fields, usagelog.FieldLastAttemptMs)
+	}
+	if m.FieldCleared(usagelog.FieldLastFailedAttemptMs) {
+		fields = append(fields, usagelog.FieldLastFailedAttemptMs)
 	}
 	if m.FieldCleared(usagelog.FieldFirstTokenMs) {
 		fields = append(fields, usagelog.FieldFirstTokenMs)
@@ -48781,6 +50195,48 @@ func (m *UsageLogMutation) ClearField(name string) error {
 		return nil
 	case usagelog.FieldDurationMs:
 		m.ClearDurationMs()
+		return nil
+	case usagelog.FieldUserQueueMs:
+		m.ClearUserQueueMs()
+		return nil
+	case usagelog.FieldAccountQueueMs:
+		m.ClearAccountQueueMs()
+		return nil
+	case usagelog.FieldAccountSelectionMs:
+		m.ClearAccountSelectionMs()
+		return nil
+	case usagelog.FieldUpstreamConnectMs:
+		m.ClearUpstreamConnectMs()
+		return nil
+	case usagelog.FieldUpstreamTLSMs:
+		m.ClearUpstreamTLSMs()
+		return nil
+	case usagelog.FieldUpstreamFirstByteMs:
+		m.ClearUpstreamFirstByteMs()
+		return nil
+	case usagelog.FieldFirstDataMs:
+		m.ClearFirstDataMs()
+		return nil
+	case usagelog.FieldFirstSemanticMs:
+		m.ClearFirstSemanticMs()
+		return nil
+	case usagelog.FieldFirstVisibleContentMs:
+		m.ClearFirstVisibleContentMs()
+		return nil
+	case usagelog.FieldClientFirstContentMs:
+		m.ClearClientFirstContentMs()
+		return nil
+	case usagelog.FieldUserDurationMs:
+		m.ClearUserDurationMs()
+		return nil
+	case usagelog.FieldAttemptCount:
+		m.ClearAttemptCount()
+		return nil
+	case usagelog.FieldLastAttemptMs:
+		m.ClearLastAttemptMs()
+		return nil
+	case usagelog.FieldLastFailedAttemptMs:
+		m.ClearLastFailedAttemptMs()
 		return nil
 	case usagelog.FieldFirstTokenMs:
 		m.ClearFirstTokenMs()
@@ -48924,6 +50380,48 @@ func (m *UsageLogMutation) ResetField(name string) error {
 		return nil
 	case usagelog.FieldDurationMs:
 		m.ResetDurationMs()
+		return nil
+	case usagelog.FieldUserQueueMs:
+		m.ResetUserQueueMs()
+		return nil
+	case usagelog.FieldAccountQueueMs:
+		m.ResetAccountQueueMs()
+		return nil
+	case usagelog.FieldAccountSelectionMs:
+		m.ResetAccountSelectionMs()
+		return nil
+	case usagelog.FieldUpstreamConnectMs:
+		m.ResetUpstreamConnectMs()
+		return nil
+	case usagelog.FieldUpstreamTLSMs:
+		m.ResetUpstreamTLSMs()
+		return nil
+	case usagelog.FieldUpstreamFirstByteMs:
+		m.ResetUpstreamFirstByteMs()
+		return nil
+	case usagelog.FieldFirstDataMs:
+		m.ResetFirstDataMs()
+		return nil
+	case usagelog.FieldFirstSemanticMs:
+		m.ResetFirstSemanticMs()
+		return nil
+	case usagelog.FieldFirstVisibleContentMs:
+		m.ResetFirstVisibleContentMs()
+		return nil
+	case usagelog.FieldClientFirstContentMs:
+		m.ResetClientFirstContentMs()
+		return nil
+	case usagelog.FieldUserDurationMs:
+		m.ResetUserDurationMs()
+		return nil
+	case usagelog.FieldAttemptCount:
+		m.ResetAttemptCount()
+		return nil
+	case usagelog.FieldLastAttemptMs:
+		m.ResetLastAttemptMs()
+		return nil
+	case usagelog.FieldLastFailedAttemptMs:
+		m.ResetLastFailedAttemptMs()
 		return nil
 	case usagelog.FieldFirstTokenMs:
 		m.ResetFirstTokenMs()

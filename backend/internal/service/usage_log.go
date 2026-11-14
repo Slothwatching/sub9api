@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/requestlatency"
 	"strings"
 	"time"
 )
@@ -102,6 +103,7 @@ func ApplyLegacyRequestFields(requestType RequestType, fallbackStream bool, fall
 }
 
 type UsageLog struct {
+	requestlatency.Snapshot
 	ID        int64
 	UserID    int64
 	APIKeyID  int64
