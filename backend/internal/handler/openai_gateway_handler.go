@@ -2573,7 +2573,7 @@ func (h *OpenAIGatewayHandler) ResponsesWebSocket(c *gin.Context) {
 		return
 	}
 	firstTurnStartedAt := time.Now()
-	ctx, wsAttemptTiming := requestlatency.ForkAt(ctx, firstTurnStartedAt)
+	_, wsAttemptTiming := requestlatency.ForkAt(ctx, firstTurnStartedAt)
 	if msgType != coderws.MessageText && msgType != coderws.MessageBinary {
 		closeOpenAIClientWS(wsConn, coderws.StatusPolicyViolation, "unsupported websocket message type")
 		return

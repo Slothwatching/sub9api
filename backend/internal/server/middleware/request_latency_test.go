@@ -35,11 +35,16 @@ func TestRequestLatencyMockRetrySmoke(t *testing.T) {
 					preamble = `{"choices":[{"delta":{"role":"assistant"}}]}`
 					content = `{"choices":[{"delta":{"content":"hello"}}]}`
 				}
+				flusher, ok := w.(http.Flusher)
+				if !ok {
+					http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+					return
+				}
 				fmt.Fprintf(w, "data: %s\n\n", preamble)
-				w.(http.Flusher).Flush()
+				flusher.Flush()
 				time.Sleep(5 * time.Millisecond)
 				fmt.Fprintf(w, "data: %s\n\n", content)
-				w.(http.Flusher).Flush()
+				flusher.Flush()
 			}))
 			defer upstream.Close()
 			var got requestlatency.Snapshot
@@ -60,7 +65,7 @@ func TestRequestLatencyMockRetrySmoke(t *testing.T) {
 					resp, err := upstream.Client().Do(req)
 					require.NoError(t, err)
 					if resp.StatusCode == 429 {
-						resp.Body.Close()
+						_ = resp.Body.Close()
 						end(true)
 						continue
 					}
@@ -71,7 +76,7 @@ func TestRequestLatencyMockRetrySmoke(t *testing.T) {
 					require.NoError(t, err)
 					require.Nil(t, timing.Snapshot().ClientFirstContentMs, "content written but not flushed yet")
 					c.Writer.Flush()
-					body.Close()
+					_ = body.Close()
 					end(false)
 				}
 				timing.Mark(requestlatency.UserDuration)
@@ -106,7 +111,7 @@ func TestRequestLatencySkipsLifecycleFlushAndBufferedJSON(t *testing.T) {
 					c.JSON(200, gin.H{"choices": []any{gin.H{"message": gin.H{"content": "ok"}}}})
 				} else {
 					c.Header("Content-Type", "text/event-stream")
-					c.Writer.WriteString("data: {\"type\":\"response.created\"}\n\n")
+					_, _ = c.Writer.WriteString("data: {\"type\":\"response.created\"}\n\n")
 					c.Writer.Flush()
 				}
 				got = requestlatency.From(c.Request.Context()).Snapshot()

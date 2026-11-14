@@ -191,15 +191,15 @@ func TestTimingObserverOversizedEventRecovery(t *testing.T) {
 }
 
 func TestTimingActualTLSHooks(t *testing.T) {
-	upstream := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.Write([]byte("ok")) }))
+	upstream := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("ok")) }))
 	defer upstream.Close()
 	ctx, clock := New(context.Background())
 	req, err := http.NewRequestWithContext(clock.Trace(ctx), http.MethodGet, upstream.URL, nil)
 	require.NoError(t, err)
 	resp, err := upstream.Client().Do(req)
 	require.NoError(t, err)
-	io.Copy(io.Discard, resp.Body)
-	resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
+	_, _ = io.Copy(io.Discard, resp.Body)
 	got := clock.Snapshot()
 	require.NotNil(t, got.UpstreamTLSMs)
 	require.NotNil(t, got.UpstreamConnectMs)

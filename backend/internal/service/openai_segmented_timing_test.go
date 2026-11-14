@@ -102,7 +102,7 @@ func TestOpenAIUpstreamSegmentedTimingPluginObservation(t *testing.T) {
 			resp, err := svc.doOpenAIUpstream(req, "", &Account{ID: 1, Platform: PlatformOpenAI, Type: AccountTypeOAuth})
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			require.Same(t, plugin.response, resp)
 			require.Equal(t, 1, plugin.calls)
 			require.Empty(t, upstream.requests, "handled plugin request must bypass HTTP upstream")
