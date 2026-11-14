@@ -57,7 +57,9 @@ observation stops, WriteString delegates directly to the underlying string write
 Fragmented SSE retains the 64 KiB bound; oversized fragmented events/envelopes
 are skipped rather than copying entire image/tool payloads; a later qualifying
 event can still be measured after an LF or CRLF blank event delimiter, including
-a delimiter split across reads. Recovery clears the skipped event name. An oversized
+a delimiter split across reads. A newline that merely terminates a dropped line,
+including one arriving in a later read, is not a blank event delimiter and does
+not end dropping. Recovery clears the skipped event name. An oversized
 fragmented buffered response or a stream with only oversized content can therefore
 have NULL content/flush timestamps. SSE event names and fragmented/multiline data are
 supported. No payload is logged. New usage fields only attach to existing usage

@@ -101,8 +101,10 @@ type Observer struct {
 	buf      []byte
 	data     []byte
 	dropping bool
-	done     bool
-	Visible  bool
+	// dropLineOpen remembers discarded line content across Feed boundaries.
+	dropLineOpen bool
+	done         bool
+	Visible      bool
 }
 
 const maxObservation = 64 * 1024
@@ -172,6 +174,7 @@ func (o *Observer) Feed(p []byte) {
 		}
 		if len(o.buf)+n > maxObservation {
 			o.dropping = true
+			o.dropLineOpen = true
 			o.buf = nil
 			o.data = nil
 		}
@@ -181,12 +184,19 @@ func (o *Observer) Feed(p []byte) {
 		skippedLine := p[:n]
 		p = p[n:]
 		if i < 0 {
+			if o.dropping && len(bytes.TrimSpace(skippedLine)) > 0 {
+				o.dropLineOpen = true
+			}
 			return
 		}
 		p = p[1:]
 		line := bytes.TrimSpace(o.buf)
 		if o.dropping {
-			if len(bytes.TrimSpace(skippedLine)) == 0 {
+			if o.dropLineOpen {
+				// This newline only terminates the discarded line, even if
+				// all its nonempty content arrived in an earlier Feed.
+				o.dropLineOpen = false
+			} else if len(bytes.TrimSpace(skippedLine)) == 0 {
 				o.dropping = false
 				o.event = ""
 			}
