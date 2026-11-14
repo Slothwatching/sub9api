@@ -212,6 +212,7 @@ func enqueueOpsErrorLog(ops *service.OpsService, entry *service.OpsInsertErrorLo
 	if ops == nil || entry == nil {
 		return
 	}
+	classifyOpsUnsupportedModel(entry)
 	entry.UserAgent = normalizeOpsPersistentUserAgent(entry.UserAgent)
 	if entry.ErrorBody != "" {
 		originalBody := entry.ErrorBody
@@ -263,6 +264,30 @@ func enqueueOpsErrorLog(ops *service.OpsService, entry *service.OpsInsertErrorLo
 		opsErrorLogDropped.Add(1)
 		maybeLogOpsErrorLogDrop()
 	}
+}
+
+// Sub9API D144: deterministic unsupported-model requests are client/business
+// restrictions, like local model-configuration rejections. Classify once after
+// final upstream/stream snapshots, preserving the provider attribution and log.
+// Never let a model-looking message mask auth, rate-limit or server failures.
+func classifyOpsUnsupportedModel(entry *service.OpsInsertErrorLogInput) {
+	if entry == nil || entry.StatusCode != http.StatusBadRequest || entry.ErrorPhase == "account_auth" {
+		return
+	}
+	if entry.UpstreamStatusCode != nil && *entry.UpstreamStatusCode != http.StatusBadRequest {
+		return
+	}
+	parsed := parseOpsErrorResponse([]byte(entry.ErrorBody))
+	if entry.ErrorType == "model_not_found" || parsed.Code == "model_not_found" || parsed.ErrorType == "model_not_found" ||
+		isOpsUnsupportedModelMessage(entry.ErrorMessage) || isOpsUnsupportedModelMessage(parsed.Message) ||
+		(entry.UpstreamErrorMessage != nil && isOpsUnsupportedModelMessage(*entry.UpstreamErrorMessage)) {
+		entry.IsBusinessLimited = true
+	}
+}
+
+func isOpsUnsupportedModelMessage(message string) bool {
+	msg := strings.ToLower(message)
+	return strings.Contains(msg, "model is not supported")
 }
 
 func normalizeOpsPersistentUserAgent(value string) string {

@@ -597,25 +597,49 @@ func (s *OpsAlertEvaluatorService) computeRuleMetric(
 		return 0, false
 	}
 
+	// Sub9API D144: ratio alerts need enough SLA-eligible requests to be
+	// meaningful. Unavailable follows the zero-request path: no fire or resolve.
+	if overview.RequestCountSLA < opsAlertMinRequests(rule.Filters) {
+		return 0, false
+	}
+
 	switch strings.TrimSpace(rule.MetricType) {
 	case "success_rate":
-		if overview.RequestCountSLA <= 0 {
-			return 0, false
-		}
 		return overview.SLA * 100, true
 	case "error_rate":
-		if overview.RequestCountSLA <= 0 {
-			return 0, false
-		}
 		return overview.ErrorRate * 100, true
 	case "upstream_error_rate":
-		if overview.RequestCountSLA <= 0 {
-			return 0, false
-		}
 		return overview.UpstreamErrorRate * 100, true
 	default:
 		return 0, false
 	}
+}
+
+// opsAlertMinRequests uses the existing rule filters JSON, avoiding a schema
+// change. Positive integral values up to MaxInt32 are accepted; invalid or
+// missing values use 10. A value of 1 explicitly restores the legacy guard.
+func opsAlertMinRequests(filters map[string]any) int64 {
+	var n float64
+	switch v := filters["min_requests"].(type) {
+	case float64: // JSON decoded by the repository/API
+		n = v
+	case int:
+		n = float64(v)
+	case int64:
+		n = float64(v)
+	case string:
+		parsed, err := strconv.ParseInt(strings.TrimSpace(v), 10, 32)
+		if err != nil {
+			return 10
+		}
+		n = float64(parsed)
+	default:
+		return 10
+	}
+	if math.IsNaN(n) || math.IsInf(n, 0) || n < 1 || n > math.MaxInt32 || math.Trunc(n) != n {
+		return 10
+	}
+	return int64(n)
 }
 
 func compareMetric(value float64, operator string, threshold float64) bool {
