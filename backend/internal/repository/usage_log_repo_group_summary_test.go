@@ -149,12 +149,15 @@ func TestUsageLogRepositoryGetAllGroupUsageSummaryTailStartsAtExpiredBefore(t *t
 			repo := newUsageLogRepositoryWithSQL(nil, db)
 			useGroupUsageRepositoryTestTimezone(t, "America/New_York")
 
+			// Fork-local: retain the repeatable-read snapshot around both queries.
+			mock.ExpectBegin()
 			mock.ExpectQuery(`(?s)COUNT\(\*\).*MAX\(expired_before\).*usage_group_rollup_state.*WHERE id = 1`).
 				WillReturnRows(tc.rows)
 			mock.ExpectQuery(`(?s)usage_group_daily_rollups.*FROM usage_logs ul\s+WHERE ul\.created_at >= \$7`).
 				WithArgs(todayStart, yesterdayStart, "2026-03-08", tc.valid, tc.retained, tc.closed, tc.tailStart).
 				WillReturnRows(sqlmock.NewRows([]string{"group_id", "total_cost", "today_cost", "yesterday_cost"}))
 
+			mock.ExpectCommit()
 			_, err := repo.GetAllGroupUsageSummary(context.Background(), todayStart)
 			require.NoError(t, err)
 			require.NoError(t, mock.ExpectationsWereMet())
