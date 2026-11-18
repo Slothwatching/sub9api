@@ -700,6 +700,7 @@ function selectCodexCatalogModel(preferredModel: string): string {
 }
 
 function codexReasoningEffortTomlLine(modelSlug: string): string {
+  if (modelSlug === 'gpt-6.2-sol') return formatCodexReasoningEffortTomlLine('medium')
   return formatCodexReasoningEffortTomlLine(
     selectCodexConfigReasoningEffort(findCodexCatalogModel(codexModelManifestContent.value, modelSlug))
   )
@@ -1015,7 +1016,7 @@ function generateOpenAIFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const isWindows = activeTab.value === 'windows'
   const configDir = isWindows ? '%userprofile%\\.codex' : '~/.codex'
 
-  const model = selectCodexCatalogModel('gpt-6.1-sol')
+  const model = selectCodexCatalogModel('gpt-6.2-sol')
   const reasoningEffortLine = codexReasoningEffortTomlLine(model)
 
   // config.toml content
@@ -1362,7 +1363,7 @@ supports_websockets = false${codexModelCatalogMode.value === 'remote' ? '\n\n[fe
 function generateOpenAIWsFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const isWindows = activeTab.value === 'windows'
   const configDir = isWindows ? '%userprofile%\\.codex' : '~/.codex'
-  const model = selectCodexCatalogModel('gpt-6.1-sol')
+  const model = selectCodexCatalogModel('gpt-6.2-sol')
   const reasoningEffortLine = codexReasoningEffortTomlLine(model)
 
   // config.toml content with WebSocket v2
