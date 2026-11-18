@@ -86,8 +86,9 @@ describe('UseKeyContent', () => {
       .find((content) => content.includes('model_provider = "OpenAI"'))!
 
     expect(wrapper.get('[data-testid="codex-auth-mode-api-key"]').attributes('aria-checked')).toBe('true')
-    expect(config()).toContain('model = "gpt-6.1-sol"')
-    expect(config()).toContain('review_model = "gpt-6.1-sol"')
+    expect(config()).toContain('model = "gpt-6.2-sol"')
+    expect(config()).toContain('review_model = "gpt-6.2-sol"')
+    expect(config()).toContain('model_reasoning_effort = "medium"')
     expect(config().split('[model_providers.')[0]).toContain('web_search = "live"')
     expect(config()).toContain('requires_openai_auth = false')
     expect(config()).toContain('experimental_bearer_token = "test-only-key"')

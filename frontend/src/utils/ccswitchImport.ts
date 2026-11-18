@@ -1,7 +1,7 @@
 import type { GroupPlatform } from '@/types'
 import { buildCodexApiKeyAuthConfig } from '@/utils/codexAuthConfig'
 
-export const OPENAI_CC_SWITCH_CODEX_MODEL = 'gpt-6.1-sol'
+export const OPENAI_CC_SWITCH_CODEX_MODEL = 'gpt-6.2-sol'
 export const GROK_CC_SWITCH_MODEL = 'grok-4.5'
 
 export type CcSwitchClientType = 'claude' | 'gemini'
@@ -118,6 +118,7 @@ export function buildCcSwitchImportDeeplink(input: CcSwitchImportDeeplinkInput):
     // Keep the provider display name aligned with the configured site branding.
     const codexConfig = `model_provider = "sub2api"
 model = ${JSON.stringify(config.model)}
+model_reasoning_effort = "medium"
 web_search = "live"
 
 [model_providers.sub2api]

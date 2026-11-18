@@ -14,7 +14,7 @@ function paramsFromDeeplink(deeplink: string): URLSearchParams {
 
 describe('ccswitchImport utils', () => {
   it('defaults OpenAI CC Switch imports to the current Codex model', () => {
-    expect(OPENAI_CC_SWITCH_CODEX_MODEL).toBe('gpt-6.1-sol')
+    expect(OPENAI_CC_SWITCH_CODEX_MODEL).toBe('gpt-6.2-sol')
   })
 
   it('defaults Grok Build imports to the current Grok model', () => {
@@ -52,6 +52,7 @@ describe('ccswitchImport utils', () => {
     expect(params.get('configFormat')).toBe('json')
     expect(payload.config).toContain(`base_url = "${endpoint}"`)
     expect(payload.config).toContain(`model = "${OPENAI_CC_SWITCH_CODEX_MODEL}"`)
+    expect(payload.config).toContain('model_reasoning_effort = "medium"')
     expect(payload.config.split('[model_providers.')[0]).toContain('web_search = "live"')
     expect(payload.config).toContain('requires_openai_auth = false')
     expect(payload.config).toContain('experimental_bearer_token = "sk-test"')
