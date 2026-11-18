@@ -4,6 +4,18 @@ import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import type { UserAvailableChannel } from '@/api/channels'
 
 describe('curated model display', () => {
+  it('shows the verified GPT-6.2 models in the plaza and channels without exposing lookalikes', () => {
+    const models = ['gpt-6.2-sol', 'gpt-6.2-astra', 'gpt-6.2-sol-preview']
+      .map(name => ({ name, platform: 'openai' }))
+    const groups = [{ id: 1, models }] as unknown as ModelPlazaGroup[]
+    const channels = [{ name: 'OpenAI', description: '', platforms: [
+      { platform: 'openai', supported_models: models, groups: [] }
+    ] }] as unknown as UserAvailableChannel[]
+    const expected = ['gpt-6.2-sol', 'gpt-6.2-astra']
+    expect(displayPlazaGroups(groups)[0].models.map(m => m.name)).toEqual(expected)
+    expect(displayChannels(channels)[0].platforms[0].supported_models.map(m => m.name)).toEqual(expected)
+  })
+
   it('hides retired and similarly named OpenAI models without changing prices or other providers', () => {
     const price = { billing_mode: 'token', input_price: 42 }
     const groups = [{ id: 1, models: [
