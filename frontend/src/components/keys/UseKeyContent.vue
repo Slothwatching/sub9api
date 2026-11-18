@@ -1493,6 +1493,32 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         max: { reasoningEffort: 'max' }
       }
     },
+    'gpt-6.2-sol': {
+      name: 'GPT-6.2 Sol',
+      limit: { context: 1050000, output: 128000 },
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
+    },
+    'gpt-6.2-astra': {
+      name: 'GPT-6.2 Astra',
+      limit: { context: 1050000, output: 128000 },
+      reasoning: true,
+      options: { store: false, reasoningEffort: 'medium', include: ['reasoning.encrypted_content'] },
+      variants: {
+        low: { reasoningEffort: 'low' },
+        medium: { reasoningEffort: 'medium' },
+        high: { reasoningEffort: 'high' },
+        xhigh: { reasoningEffort: 'xhigh' },
+        max: { reasoningEffort: 'max' }
+      }
+    },
     'gpt-6.1-sol': {
       name: 'GPT-6.1 Sol',
       limit: {
