@@ -21,15 +21,18 @@ const ContextPricingBasisWholeRequest ContextPricingBasis = "whole_request"
 // ContextPricingTier (MinTokens, MaxTokens] 区间内的有效 per-token 单价（USD）。
 // nil 表示该项无价/不计费；MaxTokens 为 nil 表示无上限。
 type ContextPricingTier struct {
-	MinTokens     int
-	MaxTokens     *int
-	Label         string
-	Input         *float64
-	Output        *float64
-	CacheWrite    *float64
-	CacheWrite1h  *float64
-	CacheWrite12h *float64
-	CacheRead     *float64
+	MinTokens      int
+	MaxTokens      *int
+	Label          string
+	Input          *float64
+	Output         *float64
+	CacheWrite     *float64
+	CacheWrite1h   *float64
+	CacheWrite12h  *float64
+	CacheRead      *float64
+	ImageInput     *float64
+	ImageOutput    *float64
+	ImageCacheRead *float64
 }
 
 // TimePricingPeriod 分时倍率时段：配置时区当天 [StartTime, EndTime) 内整单费用乘 Multiplier。
@@ -121,9 +124,15 @@ func (s *BillingService) ResolveContextPricingSchedule(ctx context.Context, reso
 	plan := s.contextPricingBreakpoints(resolver, resolved, in.Model)
 	segments := buildContextSegments(plan.bounds)
 
+	imageModel := false
+	if s.pricingService != nil {
+		if metadata := s.pricingService.GetIdentifiedModelPricing(in.Model); metadata != nil {
+			imageModel = metadata.Mode == "image_generation"
+		}
+	}
 	tiers := make([]ContextPricingTier, 0, len(segments))
 	for _, seg := range segments {
-		tier, err := probeContextTier(seg, resolved, probe)
+		tier, err := probeContextTier(seg, resolved, imageModel, probe)
 		if err != nil {
 			return nil, err
 		}
@@ -272,7 +281,7 @@ func buildContextSegments(bounds []int) []contextSegment {
 // 每次只喂一种 token，ActualCost 即该项费用；旧边际规则的加倍只体现在 ActualCost
 // 而不在分项费用里，因此统一读 ActualCost。整单阶梯与边际规则在同一段内都是
 // 线性函数，差商同时适用，无需区分规则类型。
-func probeContextTier(seg contextSegment, resolved *ResolvedPricing, probe func(UsageTokens) (*CostBreakdown, error)) (ContextPricingTier, error) {
+func probeContextTier(seg contextSegment, resolved *ResolvedPricing, imageModel bool, probe func(UsageTokens) (*CostBreakdown, error)) (ContextPricingTier, error) {
 	tier := ContextPricingTier{MinTokens: seg.min, MaxTokens: seg.max}
 	c := seg.min + 1
 	delta := contextProbeDelta
@@ -304,6 +313,22 @@ func probeContextTier(seg contextSegment, resolved *ResolvedPricing, probe func(
 	if err != nil {
 		return tier, err
 	}
+	// Image token counters are subsets of the corresponding total counters.
+	// Keep both in the probe so the billing function uses the image component.
+	if imageModel || hasImageTokenPricing(resolved) {
+		tier.ImageInput, err = probeComponentPrice(func(n int) UsageTokens { return UsageTokens{InputTokens: n, ImageInputTokens: n} }, c, delta, probe)
+		if err != nil {
+			return tier, err
+		}
+		tier.ImageOutput, err = probeComponentPrice(func(n int) UsageTokens { return UsageTokens{InputTokens: c, OutputTokens: n, ImageOutputTokens: n} }, 0, contextProbeDelta, probe)
+		if err != nil {
+			return tier, err
+		}
+		tier.ImageCacheRead, err = probeComponentPrice(func(n int) UsageTokens { return UsageTokens{CacheReadTokens: n, ImageCacheReadTokens: n} }, c, delta, probe)
+		if err != nil {
+			return tier, err
+		}
+	}
 	explicit := explicitContextPricingFields(resolved, c)
 	if explicit.cacheWrite12h || (resolved.BasePricing != nil && resolved.BasePricing.CacheCreation12hPricePerToken != nil) {
 		tier.CacheWrite12h, err = probeComponentPrice(func(n int) UsageTokens { return UsageTokens{CacheCreationTokens: n, CacheCreation12hTokens: n} }, c, delta, probe)
@@ -311,6 +336,9 @@ func probeContextTier(seg contextSegment, resolved *ResolvedPricing, probe func(
 			return tier, err
 		}
 	}
+	tier.ImageInput = contextPricePtr(tier.ImageInput, explicit.input)
+	tier.ImageOutput = contextPricePtr(tier.ImageOutput, explicit.output || (resolved.channelPricing != nil && resolved.channelPricing.ImageOutputPrice != nil))
+	tier.ImageCacheRead = contextPricePtr(tier.ImageCacheRead, explicit.cacheRead)
 	tier.Input = contextPricePtr(tier.Input, explicit.input)
 	tier.Output = contextPricePtr(tier.Output, explicit.output)
 	tier.CacheWrite = contextPricePtr(tier.CacheWrite, explicit.cacheWrite)
@@ -318,6 +346,18 @@ func probeContextTier(seg contextSegment, resolved *ResolvedPricing, probe func(
 	tier.CacheWrite12h = contextPricePtr(tier.CacheWrite12h, explicit.cacheWrite12h)
 	tier.CacheRead = contextPricePtr(tier.CacheRead, explicit.cacheRead)
 	return tier, nil
+}
+
+// Only expose image-specific prices when the resolved price card contains image rates.
+func hasImageTokenPricing(resolved *ResolvedPricing) bool {
+	if resolved == nil {
+		return false
+	}
+	if p := resolved.channelPricing; p != nil && (p.ImageInputPrice != nil || p.ImageOutputPrice != nil) {
+		return true
+	}
+	p := resolved.BasePricing
+	return p != nil && (p.ImageInputPricePerToken != 0 || p.ImageOutputPricePerToken != 0 || p.ImageCacheReadPricePerToken != 0 || p.ImageOutputPriceExplicit)
 }
 
 // probeComponentPrice 返回 [from, from+delta] 上 ActualCost 的差商；delta 为 0（退化段）时退回平均单价。
@@ -416,7 +456,8 @@ func mergeEqualContextTiers(tiers []ContextPricingTier) []ContextPricingTier {
 func sameContextPrices(a, b ContextPricingTier) bool {
 	return samePricePtr(a.Input, b.Input) && samePricePtr(a.Output, b.Output) &&
 		samePricePtr(a.CacheWrite, b.CacheWrite) && samePricePtr(a.CacheWrite1h, b.CacheWrite1h) &&
-		samePricePtr(a.CacheWrite12h, b.CacheWrite12h) && samePricePtr(a.CacheRead, b.CacheRead)
+		samePricePtr(a.CacheWrite12h, b.CacheWrite12h) && samePricePtr(a.CacheRead, b.CacheRead) &&
+		samePricePtr(a.ImageInput, b.ImageInput) && samePricePtr(a.ImageOutput, b.ImageOutput) && samePricePtr(a.ImageCacheRead, b.ImageCacheRead)
 }
 
 func samePricePtr(a, b *float64) bool {

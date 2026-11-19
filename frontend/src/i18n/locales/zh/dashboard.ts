@@ -637,6 +637,7 @@ export default {
   availableChannels: {
     title: '可用渠道',
     description: '查看您可访问的渠道与其支持的模型、定价',
+    pricingScope: '此处展示渠道配置或参考价格；实际计费取决于分组、请求接口和计费方式，图片请求可能按张或按 Token 计费。',
     searchPlaceholder: '搜索渠道或模型...',
     empty: '暂无可用渠道',
     noModels: '未配置模型',
@@ -672,7 +673,8 @@ export default {
       perRequestPrice: '每次请求',
       intervals: '阶梯定价',
       unitPerMillion: '/ 1M token',
-      unitPerRequest: '/ 次'
+      unitPerRequest: '/ 次',
+      unitPerImage: '/ 张'
     }
   },
 
@@ -711,6 +713,12 @@ export default {
       cacheWrite: '写入',
       cacheRead: '读取',
       cacheWriteShort: '写',
+      imageTokenScope: '仅适用于按 Token 计费的请求；图片接口可能按张计费。',
+      imageTokenPaid: '图片 Token 实付 / 100万',
+      imageTokenOfficial: '图片 Token 参考 / 100万',
+      imageTokenInput: '输入',
+      imageTokenOutput: '输出',
+      imageTokenCache: '缓存输入',
       cacheReadShort: '读',
       tierHint: '按单次请求的总上下文（输入 + 缓存写入 + 缓存读取）所在档位对整单计价',
       tierHintMarginal: '仅超过阈值的部分按该档计价，输出不加价',

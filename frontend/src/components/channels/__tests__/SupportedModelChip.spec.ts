@@ -67,6 +67,42 @@ describe('SupportedModelChip', () => {
     }
   )
 
+  it('shows image request and tier prices without treating token output price as per-request', async () => {
+    const wrapper = mount(SupportedModelChip, {
+      attachTo: document.body,
+      props: {
+        model: {
+          name: 'image-test', platform: '',
+          pricing: {
+            billing_mode: 'image', input_price: null, output_price: null,
+            cache_write_price: null, cache_read_price: null, image_input_price: null,
+            image_output_price: 0.00003, per_request_price: 0.04,
+            intervals: [{ tier_label: '1K', min_tokens: 0, max_tokens: null,
+              input_price: null, output_price: null, cache_write_price: null,
+              cache_read_price: null, per_request_price: 0.02 }]
+          }
+        }
+      }
+    })
+    try {
+      await wrapper.find('[tabindex="0"]').trigger('mouseenter')
+      await nextTick()
+      const tooltip = document.body.querySelector('[role="tooltip"]')
+      expect(tooltip?.textContent).toContain('$0.04 availableChannels.pricing.unitPerImage')
+      expect(tooltip?.textContent).toContain('1K')
+      expect(tooltip?.textContent).toContain('$0.02')
+      expect(tooltip?.textContent).not.toContain('$0.00003')
+      const model = wrapper.props('model')
+      await wrapper.setProps({ model: { ...model, pricing: { ...model.pricing!, per_request_price: 0 } } })
+      expect(tooltip?.textContent).toContain('$0 availableChannels.pricing.unitPerImage')
+      await wrapper.setProps({ model: { ...model, pricing: { ...model.pricing!, per_request_price: null } } })
+      expect(tooltip?.textContent).not.toContain('availableChannels.pricing.imageOutputPrice')
+      expect(tooltip?.textContent).toContain('$0.02')
+    } finally {
+      wrapper.unmount()
+    }
+  })
+
   it('仅配置区间倍率时按基础价展示 token 档位', async () => {
     const wrapper = mount(SupportedModelChip, {
       attachTo: document.body,

@@ -109,6 +109,24 @@
                 {{ t('modelPlaza.table.reasoningMultiplierBadge', { effort, multiplier }) }}
               </span>
             </div>
+            <div v-if="billingMode(m) === BILLING_MODE_TOKEN && m.image_token_tiers?.length" class="mt-1 text-xs text-gray-500 dark:text-dark-400" data-image-token-pricing>
+              <div>{{ t('modelPlaza.table.imageTokenPaid') }}</div>
+              <div>{{ t('modelPlaza.table.imageTokenScope') }}</div>
+              <div v-for="(tier, idx) in m.image_token_tiers" :key="idx">
+                {{ tier.label }} {{ t('modelPlaza.table.imageTokenInput') }} {{ paidPerMillion(tier.input, period) }} ·
+                {{ t('modelPlaza.table.imageTokenOutput') }} {{ paidPerMillion(tier.output, period) }} ·
+                {{ t('modelPlaza.table.imageTokenCache') }} {{ paidPerMillion(tier.cache_read, period) }}
+              </div>
+            </div>
+            <div v-if="m.official_pricing?.image_token_tiers?.length" class="mt-1 text-xs text-gray-500 dark:text-dark-400" data-official-image-token-pricing>
+              <div>{{ t('modelPlaza.table.imageTokenOfficial') }}</div>
+              <div>{{ t('modelPlaza.table.imageTokenScope') }}</div>
+              <div v-for="(tier, idx) in m.official_pricing.image_token_tiers" :key="idx">
+                {{ tier.label }} {{ t('modelPlaza.table.imageTokenInput') }} {{ official(tier.input) }} ·
+                {{ t('modelPlaza.table.imageTokenOutput') }} {{ official(tier.output) }} ·
+                {{ t('modelPlaza.table.imageTokenCache') }} {{ official(tier.cache_read) }}
+              </div>
+            </div>
           </td>
 
           <!-- token 计费:输入 / 输出 / 缓存(写/读),有阶梯时每档一行;档位标签只放输入列,其余列按行对齐 -->

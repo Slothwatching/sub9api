@@ -37,13 +37,21 @@ func NewModelPlazaHandler(
 }
 
 // modelPlazaOfficialPricing 官方参考价（USD per token，与计费目录同源）。
+type modelPlazaImageTokenTier struct {
+	Label     string   `json:"label,omitempty"`
+	Input     *float64 `json:"input"`
+	Output    *float64 `json:"output"`
+	CacheRead *float64 `json:"cache_read"`
+}
+
 type modelPlazaOfficialPricing struct {
-	InputPrice         *float64 `json:"input_price"`
-	OutputPrice        *float64 `json:"output_price"`
-	CacheWritePrice    *float64 `json:"cache_write_price"`
-	CacheWrite1hPrice  *float64 `json:"cache_write_1h_price,omitempty"`
-	CacheWrite12hPrice *float64 `json:"cache_write_12h_price,omitempty"`
-	CacheReadPrice     *float64 `json:"cache_read_price"`
+	ImageTokenTiers    []modelPlazaImageTokenTier `json:"image_token_tiers,omitempty"`
+	InputPrice         *float64                   `json:"input_price"`
+	OutputPrice        *float64                   `json:"output_price"`
+	CacheWritePrice    *float64                   `json:"cache_write_price"`
+	CacheWrite1hPrice  *float64                   `json:"cache_write_1h_price,omitempty"`
+	CacheWrite12hPrice *float64                   `json:"cache_write_12h_price,omitempty"`
+	CacheReadPrice     *float64                   `json:"cache_read_price"`
 	// Intervals 官方长上下文阶梯，仅多档模型给出。
 	Intervals []userPricingIntervalDTO `json:"intervals,omitempty"`
 }
@@ -65,6 +73,7 @@ type modelPlazaTimePricing struct {
 
 // modelPlazaModel 广场模型条目：实收口径展示定价（白名单形态）+ 官方参考价。
 type modelPlazaModel struct {
+	ImageTokenTiers     []modelPlazaImageTokenTier        `json:"image_token_tiers,omitempty"`
 	CatalogCapabilities *service.ModelCatalogCapabilities `json:"catalog_capabilities,omitempty"`
 	Name                string                            `json:"name"`
 	Platform            string                            `json:"platform"`
@@ -209,6 +218,7 @@ func toModelPlazaGroupDTO(g *service.PlazaGroup, userRates map[int64]float64) mo
 			Platform:            m.Platform,
 			Pricing:             toUserPricing(m.Pricing),
 			OfficialPricing:     toModelPlazaOfficialPricing(m.OfficialPricing),
+			ImageTokenTiers:     toPlazaImageTokenTiers(m.ImageTokenTiers),
 			LongContextBasis:    string(m.LongContextBasis),
 			TimePricing:         toModelPlazaTimePricing(m.TimePricing),
 		})
@@ -260,6 +270,7 @@ func toModelPlazaOfficialPricing(p *service.PlazaOfficialPricing) *modelPlazaOff
 		return nil
 	}
 	return &modelPlazaOfficialPricing{
+		ImageTokenTiers:    toPlazaImageTokenTiers(p.ImageTokenTiers),
 		InputPrice:         p.InputPrice,
 		OutputPrice:        p.OutputPrice,
 		CacheWritePrice:    p.CacheWritePrice,
@@ -268,4 +279,15 @@ func toModelPlazaOfficialPricing(p *service.PlazaOfficialPricing) *modelPlazaOff
 		CacheReadPrice:     p.CacheReadPrice,
 		Intervals:          toUserPricingIntervals(p.Intervals),
 	}
+}
+
+func toPlazaImageTokenTiers(src []service.PlazaImageTokenTier) []modelPlazaImageTokenTier {
+	if len(src) == 0 {
+		return nil
+	}
+	out := make([]modelPlazaImageTokenTier, 0, len(src))
+	for _, t := range src {
+		out = append(out, modelPlazaImageTokenTier{Label: t.Label, Input: t.Input, Output: t.Output, CacheRead: t.CacheRead})
+	}
+	return out
 }

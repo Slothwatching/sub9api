@@ -7,9 +7,15 @@ import (
 	"strings"
 )
 
-// PlazaOfficialPricing 模型广场展示用的官方参考价（USD per token），与计费同源：
-// LiteLLM → 内置兜底价卡 → 模型策略。字段为 nil 表示该项缺失（0 视为未配置）。
+// PlazaImageTokenTier contains effective image-token rates for one context tier.
+type PlazaImageTokenTier struct {
+	Label                    string
+	Input, Output, CacheRead *float64
+}
+
+// PlazaOfficialPricing 模型广场展示用的官方参考价（USD per token）。
 type PlazaOfficialPricing struct {
+	ImageTokenTiers    []PlazaImageTokenTier
 	InputPrice         *float64
 	OutputPrice        *float64
 	CacheWritePrice    *float64 // 5m 缓存写入（= LiteLLM cache_creation）
@@ -22,6 +28,7 @@ type PlazaOfficialPricing struct {
 
 // PlazaModel 模型广场中单个模型条目：按实收口径合成的展示定价 + 官方参考价。
 type PlazaModel struct {
+	ImageTokenTiers []PlazaImageTokenTier
 	// CatalogCapabilities are declared metadata, never proof of live availability.
 	CatalogCapabilities *ModelCatalogCapabilities
 	Name                string
@@ -256,6 +263,7 @@ func (s *ModelPlazaService) fillDisplayPricing(ctx context.Context, m *PlazaMode
 		})
 		if err == nil && sched != nil && len(sched.Tiers) > 0 {
 			m.Pricing = plazaPricingFromSchedule(m.Pricing, sched)
+			m.ImageTokenTiers = plazaImageTokenTiers(sched)
 			if len(sched.Tiers) > 1 {
 				m.LongContextBasis = sched.Basis
 			}
@@ -271,12 +279,12 @@ func (s *ModelPlazaService) fillDisplayPricing(ctx context.Context, m *PlazaMode
 func plazaPricingFromSchedule(raw *ChannelModelPricing, sched *ContextPricingSchedule) *ChannelModelPricing {
 	out := &ChannelModelPricing{BillingMode: BillingModeToken}
 	if raw != nil {
-		out.ImageInputPrice = raw.ImageInputPrice
-		out.ImageOutputPrice = raw.ImageOutputPrice
 		out.PerRequestPrice = raw.PerRequestPrice
 		out.ReasoningEffortMultipliers = reasoningEffortMultipliersFromPricing(raw)
 	}
 	first := sched.Tiers[0]
+	out.ImageInputPrice = first.ImageInput
+	out.ImageOutputPrice = first.ImageOutput
 	out.InputPrice = first.Input
 	out.OutputPrice = first.Output
 	out.CacheWritePrice = first.CacheWrite
@@ -287,6 +295,26 @@ func plazaPricingFromSchedule(raw *ChannelModelPricing, sched *ContextPricingSch
 		out.Intervals = plazaIntervalsFromTiers(sched.Tiers)
 	}
 	return out
+}
+
+func plazaImageTokenTiers(sched *ContextPricingSchedule) []PlazaImageTokenTier {
+	if sched == nil || len(sched.Tiers) == 0 {
+		return nil
+	}
+	hasPrice := false
+	for _, t := range sched.Tiers {
+		if t.ImageInput != nil || t.ImageOutput != nil || t.ImageCacheRead != nil {
+			hasPrice = true
+		}
+	}
+	if !hasPrice {
+		return nil
+	}
+	tiers := make([]PlazaImageTokenTier, 0, len(sched.Tiers))
+	for _, t := range sched.Tiers {
+		tiers = append(tiers, PlazaImageTokenTier{Label: t.Label, Input: t.ImageInput, Output: t.ImageOutput, CacheRead: t.ImageCacheRead})
+	}
+	return tiers
 }
 
 func plazaIntervalsFromTiers(tiers []ContextPricingTier) []PricingInterval {
@@ -380,12 +408,15 @@ func (s *ModelPlazaService) lookupOfficialPricing(ctx context.Context, modelName
 		result.CacheWrite12hPrice = mp.CacheCreation12hPricePerToken
 		if s.resolver != nil {
 			sched, schedErr := s.billingService.ResolveContextPricingSchedule(ctx, s.resolver, ContextPricingScheduleInput{Model: modelName})
+			if schedErr == nil && sched != nil {
+				result.ImageTokenTiers = plazaImageTokenTiers(sched)
+			}
 			if schedErr == nil && sched != nil && len(sched.Tiers) > 1 {
 				result.Intervals = plazaIntervalsFromTiers(sched.Tiers)
 			}
 		}
 		if result.InputPrice == nil && result.OutputPrice == nil && result.CacheWritePrice == nil &&
-			result.CacheWrite1hPrice == nil && result.CacheWrite12hPrice == nil && result.CacheReadPrice == nil && len(result.Intervals) == 0 {
+			result.CacheWrite1hPrice == nil && result.CacheWrite12hPrice == nil && result.CacheReadPrice == nil && len(result.Intervals) == 0 && len(result.ImageTokenTiers) == 0 {
 			result = nil
 		}
 	}

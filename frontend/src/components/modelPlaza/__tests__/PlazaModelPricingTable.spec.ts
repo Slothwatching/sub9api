@@ -777,3 +777,43 @@ describe('PlazaModelPricingTable 分时计价', () => {
     expect(wrapper.find('[title*="modelPlaza.table.timePricingRowHint"]').exists()).toBe(false)
   })
 })
+
+describe('image token prices', () => {
+  it('explains the scope of token reference prices when the model is billed per image', () => {
+    const base = tokenModel()
+    const model = tokenModel({
+      pricing: { ...base.pricing!, billing_mode: 'image', per_request_price: 0.2 },
+      official_pricing: { ...base.official_pricing!, image_token_tiers: [
+        { input: 8e-6, output: 30e-6, cache_read: 2e-6 }
+      ] }
+    })
+    const wrapper = mountTable([model], 1)
+    expect(wrapper.get('[data-official-image-token-pricing]').text()).toContain('modelPlaza.table.imageTokenScope')
+    expect(wrapper.find('[data-image-token-pricing]').exists()).toBe(false)
+  })
+
+  it('shows paid and reference rates by tier, retaining zero and applying the user multiplier only to paid rates', () => {
+    const model = tokenModel({
+      image_token_tiers: [
+        { label: '≤100K', input: 8e-6, output: 0, cache_read: 2e-6 },
+        { label: '>100K', input: 10e-6, output: 30e-6, cache_read: null }
+      ],
+      official_pricing: { ...tokenModel().official_pricing!, image_token_tiers: [
+        { input: 8e-6, output: 30e-6, cache_read: 2e-6 }
+      ] }
+    })
+    const wrapper = mountTable([model], 0.5)
+    const paid = wrapper.get('[data-image-token-pricing]')
+    expect(paid.text()).toContain('≤100K')
+    expect(paid.text()).toContain('$4.00')
+    expect(paid.text()).toContain('$0.00')
+    expect(paid.text()).toContain('>100K')
+    expect(paid.text()).toContain('$15.00')
+    expect(paid.text()).toContain('-')
+    expect(paid.text()).toContain('modelPlaza.table.imageTokenScope')
+    const reference = wrapper.get('[data-official-image-token-pricing]')
+    expect(reference.text()).toContain('modelPlaza.table.imageTokenScope')
+    expect(reference.text()).toContain('$8.00')
+    expect(reference.text()).toContain('$30.00')
+  })
+})

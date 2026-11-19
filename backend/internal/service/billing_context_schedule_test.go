@@ -641,3 +641,30 @@ func TestResolveContextPricingSchedule_TimePricing(t *testing.T) {
 		require.Nil(t, sched.TimePricing)
 	})
 }
+
+func TestImageTokenScheduleUsesBillingRatesAndFallbacks(t *testing.T) {
+	p := testPtrFloat64
+	catalog := mustCatalogFromJSON(`{"image-test": {"litellm_provider":"openai","mode":"image_generation","input_cost_per_token":0.000005,"output_cost_per_token":0.00001,"cache_read_input_token_cost":0.000001,"input_cost_per_image_token":0.000008,"output_cost_per_image_token":0.00003,"cache_read_input_image_token_cost":0.000002}}`)
+	group := enabledGroup(PlatformOpenAI)
+	channel := []ChannelModelPricing{{Platform: PlatformOpenAI, Models: []string{"image-test"}, BillingMode: BillingModeToken, ImageOutputPrice: p(0)}}
+	bs, resolver := newScheduleTestEnv(t, scheduleScenario{channel: channel, groupPlatform: PlatformOpenAI, catalog: catalog})
+	sched, err := bs.ResolveContextPricingSchedule(context.Background(), resolver, ContextPricingScheduleInput{Model: "image-test", Group: group, Platform: PlatformOpenAI})
+	require.NoError(t, err)
+	require.Len(t, sched.Tiers, 1)
+	requirePrice(t, p(8e-6), sched.Tiers[0].ImageInput, "image input")
+	requirePrice(t, p(0), sched.Tiers[0].ImageOutput, "explicit zero image output")
+	requirePrice(t, p(2e-6), sched.Tiers[0].ImageCacheRead, "image cache")
+	require.Len(t, mergeEqualContextTiers([]ContextPricingTier{{ImageInput: p(1)}, {ImageInput: p(2)}}), 2)
+}
+
+func TestImageTokenScheduleFallsBackToTextRates(t *testing.T) {
+	p := testPtrFloat64
+	catalog := mustCatalogFromJSON(`{"image-fallback": {"litellm_provider":"openai","mode":"image_generation","input_cost_per_token":0.000005,"output_cost_per_token":0.00001,"cache_read_input_token_cost":0.000001}}`)
+	bs, resolver := newScheduleTestEnv(t, scheduleScenario{groupPlatform: PlatformOpenAI, catalog: catalog})
+	sched, err := bs.ResolveContextPricingSchedule(context.Background(), resolver, ContextPricingScheduleInput{Model: "image-fallback", Group: enabledGroup(PlatformOpenAI), Platform: PlatformOpenAI})
+	require.NoError(t, err)
+	require.Len(t, sched.Tiers, 1)
+	requirePrice(t, p(5e-6), sched.Tiers[0].ImageInput, "fallback image input")
+	requirePrice(t, p(10e-6), sched.Tiers[0].ImageOutput, "fallback image output")
+	requirePrice(t, p(1e-6), sched.Tiers[0].ImageCacheRead, "fallback image cache")
+}

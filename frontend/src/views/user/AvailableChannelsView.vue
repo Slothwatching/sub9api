@@ -30,6 +30,9 @@
             </button>
           </div>
         </div>
+        <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
+          {{ t('availableChannels.pricingScope') }}
+        </p>
       </template>
 
       <template #table>
