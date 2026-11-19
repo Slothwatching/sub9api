@@ -147,3 +147,26 @@ describe('PlazaGroupSection 高峰配置传递', () => {
     expect(wrapper.findComponent(PlazaModelPricingTable).props('peakWindow')).toBe('')
   })
 })
+
+describe('图片模型独立展示', () => {
+  it('保留文字模型原表和阶梯，并以分组倍率展示图片价及参考价', async () => {
+    const text = ladderModel(2)
+    const image: PlazaModel = {
+      ...ladderModel(0), name: 'gpt-image-2',
+      pricing: { ...ladderModel(0).pricing!, input_price: 5e-6, output_price: 10e-6, cache_read_price: 1.25e-6 },
+      image_token_tiers: [{ input: 8e-6, output: 30e-6, cache_read: 2e-6 }],
+      official_pricing: { ...ladderModel(0).official_pricing!, input_price: 5e-6, cache_read_price: 1.25e-6, image_token_tiers: [{ input: 8e-6, output: 30e-6, cache_read: 2e-6 }] }
+    }
+    const wrapper = mountSection(group({ models: [text, image], rate_multiplier: 1.5 }))
+    expect(wrapper.getComponent(PlazaModelPricingTable).props('models')).toEqual([text])
+    const table = wrapper.get('[data-image-pricing-table]')
+    expect(table.text()).toContain('modelPlaza.table.imagePaidRate: 1.5x')
+    expect(table.text()).toContain('$45.00')
+    expect(table.text()).toContain('$15.00')
+    expect(table.text()).toContain('$12.00')
+    await table.findAll('button')[1].trigger('click')
+    expect(table.text()).toContain('modelPlaza.table.imagePaidRate: 1.5x')
+    expect(table.text()).toContain('$30.00')
+    expect(table.text()).toContain('$8.00')
+  })
+})
