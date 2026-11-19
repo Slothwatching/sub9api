@@ -54,8 +54,8 @@
     <!-- 模型价格表:整行(含 hover 底色/分区底色)顶到卡片边缘,左右留白由表格首列/末列的 padding 提供 -->
     <div>
       <PlazaModelPricingTable
-        v-if="group.models.length > 0"
-        :models="group.models"
+        v-if="otherModels.length > 0"
+        :models="otherModels"
         :platform="group.platform"
         :rate-multiplier="group.rate_multiplier"
         :user-rate-multiplier="group.user_rate_multiplier ?? null"
@@ -66,7 +66,8 @@
         :peak-window="peakWindow"
         :peak-rate-multiplier="group.peak_rate_multiplier"
       />
-      <p v-else class="px-5 py-4 text-center text-sm text-gray-400 dark:text-dark-500">
+      <PlazaImagePricingTable v-if="imageModels.length" :models="imageModels" :rate="group.user_rate_multiplier ?? group.rate_multiplier" />
+      <p v-if="!group.models.length" class="px-5 py-4 text-center text-sm text-gray-400 dark:text-dark-500">
         {{ t('modelPlaza.detail.noModels') }}
       </p>
     </div>
@@ -79,6 +80,7 @@ import { useI18n } from 'vue-i18n'
 import Icon from '@/components/icons/Icon.vue'
 import GroupBadge from '@/components/common/GroupBadge.vue'
 import PlazaModelPricingTable from './PlazaModelPricingTable.vue'
+import PlazaImagePricingTable from './PlazaImagePricingTable.vue'
 import type { ModelPlazaGroup } from '@/api/modelPlaza'
 import type { GroupPlatform, SubscriptionType } from '@/types'
 import { platformBorderStrongClass } from '@/utils/platformColors'
@@ -88,6 +90,15 @@ import { useAppStore } from '@/stores/app'
 const props = defineProps<{
   group: ModelPlazaGroup
 }>()
+
+// Keep complex pricing on the existing table until all its variants have a dedicated layout.
+const imageModels = computed(() => props.group.models.filter((m) =>
+  m.name.startsWith('gpt-image-') && (m.pricing?.billing_mode || 'token') === 'token' &&
+  m.image_token_tiers?.length === 1 && m.official_pricing?.image_token_tiers?.length === 1 &&
+  !(m.pricing?.intervals?.length || m.official_pricing?.intervals?.length || m.time_pricing?.periods?.length) &&
+  !Object.keys(m.pricing?.reasoning_effort_multipliers || {}).length
+))
+const otherModels = computed(() => props.group.models.filter((m) => !imageModels.value.includes(m)))
 
 const { t } = useI18n()
 const appStore = useAppStore()
