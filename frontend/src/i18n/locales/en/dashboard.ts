@@ -632,6 +632,7 @@ export default {
   availableChannels: {
     title: 'Available Channels',
     description: 'Channels you can access, along with their supported models and pricing',
+    pricingScope: 'Prices shown are channel configuration or reference prices. Actual billing depends on the group, endpoint and billing mode; image requests may be billed per image or per token.',
     searchPlaceholder: 'Search channels or models...',
     empty: 'No available channels',
     noModels: 'No models configured',
@@ -667,7 +668,8 @@ export default {
       perRequestPrice: 'Per Request',
       intervals: 'Tiered Pricing',
       unitPerMillion: '/ 1M tokens',
-      unitPerRequest: '/ request'
+      unitPerRequest: '/ request',
+      unitPerImage: '/ image'
     }
   },
 
@@ -706,6 +708,12 @@ export default {
       cacheWrite: 'Write',
       cacheRead: 'Read',
       cacheWriteShort: 'W',
+      imageTokenScope: 'Applies to token-billed requests. Image endpoints may instead be billed per image.',
+      imageTokenPaid: 'Image tokens, paid / 1M',
+      imageTokenOfficial: 'Image tokens, reference / 1M',
+      imageTokenInput: 'Input',
+      imageTokenOutput: 'Output',
+      imageTokenCache: 'Cached input',
       cacheReadShort: 'R',
       tierHint: 'The whole request is billed at the tier matching its total context (input + cache write + cache read)',
       tierHintMarginal: 'Only the portion above the threshold is billed at this tier; output is unaffected',

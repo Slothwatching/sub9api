@@ -7,8 +7,16 @@
 import { apiClient } from './client'
 import type { UserPricingInterval, UserSupportedModelPricing } from './channels'
 
+export interface PlazaImageTokenTier {
+  label?: string
+  input: number | null
+  output: number | null
+  cache_read: number | null
+}
+
 /** 官方参考价（USD per token，与计费目录同源；字段缺失 = 目录未覆盖）。 */
 export interface PlazaOfficialPricing {
+  image_token_tiers?: PlazaImageTokenTier[]
   input_price: number | null
   output_price: number | null
   /** 5m 缓存写入（= LiteLLM cache_creation）。 */
@@ -52,6 +60,7 @@ export interface ModelCatalogCapabilities {
 }
 
 export interface PlazaModel {
+  image_token_tiers?: PlazaImageTokenTier[]
   catalog_capabilities?: ModelCatalogCapabilities
   name: string
   platform: string
