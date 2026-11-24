@@ -125,6 +125,9 @@ func (s *PaymentService) CreateOrder(ctx context.Context, req CreateOrderRequest
 		_, _ = s.entClient.PaymentOrder.UpdateOneID(order.ID).
 			SetStatus(OrderStatusFailed).
 			Save(ctx)
+		if req.WeChatAutoRenew {
+			s.cleanupFailedWeChatRenewalCheckout(ctx, order.ID)
+		}
 		return nil, err
 	}
 	return resp, nil

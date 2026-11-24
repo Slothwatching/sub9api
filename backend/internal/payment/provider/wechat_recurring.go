@@ -8,10 +8,12 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"sort"
@@ -44,6 +46,7 @@ func NewWeChatRecurringClient(appID, merchantID, key string) (*WeChatRecurringCl
 type WeChatContractCheckout struct {
 	OrderNo, ContractCode, TemplateID, Body, ClientIP, OpenID string
 	PaymentNotifyURL, ContractNotifyURL                       string
+	WapURL, WapName                                           string
 	Serial, AmountFen                                         int64
 	ExpiresAt                                                 time.Time
 }
@@ -62,8 +65,31 @@ func (w *WeChatRecurringClient) Checkout(ctx context.Context, in WeChatContractC
 		"plan_id": in.TemplateID, "request_serial": strconv.FormatInt(in.Serial, 10),
 		"contract_display_account": "Subscription", "body": in.Body, "trade_type": tradeType,
 		"total_fee": strconv.FormatInt(in.AmountFen, 10), "openid": in.OpenID,
-		"spbill_create_ip": in.ClientIP, "notify_url": in.PaymentNotifyURL,
+		"spbill_create_ip": normalizePAPClientIP(in.ClientIP), "notify_url": in.PaymentNotifyURL,
 		"contract_notify_url": in.ContractNotifyURL,
+	}
+	if tradeType == "MWEB" {
+		wapURL := strings.TrimSpace(in.WapURL)
+		if wapURL == "" && in.PaymentNotifyURL != "" {
+			if parsed, err := url.Parse(in.PaymentNotifyURL); err == nil && parsed.Scheme != "" && parsed.Host != "" {
+				wapURL = parsed.Scheme + "://" + parsed.Host
+			}
+		}
+		wapName := strings.TrimSpace(in.WapName)
+		if wapName == "" {
+			wapName = "Subscription"
+		}
+		sceneInfo, err := json.Marshal(map[string]any{
+			"h5_info": map[string]string{
+				"type":     "Wap",
+				"wap_url":  wapURL,
+				"wap_name": wapName,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		fields["scene_info"] = string(sceneInfo)
 	}
 	if !in.ExpiresAt.IsZero() {
 		fields["time_expire"] = in.ExpiresAt.In(time.FixedZone("UTC+8", 8*60*60)).Format("20060102150405")
@@ -107,11 +133,19 @@ func (w *WeChatRecurringClient) RequestDebit(ctx context.Context, orderNo, contr
 	return err
 }
 
+func (w *WeChatRecurringClient) QueryCheckout(ctx context.Context, orderNo string) (map[string]string, error) {
+	return w.queryOrder(ctx, "/pay/orderquery", orderNo)
+}
+
 func (w *WeChatRecurringClient) QueryDebit(ctx context.Context, orderNo string) (map[string]string, error) {
+	return w.queryOrder(ctx, "/pay/paporderquery", orderNo)
+}
+
+func (w *WeChatRecurringClient) queryOrder(ctx context.Context, path, orderNo string) (map[string]string, error) {
 	if orderNo == "" {
 		return nil, errors.New("missing WeChat order number")
 	}
-	result, err := w.call(ctx, "/pay/orderquery", map[string]string{"out_trade_no": orderNo})
+	result, err := w.call(ctx, path, map[string]string{"out_trade_no": orderNo})
 	if err != nil {
 		return nil, err
 	}
@@ -143,10 +177,28 @@ func (w *WeChatRecurringClient) CancelContract(ctx context.Context, contractID s
 	result, err := w.call(ctx, "/papay/deletecontract", map[string]string{
 		"contract_id": contractID, "version": "1.0", "contract_termination_remark": "Cancel automatic renewal",
 	})
+	var rejection *WeChatPAPError
+	if errors.As(err, &rejection) && rejection.Code == "CONTRACT_NOT_EXIST" {
+		return nil
+	}
 	if err == nil && result["contract_id"] != contractID {
 		return errors.New("WeChat PAP cancellation contract mismatch")
 	}
 	return err
+}
+
+func normalizePAPClientIP(raw string) string {
+	ip := strings.TrimSpace(raw)
+	if idx := strings.IndexByte(ip, ','); idx >= 0 {
+		ip = strings.TrimSpace(ip[:idx])
+	}
+	if host, _, err := net.SplitHostPort(ip); err == nil {
+		ip = host
+	}
+	if parsed := net.ParseIP(ip); parsed != nil {
+		return parsed.String()
+	}
+	return "127.0.0.1"
 }
 
 func (w *WeChatRecurringClient) VerifyNotification(body io.Reader) (map[string]string, error) {

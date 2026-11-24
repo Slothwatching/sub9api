@@ -14,7 +14,7 @@
           </div>
           <div v-if="admin && agreement.failure_code" class="text-red-600">{{ agreement.failure_code }}</div>
         </div>
-        <button v-if="agreement.state !== 'failed'" type="button" class="btn btn-secondary" :disabled="busy" @click="cancel(agreement.id)">
+        <button v-if="agreement.state === 'pending' || agreement.state === 'active'" type="button" class="btn btn-secondary" :disabled="busy" @click="cancel(agreement.id)">
           {{ t('payment.wechatRenewal.cancel') }}
         </button>
       </li>

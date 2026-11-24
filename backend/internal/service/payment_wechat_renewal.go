@@ -144,6 +144,7 @@ func (s *PaymentService) startWeChatRenewalCheckout(ctx context.Context, order *
 		TemplateID: r.templates[strconv.FormatInt(req.PlanID, 10)], Body: body, AmountFen: int64(math.Round(order.PayAmount * 100)),
 		ClientIP: req.ClientIP, OpenID: openID, ExpiresAt: order.ExpiresAt,
 		PaymentNotifyURL: r.origin + wechatRenewalWebhookBase + "payment", ContractNotifyURL: r.origin + wechatRenewalWebhookBase + "contract",
+		WapURL: r.origin, WapName: body,
 	})
 	if err != nil {
 		return nil, err
@@ -225,7 +226,7 @@ func (s *PaymentService) applyWeChatRenewalPayment(ctx context.Context, fields m
 		return errors.New("WeChat renewal order mismatch")
 	}
 	success := fields["result_code"] == "SUCCESS" && (fields["trade_state"] == "SUCCESS" || (fields["trade_state"] == "" && fields["transaction_id"] != ""))
-	finalFailure := fields["trade_state"] == "PAYERROR" || fields["trade_state"] == "CLOSED" || fields["trade_state"] == "REVOKED"
+	finalFailure := fields["trade_state"] == "PAY_FAIL" || fields["trade_state"] == "PAYERROR" || fields["trade_state"] == "CLOSED" || fields["trade_state"] == "REVOKED"
 	if fields["result_code"] == "FAIL" && fields["contract_id"] != "" && isFinalWeChatDebitFailure(fields["err_code"]) {
 		finalFailure = true
 		fields["trade_state"] = fields["err_code"]
@@ -375,7 +376,20 @@ func (s *PaymentService) reconcileWeChatRenewalOrder(ctx context.Context, order 
 	if s.wechatRenewal == nil {
 		return ""
 	}
-	fields, err := s.wechatRenewal.client.QueryDebit(ctx, order.OutTradeNo)
+	var isCycle bool
+	if err := wechatQueryRow(ctx, s.entClient, `SELECT EXISTS(SELECT 1 FROM wechat_renewal_cycles WHERE order_id=$1)`, order.ID).scan(&isCycle); err != nil {
+		slog.Warn("WeChat renewal order lookup failed", "order", order.ID, "error", err)
+		return ""
+	}
+	var (
+		fields map[string]string
+		err    error
+	)
+	if isCycle {
+		fields, err = s.wechatRenewal.client.QueryDebit(ctx, order.OutTradeNo)
+	} else {
+		fields, err = s.wechatRenewal.client.QueryCheckout(ctx, order.OutTradeNo)
+	}
 	if err != nil {
 		return ""
 	}
@@ -401,17 +415,36 @@ func (s *PaymentService) CancelWeChatRenewal(ctx context.Context, id, userID int
 		return err
 	}
 	var contractID sql.NullString
-	if err := wechatQueryRow(ctx, s.entClient, `UPDATE wechat_renewal_contracts SET state='cancelled',updated_at=now()
-  WHERE initial_order_id=$1 AND ($2=0 OR user_id=$2) RETURNING contract_id`, id, userID).scan(&contractID); err != nil {
+	var state string
+	if err := wechatQueryRow(ctx, s.entClient, `SELECT contract_id,state FROM wechat_renewal_contracts
+  WHERE initial_order_id=$1 AND ($2=0 OR user_id=$2)`, id, userID).scan(&contractID, &state); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return infraerrors.NotFound("NOT_FOUND", "WeChat agreement not found")
 		}
 		return err
 	}
 	if contractID.Valid {
-		return s.wechatRenewal.client.CancelContract(ctx, contractID.String)
+		if err := s.wechatRenewal.client.CancelContract(ctx, contractID.String); err != nil {
+			return err
+		}
+	}
+	if state == "pending" || state == "active" {
+		if _, err := s.entClient.ExecContext(ctx, `UPDATE wechat_renewal_contracts SET state='cancelled',updated_at=now()
+  WHERE initial_order_id=$1 AND ($2=0 OR user_id=$2) AND state IN ('pending','active')`, id, userID); err != nil {
+			return err
+		}
 	}
 	return nil
+}
+
+func (s *PaymentService) cleanupFailedWeChatRenewalCheckout(ctx context.Context, orderID int64) {
+	if s.wechatRenewal == nil || orderID <= 0 {
+		return
+	}
+	if _, err := s.entClient.ExecContext(ctx, `UPDATE wechat_renewal_contracts SET state='cancelled',updated_at=now()
+  WHERE initial_order_id=$1 AND state='pending' AND contract_id IS NULL`, orderID); err != nil {
+		slog.Warn("WeChat renewal failed-checkout cleanup failed", "order", orderID, "error", err)
+	}
 }
 
 func (s *PaymentService) RunWeChatRenewals(ctx context.Context) error {
@@ -562,12 +595,47 @@ func (s *PaymentService) processWeChatRenewalCycle(ctx context.Context, id int64
 	err = s.submitWeChatRenewalDebit(ctx, order, contractID)
 	if err != nil {
 		var rejection *provider.WeChatPAPError
-		if errors.As(err, &rejection) && isFinalWeChatDebitFailure(rejection.Code) {
-			return s.applyWeChatRenewalPayment(ctx, map[string]string{"out_trade_no": order.OutTradeNo, "contract_id": contractID, "result_code": "FAIL", "err_code": rejection.Code})
+		if errors.As(err, &rejection) {
+			if rejection.Code == "CONTRACT_NOT_EXIST" {
+				return s.cancelWeChatRenewalFromMissingContract(ctx, order)
+			}
+			if isFinalWeChatDebitFailure(rejection.Code) {
+				return s.applyWeChatRenewalPayment(ctx, map[string]string{"out_trade_no": order.OutTradeNo, "contract_id": contractID, "result_code": "FAIL", "err_code": rejection.Code})
+			}
 		}
 		return fmt.Errorf("request WeChat renewal order %d: %w", id, err)
 	}
 	return nil
+}
+
+// cancelWeChatRenewalFromMissingContract handles CONTRACT_NOT_EXIST when the
+// customer already terminated the agreement in WeChat settings before a DELETE
+// callback arrived. Current paid subscription access is preserved.
+func (s *PaymentService) cancelWeChatRenewalFromMissingContract(ctx context.Context, order *dbent.PaymentOrder) error {
+	tx, err := s.entClient.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	db := tx.Client()
+	var sourceID int64
+	var cycleState string
+	if err := wechatQueryRow(ctx, db, `SELECT initial_order_id,state FROM wechat_renewal_cycles WHERE order_id=$1 FOR UPDATE`, order.ID).scan(&sourceID, &cycleState); err != nil {
+		return err
+	}
+	if cycleState == "completed" || cycleState == "failed" {
+		return nil
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE wechat_renewal_contracts SET state='cancelled',updated_at=now() WHERE initial_order_id=$1 AND state IN ('pending','active')`, sourceID); err != nil {
+		return err
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE wechat_renewal_cycles SET state='failed' WHERE order_id=$1`, order.ID); err != nil {
+		return err
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE payment_orders SET status='CANCELLED',failed_reason='WeChat renewal agreement cancelled',updated_at=now() WHERE id=$1 AND status='PENDING'`, order.ID); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // WeChatRenewalAgreement is safe to display to users and payment administrators.
@@ -614,7 +682,7 @@ func (s *PaymentService) ListWeChatRenewals(ctx context.Context, userID int64, p
 
 func isFinalWeChatDebitFailure(code string) bool {
 	switch code {
-	case "ACCOUNTERROR", "CONTRACT_NOT_EXIST", "RULELIMIT", "BANKERROR", "NOTENOUGH", "USER_ACCOUNT_ABNORMAL", "USER_NOT_EXIST", "TRADE_ERROR", "USER_ERROR":
+	case "ACCOUNTERROR", "RULELIMIT", "BANKERROR", "NOTENOUGH", "USER_ACCOUNT_ABNORMAL", "USER_NOT_EXIST", "TRADE_ERROR", "USER_ERROR":
 		return true
 	default:
 		return false
@@ -655,7 +723,7 @@ func (s *PaymentService) closeWeChatInitialCheckout(ctx context.Context, order *
 		}
 		return "", infraerrors.BadRequest("WECHAT_RENEWAL_MANAGED", "WeChat renewal debits are managed by their agreement")
 	}
-	fields, err := s.wechatRenewal.client.QueryDebit(ctx, order.OutTradeNo)
+	fields, err := s.wechatRenewal.client.QueryCheckout(ctx, order.OutTradeNo)
 	var missing *provider.WeChatPAPError
 	if err != nil && (!errors.As(err, &missing) || missing.Code != "ORDERNOTEXIST") {
 		return "", err

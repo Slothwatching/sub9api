@@ -30,7 +30,7 @@ func TestWeChatRenewalPaymentSettlement(t *testing.T) {
 	subSvc := service.NewSubscriptionService(groups, subs, nil, client, nil)
 	t.Cleanup(subSvc.Stop)
 	svc := service.NewPaymentService(client, nil, nil, nil, subSvc, nil, nil, groups, nil)
-	for _, final := range []string{"NOTENOUGH", "SUCCESS"} {
+	for _, final := range []string{"NOTENOUGH", "PAY_FAIL", "SUCCESS"} {
 		t.Run(final, func(t *testing.T) {
 			stamp := fmt.Sprint(time.Now().UnixNano())
 			user := client.User.Create().SetEmail("papay-" + stamp + "@example.test").SetPasswordHash("fixture").SaveX(ctx)
@@ -70,10 +70,15 @@ func TestWeChatRenewalPaymentSettlement(t *testing.T) {
 				return svc.HandleWeChatRenewalNotification(context.Background(), "payment", strings.NewReader(body.String()))
 			}
 			require.NoError(t, send(map[string]string{"result_code": "SUCCESS", "trade_state": "USERPAYING"}))
+			require.NoError(t, send(map[string]string{"result_code": "SUCCESS", "trade_state": "ACCEPT"}))
 			require.Equal(t, service.OrderStatusPending, client.PaymentOrder.GetX(ctx, cycle.ID).Status)
-			if final == "NOTENOUGH" {
+			if final == "NOTENOUGH" || final == "PAY_FAIL" {
 				for range 2 {
-					require.NoError(t, send(map[string]string{"result_code": "FAIL", "err_code": "NOTENOUGH"}))
+					if final == "PAY_FAIL" {
+						require.NoError(t, send(map[string]string{"result_code": "SUCCESS", "trade_state": "PAY_FAIL"}))
+					} else {
+						require.NoError(t, send(map[string]string{"result_code": "FAIL", "err_code": "NOTENOUGH"}))
+					}
 				}
 				_, err = subSvc.GetActiveSubscription(ctx, user.ID, group.ID)
 				require.ErrorIs(t, err, service.ErrSubscriptionNotFound)
