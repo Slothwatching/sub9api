@@ -123,13 +123,7 @@ func (s *PaymentService) AdminCancelOrder(ctx context.Context, orderID int64) (s
 
 func (s *PaymentService) cancelCore(ctx context.Context, o *dbent.PaymentOrder, fs, op, ad string) (string, error) {
 	if isWeChatRenewalOrder(o) {
-		if s.reconcileWeChatRenewalOrder(ctx, o) == checkPaidResultAlreadyPaid {
-			return checkPaidResultAlreadyPaid, nil
-		}
-		if fs == OrderStatusExpired {
-			return s.expireWeChatInitialCheckout(ctx, o)
-		}
-		return "", infraerrors.BadRequest("WECHAT_RENEWAL_MANAGED", "WeChat renewal orders are managed by their agreement")
+		return s.closeWeChatInitialCheckout(ctx, o, fs)
 	}
 	if o.PaymentTradeNo != "" || o.PaymentType != "" {
 		if s.checkPaid(ctx, o) == checkPaidResultAlreadyPaid {

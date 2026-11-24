@@ -121,6 +121,17 @@ func (w *WeChatRecurringClient) QueryDebit(ctx context.Context, orderNo string) 
 	return result, nil
 }
 
+// CloseUnpaidCheckout closes an abandoned first-payment order. Renewal debit
+// orders are reconciled independently and must never use this path.
+func (w *WeChatRecurringClient) CloseUnpaidCheckout(ctx context.Context, orderNo string) error {
+	_, err := w.call(ctx, "/pay/closeorder", map[string]string{"out_trade_no": orderNo})
+	var rejection *WeChatPAPError
+	if errors.As(err, &rejection) && rejection.Code == "ORDERCLOSED" {
+		return nil
+	}
+	return err
+}
+
 func (w *WeChatRecurringClient) QueryContract(ctx context.Context, templateID, contractCode string) (map[string]string, error) {
 	return w.call(ctx, "/papay/querycontract", map[string]string{"plan_id": templateID, "contract_code": contractCode, "version": "1.0"})
 }

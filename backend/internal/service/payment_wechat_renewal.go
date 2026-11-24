@@ -630,25 +630,61 @@ func (s *PaymentService) submitWeChatRenewalDebit(ctx context.Context, order *db
 	return s.wechatRenewal.client.RequestDebit(ctx, order.OutTradeNo, contractID, "Subscription renewal", s.wechatRenewal.origin+wechatRenewalWebhookBase+"payment", int64(math.Round(order.PayAmount*100)))
 }
 
-func (s *PaymentService) expireWeChatInitialCheckout(ctx context.Context, order *dbent.PaymentOrder) (string, error) {
+func (s *PaymentService) closeWeChatInitialCheckout(ctx context.Context, order *dbent.PaymentOrder, status string) (string, error) {
 	if s.wechatRenewal == nil {
-		return "", nil
+		return "", s.requireWeChatRenewal()
 	}
 	var initial bool
-	if err := wechatQueryRow(ctx, s.entClient, `SELECT EXISTS(SELECT 1 FROM wechat_renewal_contracts WHERE initial_order_id=$1)`, order.ID).scan(&initial); err != nil || !initial {
+	if err := wechatQueryRow(ctx, s.entClient, `SELECT EXISTS(SELECT 1 FROM wechat_renewal_contracts WHERE initial_order_id=$1)`, order.ID).scan(&initial); err != nil {
 		return "", err
+	}
+	if !initial {
+		if status == OrderStatusExpired {
+			return "", nil
+		}
+		return "", infraerrors.BadRequest("WECHAT_RENEWAL_MANAGED", "WeChat renewal debits are managed by their agreement")
 	}
 	fields, err := s.wechatRenewal.client.QueryDebit(ctx, order.OutTradeNo)
 	var missing *provider.WeChatPAPError
 	if err != nil && (!errors.As(err, &missing) || missing.Code != "ORDERNOTEXIST") {
 		return "", err
 	}
-	if err == nil && fields["trade_state"] != "CLOSED" && fields["trade_state"] != "PAYERROR" && fields["trade_state"] != "REVOKED" {
-		return "", nil
+	if err == nil {
+		switch fields["trade_state"] {
+		case "SUCCESS":
+			return checkPaidResultAlreadyPaid, s.applyWeChatRenewalPayment(ctx, fields)
+		case "CLOSED", "PAYERROR", "REVOKED":
+		case "NOTPAY":
+			if time.Since(order.CreatedAt) < 5*time.Minute {
+				return "", infraerrors.Conflict("WECHAT_CHECKOUT_CLOSE_TOO_SOON", "WeChat checkout can be closed five minutes after opening")
+			}
+			if err := s.wechatRenewal.client.CloseUnpaidCheckout(ctx, order.OutTradeNo); err != nil {
+				return "", err
+			}
+		default:
+			return "", infraerrors.Conflict("WECHAT_CHECKOUT_PROCESSING", "WeChat checkout is still processing")
+		}
 	}
-	count, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(order.ID), paymentorder.StatusEQ(OrderStatusPending)).SetStatus(OrderStatusExpired).Save(ctx)
+	tx, err := s.entClient.Tx(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = tx.Rollback() }()
+	count, err := tx.Client().PaymentOrder.Update().Where(paymentorder.IDEQ(order.ID), paymentorder.StatusEQ(OrderStatusPending)).SetStatus(status).Save(ctx)
 	if err != nil || count != 1 {
 		return "", err
+	}
+	var contractID sql.NullString
+	if err := wechatQueryRow(ctx, tx.Client(), `UPDATE wechat_renewal_contracts SET state='cancelled',updated_at=now() WHERE initial_order_id=$1 AND state IN ('pending','cancelled') RETURNING contract_id`, order.ID).scan(&contractID); err != nil {
+		return "", err
+	}
+	if err := tx.Commit(); err != nil {
+		return "", err
+	}
+	if contractID.Valid {
+		if err := s.wechatRenewal.client.CancelContract(ctx, contractID.String); err != nil {
+			return checkPaidResultCancelled, err
+		}
 	}
 	return checkPaidResultCancelled, nil
 }
