@@ -239,7 +239,9 @@ func (w *WeChatRecurringClient) verify(fields map[string]string, contractEvent b
 	if !hmac.Equal([]byte(fields["sign"]), []byte(papaySign(fields, w.key, algorithm))) {
 		return errors.New("invalid WeChat PAP signature")
 	}
-	if fields["mch_id"] != w.merchantID || (fields["appid"] != w.appID && !(contractEvent && fields["appid"] == "")) {
+	appID := fields["appid"]
+	appMatches := appID == w.appID || (contractEvent && appID == "")
+	if fields["mch_id"] != w.merchantID || !appMatches {
 		return errors.New("WeChat PAP merchant identity mismatch")
 	}
 	return nil
@@ -263,9 +265,9 @@ func papaySign(fields map[string]string, key, algorithm string) string {
 	sort.Strings(names)
 	var message strings.Builder
 	for _, name := range names {
-		message.WriteString(name + "=" + fields[name] + "&")
+		_, _ = message.WriteString(name + "=" + fields[name] + "&")
 	}
-	message.WriteString("key=" + key)
+	_, _ = message.WriteString("key=" + key)
 	if algorithm == "HMAC-SHA256" {
 		mac := hmac.New(sha256.New, []byte(key))
 		_, _ = io.WriteString(mac, message.String())
@@ -318,7 +320,7 @@ func decodePapayXML(body io.Reader) (map[string]string, error) {
 			value.Reset()
 		case xml.CharData:
 			if depth == 2 {
-				value.Write(item)
+				_, _ = value.Write(item)
 			} else if len(bytes.TrimSpace(item)) != 0 {
 				return nil, errors.New("unexpected WeChat PAP XML text")
 			}

@@ -61,7 +61,7 @@ func TestWeChatRenewalPaymentSettlement(t *testing.T) {
 				}
 				sort.Strings(names)
 				var query, body strings.Builder
-				body.WriteString("<xml>")
+				_, _ = body.WriteString("<xml>")
 				for _, name := range names {
 					_, _ = fmt.Fprintf(&query, "%s=%s&", name, fields[name])
 					_, _ = fmt.Fprintf(&body, "<%s>%s</%s>", name, fields[name], name)
