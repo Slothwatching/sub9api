@@ -314,6 +314,7 @@ export default {
     wechatRenewal: {
       title: '微信自动续费',
       consent: '每期扣款 {amount}（{period}）。微信会在扣款前通知你。续费失败后套餐立即停用。你可以取消自动续费。',
+      nextDebit: '预计下次扣款 {time}',
       agreement: '订单 #{id} · 套餐 #{plan}',
       account: '用户 #{id}',
       pending: '等待首次支付或签约', active: '已开启', cancelled: '已取消', failed: '扣款失败，自动续费已停止', processing: '扣款处理中',

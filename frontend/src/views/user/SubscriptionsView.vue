@@ -2,6 +2,7 @@
   <AppLayout>
     <div class="space-y-6">
       <BillingExplanation />
+      <WeChatRenewalList />
       <SubscriptionRenewalNotice :info="renewalInfo" />
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center py-12">
@@ -250,6 +251,7 @@
 </template>
 
 <script setup lang="ts">
+import WeChatRenewalList from '@/components/payment/WeChatRenewalList.vue'
 import SubscriptionRenewalNotice from '@/components/payment/SubscriptionRenewalNotice.vue'
 import { paymentAPI } from '@/api/payment'
 import type { SubscriptionRenewalInfo } from '@/types/payment'

@@ -9,7 +9,9 @@
           <div v-if="admin">{{ t('payment.wechatRenewal.account', { id: agreement.user_id }) }}</div>
           <div>{{ t(`payment.wechatRenewal.${agreement.state}`) }}</div>
           <div v-if="agreement.processing">{{ t('payment.wechatRenewal.processing') }}</div>
-          <time v-if="agreement.period_end" :datetime="agreement.period_end">{{ new Date(agreement.period_end).toLocaleString() }}</time>
+          <div v-if="agreement.next_debit_at && !agreement.processing">
+            {{ t('payment.wechatRenewal.nextDebit', { time: new Date(agreement.next_debit_at).toLocaleString() }) }}
+          </div>
           <div v-if="admin && agreement.failure_code" class="text-red-600">{{ agreement.failure_code }}</div>
         </div>
         <button v-if="agreement.state !== 'failed'" type="button" class="btn btn-secondary" :disabled="busy" @click="cancel(agreement.id)">

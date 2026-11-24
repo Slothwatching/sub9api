@@ -43,6 +43,12 @@ func TestWeChatRenewalPaymentSettlement(t *testing.T) {
 			require.NoError(t, err)
 			_, err = client.ExecContext(ctx, `INSERT INTO wechat_renewal_cycles (order_id,initial_order_id,period_end,state) VALUES ($1,$2,$3,'processing')`, cycle.ID, old.ID, expiry)
 			require.NoError(t, err)
+			agreements, err := svc.ListWeChatRenewals(ctx, user.ID, 1)
+			require.NoError(t, err)
+			require.Len(t, agreements, 1)
+			require.True(t, agreements[0].Processing)
+			require.NotNil(t, agreements[0].NextDebitAt)
+			require.WithinDuration(t, expiry.Add(-5*time.Minute), *agreements[0].NextDebitAt, time.Second)
 			// Prime the authorization path before any callback.
 			_, err = subSvc.GetActiveSubscription(ctx, user.ID, group.ID)
 			require.NoError(t, err)

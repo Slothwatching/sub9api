@@ -429,20 +429,27 @@ func (s *PaymentService) RunWeChatRenewals(ctx context.Context) error {
 	if err := s.recoverWeChatAgreement(ctx); err != nil {
 		slog.Warn("WeChat agreement reconciliation failed", "error", err)
 	}
-	if err := s.enqueueWeChatRenewal(ctx); err != nil {
-		return err
-	}
-	var id int64
-	err := wechatQueryRow(ctx, s.entClient, `UPDATE wechat_renewal_cycles SET next_check_at=now()+interval '1 minute'
+	var processingError error
+	for range 8 {
+		if err := ctx.Err(); err != nil {
+			return errors.Join(processingError, err)
+		}
+		if err := s.enqueueWeChatRenewal(ctx); err != nil {
+			return errors.Join(processingError, err)
+		}
+		var id int64
+		err := wechatQueryRow(ctx, s.entClient, `UPDATE wechat_renewal_cycles SET next_check_at=now()+interval '2 minutes'
   WHERE order_id=(SELECT order_id FROM wechat_renewal_cycles WHERE state IN ('queued','processing') AND next_check_at<=now()
-  ORDER BY next_check_at,order_id LIMIT 1 FOR UPDATE SKIP LOCKED) RETURNING order_id`).scan(&id)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil
+  ORDER BY state='queued' DESC,next_check_at,order_id LIMIT 1 FOR UPDATE SKIP LOCKED) RETURNING order_id`).scan(&id)
+		if errors.Is(err, sql.ErrNoRows) {
+			break
+		}
+		if err != nil {
+			return errors.Join(processingError, err)
+		}
+		processingError = errors.Join(processingError, s.processWeChatRenewalCycle(ctx, id))
 	}
-	if err != nil {
-		return err
-	}
-	return s.processWeChatRenewalCycle(ctx, id)
+	return processingError
 }
 
 func (s *PaymentService) enqueueWeChatRenewal(ctx context.Context) error {
@@ -571,6 +578,7 @@ type WeChatRenewalAgreement struct {
 	PlanID      int64      `json:"plan_id"`
 	State       string     `json:"state"`
 	PeriodEnd   *time.Time `json:"period_end,omitempty"`
+	NextDebitAt *time.Time `json:"next_debit_at,omitempty"`
 	FailureCode string     `json:"failure_code,omitempty"`
 	Processing  bool       `json:"processing"`
 }
@@ -583,8 +591,11 @@ func (s *PaymentService) ListWeChatRenewals(ctx context.Context, userID int64, p
 		page = 1000000
 	}
 	rows, err := s.entClient.QueryContext(ctx, `SELECT c.initial_order_id,c.user_id,o.plan_id,c.state,c.period_end,c.failure_code,
+ CASE WHEN c.state='active' AND u.status='active' AND u.expires_at>now() THEN u.expires_at-interval '5 minutes' END,
  EXISTS(SELECT 1 FROM wechat_renewal_cycles w WHERE w.initial_order_id=c.initial_order_id AND w.state IN ('queued','processing'))
- FROM wechat_renewal_contracts c JOIN payment_orders o ON o.id=c.initial_order_id WHERE $1=0 OR c.user_id=$1
+ FROM wechat_renewal_contracts c JOIN payment_orders o ON o.id=c.initial_order_id
+ LEFT JOIN user_subscriptions u ON u.user_id=c.user_id AND u.group_id=c.group_id AND u.deleted_at IS NULL
+ WHERE $1=0 OR c.user_id=$1
  ORDER BY c.initial_order_id DESC LIMIT 50 OFFSET $2`, userID, int64(page-1)*50)
 	if err != nil {
 		return nil, err
@@ -593,7 +604,7 @@ func (s *PaymentService) ListWeChatRenewals(ctx context.Context, userID int64, p
 	result := make([]WeChatRenewalAgreement, 0)
 	for rows.Next() {
 		var row WeChatRenewalAgreement
-		if err := rows.Scan(&row.ID, &row.UserID, &row.PlanID, &row.State, &row.PeriodEnd, &row.FailureCode, &row.Processing); err != nil {
+		if err := rows.Scan(&row.ID, &row.UserID, &row.PlanID, &row.State, &row.PeriodEnd, &row.FailureCode, &row.NextDebitAt, &row.Processing); err != nil {
 			return nil, err
 		}
 		result = append(result, row)

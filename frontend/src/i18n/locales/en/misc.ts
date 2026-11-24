@@ -290,6 +290,7 @@ export default {
     wechatRenewal: {
       title: 'WeChat automatic renewal',
       consent: 'Pay {amount} each period ({period}). WeChat will notify you before charging. A failed renewal suspends this subscription immediately. You can cancel automatic renewal.',
+      nextDebit: 'Estimated next debit {time}',
       agreement: 'Order #{id} · Plan #{plan}',
       account: 'User #{id}',
       pending: 'Awaiting first payment or agreement', active: 'Enabled', cancelled: 'Cancelled', failed: 'Payment failed. Automatic renewal stopped.', processing: 'Debit processing',

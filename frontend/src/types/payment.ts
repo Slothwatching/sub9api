@@ -85,6 +85,7 @@ export interface WeChatRenewalAgreement {
   plan_id: number
   state: 'pending' | 'active' | 'cancelled' | 'failed'
   period_end?: string
+  next_debit_at?: string
   failure_code?: string
   processing: boolean
 }
