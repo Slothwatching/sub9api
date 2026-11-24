@@ -706,7 +706,7 @@ func (s *PaymentService) submitWeChatRenewalDebit(ctx context.Context, order *db
 	if state != "active" {
 		return nil
 	}
-	return s.wechatRenewal.client.RequestDebit(ctx, order.OutTradeNo, contractID, "Subscription renewal", s.wechatRenewal.origin+wechatRenewalWebhookBase+"payment", int64(math.Round(order.PayAmount*100)))
+	return s.wechatRenewal.client.RequestDebit(ctx, order.OutTradeNo, contractID, "Subscription renewal", s.wechatRenewal.origin+wechatRenewalWebhookBase+"payment", order.ClientIP, int64(math.Round(order.PayAmount*100)))
 }
 
 func (s *PaymentService) closeWeChatInitialCheckout(ctx context.Context, order *dbent.PaymentOrder, status string) (string, error) {

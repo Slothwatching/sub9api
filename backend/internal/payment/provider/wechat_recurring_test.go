@@ -97,6 +97,11 @@ func TestWeChatRecurringQueryAndCancelEndpoints(t *testing.T) {
 		}
 		var result map[string]string
 		switch r.URL.Path {
+		case "/pay/pappayapply":
+			if fields["contract_id"] != "c-1" || fields["total_fee"] != "1200" || fields["trade_type"] != "PAP" || fields["fee_type"] != "CNY" || fields["spbill_create_ip"] != "127.0.0.1" {
+				t.Errorf("invalid pappayapply fields: %v", fields)
+			}
+			result = map[string]string{"return_code": "SUCCESS", "result_code": "SUCCESS", "appid": "app", "mch_id": "merchant"}
 		case "/pay/orderquery":
 			result = map[string]string{"return_code": "SUCCESS", "result_code": "SUCCESS", "appid": "app", "mch_id": "merchant", "out_trade_no": fields["out_trade_no"], "trade_state": "NOTPAY"}
 		case "/pay/paporderquery":
@@ -121,6 +126,9 @@ func TestWeChatRecurringQueryAndCancelEndpoints(t *testing.T) {
 	defer server.Close()
 	client.endpoint = server.URL
 
+	if err := client.RequestDebit(t.Context(), "cycle-1", "c-1", "Subscription renewal", "https://checkout.example.test/cb", "", 1200); err != nil {
+		t.Fatalf("RequestDebit = %v, want nil", err)
+	}
 	checkoutRes, err := client.QueryCheckout(t.Context(), "init-1")
 	if err != nil || checkoutRes["trade_state"] != "NOTPAY" {
 		t.Fatalf("QueryCheckout = %v, %v", checkoutRes, err)
@@ -137,7 +145,7 @@ func TestWeChatRecurringQueryAndCancelEndpoints(t *testing.T) {
 	if !errors.As(err, &papErr) || papErr.Code != "SYSTEMERROR" {
 		t.Fatalf("CancelContract(SYSTEMERROR) = %v, want SYSTEMERROR", err)
 	}
-	wantPaths := []string{"/pay/orderquery", "/pay/paporderquery", "/papay/deletecontract", "/papay/deletecontract"}
+	wantPaths := []string{"/pay/pappayapply", "/pay/orderquery", "/pay/paporderquery", "/papay/deletecontract", "/papay/deletecontract"}
 	if strings.Join(paths, ",") != strings.Join(wantPaths, ",") {
 		t.Fatalf("paths = %v, want %v", paths, wantPaths)
 	}

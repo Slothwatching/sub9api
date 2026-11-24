@@ -122,13 +122,14 @@ func (w *WeChatRecurringClient) Checkout(ctx context.Context, in WeChatContractC
 			Package: args["package"], SignType: "MD5", PaySign: papaySign(args, w.key, "MD5")}}, nil
 }
 
-func (w *WeChatRecurringClient) RequestDebit(ctx context.Context, orderNo, contractID, body, notifyURL string, amountFen int64) error {
+func (w *WeChatRecurringClient) RequestDebit(ctx context.Context, orderNo, contractID, body, notifyURL, clientIP string, amountFen int64) error {
 	if orderNo == "" || contractID == "" || amountFen <= 0 {
 		return errors.New("invalid WeChat PAP debit")
 	}
 	_, err := w.call(ctx, "/pay/pappayapply", map[string]string{
 		"out_trade_no": orderNo, "contract_id": contractID, "body": body,
-		"notify_url": notifyURL, "total_fee": strconv.FormatInt(amountFen, 10), "trade_type": "PAP", "fee_type": "CNY",
+		"notify_url": notifyURL, "total_fee": strconv.FormatInt(amountFen, 10),
+		"spbill_create_ip": normalizePAPClientIP(clientIP), "trade_type": "PAP", "fee_type": "CNY",
 	})
 	return err
 }
