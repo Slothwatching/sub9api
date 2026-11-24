@@ -505,3 +505,26 @@ func (h *PaymentHandler) UpdateConfig(c *gin.Context) {
 	}
 	response.Success(c, gin.H{"message": "updated"})
 }
+
+func (h *PaymentHandler) ListWeChatRenewals(c *gin.Context) {
+	page, _ := strconv.Atoi(c.Query("page"))
+	rows, err := h.paymentService.ListWeChatRenewals(c.Request.Context(), 0, page)
+	if err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, rows)
+}
+
+func (h *PaymentHandler) CancelWeChatRenewal(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil || id <= 0 {
+		response.BadRequest(c, "Invalid agreement ID")
+		return
+	}
+	if err := h.paymentService.CancelWeChatRenewal(c.Request.Context(), id, 0); err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, nil)
+}

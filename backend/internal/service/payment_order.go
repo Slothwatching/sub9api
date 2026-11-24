@@ -106,6 +106,9 @@ func (s *PaymentService) CreateOrder(ctx context.Context, req CreateOrderRequest
 	if err := validateSelectedCreateOrderAmountCurrency(payAmountStr, sel); err != nil {
 		return nil, err
 	}
+	if err := s.validateWeChatRenewalCheckout(req, cfg, sel); err != nil {
+		return nil, err
+	}
 	oauthResp, err := s.maybeBuildWeChatOAuthRequiredResponseForSelection(ctx, req, limitAmount, payAmount, feeRate, sel)
 	if err != nil {
 		return nil, err
@@ -189,6 +192,9 @@ func (s *PaymentService) createOrderInTx(ctx context.Context, req CreateOrderReq
 		return nil, err
 	}
 	providerSnapshot := buildPaymentOrderProviderSnapshot(sel, req)
+	if req.WeChatAutoRenew {
+		providerSnapshot[wechatRenewalSnapshotKey] = true
+	}
 	providerSnapshot, err = s.attachSubscriptionRenewal(ctx, tx, req, cfg, providerSnapshot)
 	if err != nil {
 		return nil, err
@@ -240,6 +246,9 @@ func (s *PaymentService) createOrderInTx(ctx context.Context, req CreateOrderReq
 	order, err = tx.PaymentOrder.UpdateOneID(order.ID).SetRechargeCode(code).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("set recharge code: %w", err)
+	}
+	if err := s.createWeChatRenewalContract(ctx, tx, order, req); err != nil {
+		return nil, err
 	}
 	if err := tx.Commit(); err != nil {
 		return nil, fmt.Errorf("commit order transaction: %w", err)
@@ -471,7 +480,12 @@ func (s *PaymentService) invokeProvider(ctx context.Context, order *dbent.Paymen
 	}, sel, outTradeNo, payAmountStr, subject)
 	providerReq.AlipayMobilePrecreate = shouldUseAlipayMobilePrecreate(req, cfg, sel)
 	finishProviderCall := servertiming.ObserveDependency(ctx, "payment")
-	pr, err := prov.CreatePayment(ctx, providerReq)
+	var pr *payment.CreatePaymentResponse
+	if req.WeChatAutoRenew {
+		pr, err = s.startWeChatRenewalCheckout(ctx, order, req, subject, providerReturnURL)
+	} else {
+		pr, err = prov.CreatePayment(ctx, providerReq)
+	}
 	finishProviderCall()
 	if err != nil {
 		slog.Error("[PaymentService] CreatePayment failed", "provider", sel.ProviderKey, "instance", sel.InstanceID, "error", err)
@@ -799,6 +813,13 @@ func buildWeChatPaymentOAuthStartURL(req CreateOrderRequest, scope string) (stri
 		q.Set("scope", scope)
 	}
 	if redirectTo := paymentRedirectPathFromURL(req.SrcURL); redirectTo != "" {
+		if req.WeChatAutoRenew {
+			parsed, _ := url.Parse(redirectTo)
+			params := parsed.Query()
+			params.Set("wechat_auto_renew", "1")
+			parsed.RawQuery = params.Encode()
+			redirectTo = parsed.String()
+		}
 		q.Set("redirect", redirectTo)
 	}
 	u.RawQuery = q.Encode()

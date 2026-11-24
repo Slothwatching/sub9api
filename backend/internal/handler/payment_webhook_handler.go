@@ -225,3 +225,12 @@ func writeSuccessResponse(c *gin.Context, providerKey string) {
 		c.String(http.StatusOK, "success")
 	}
 }
+
+func (h *PaymentWebhookHandler) WeChatRenewalNotify(c *gin.Context) {
+	if err := h.paymentService.HandleWeChatRenewalNotification(c.Request.Context(), c.Param("kind"), c.Request.Body); err != nil {
+		slog.Warn("WeChat renewal notification rejected", "kind", c.Param("kind"), "error", err)
+		c.Data(http.StatusOK, "application/xml", []byte("<xml><return_code>FAIL</return_code><return_msg>Retry</return_msg></xml>"))
+		return
+	}
+	c.Data(http.StatusOK, "application/xml", []byte("<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>"))
+}

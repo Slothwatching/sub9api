@@ -44,6 +44,7 @@ var (
 
 // SubscriptionService 订阅服务
 type SubscriptionService struct {
+	wechatRenewalChecks bool
 	groupRepo           GroupRepository
 	userSubRepo         UserSubscriptionRepository
 	billingCacheService *BillingCacheService
@@ -66,6 +67,7 @@ func NewSubscriptionService(groupRepo GroupRepository, userSubRepo UserSubscript
 		userSubRepo:         userSubRepo,
 		billingCacheService: billingCacheService,
 		entClient:           entClient,
+		wechatRenewalChecks: loadWeChatRenewalConfig() != nil,
 		now:                 time.Now,
 	}
 	svc.initSubCache(cfg)
@@ -743,6 +745,17 @@ func (s *SubscriptionService) GetByID(ctx context.Context, id int64) (*UserSubsc
 // 使用 L1 缓存 + singleflight 加速中间件热路径。
 // 返回缓存对象的浅拷贝，调用方可安全修改字段而不会污染缓存或触发 data race。
 func (s *SubscriptionService) GetActiveSubscription(ctx context.Context, userID, groupID int64) (*UserSubscription, error) {
+	// Read the current entitlement across replicas for subscriptions with PAP.
+	if s.entClient != nil && s.wechatRenewalChecks {
+		var tracked bool
+		err := wechatQueryRow(ctx, s.entClient, `SELECT EXISTS(SELECT 1 FROM wechat_renewal_contracts WHERE user_id=$1 AND group_id=$2 AND state IN ('active','failed'))`, userID, groupID).scan(&tracked)
+		if err != nil {
+			return nil, err
+		}
+		if tracked {
+			return s.userSubRepo.GetActiveByUserIDAndGroupID(ctx, userID, groupID)
+		}
+	}
 	key := subCacheKey(userID, groupID)
 
 	// L1 缓存命中：返回浅拷贝

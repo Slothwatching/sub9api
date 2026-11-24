@@ -102,6 +102,11 @@ func (s *PaymentOrderExpiryService) runOnce() {
 		slog.Error("subscription renewal activation failed", "error", err)
 	}
 	activationCancel()
+	renewalCtx, renewalCancel := context.WithTimeout(context.Background(), expiryCheckTimeout)
+	if err := s.paymentSvc.RunWeChatRenewals(renewalCtx); err != nil {
+		slog.Warn("WeChat renewal processing failed", "error", err)
+	}
+	renewalCancel()
 	reconcileCtx, cancel := context.WithTimeout(context.Background(), expiryCheckTimeout)
 	recovered, err := s.paymentSvc.ReconcilePendingPaymentOrders(reconcileCtx)
 	cancel()

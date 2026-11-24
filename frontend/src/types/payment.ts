@@ -79,7 +79,18 @@ export interface SubscriptionRenewalInfo {
   scheduled: {order_id: number; plan_id: number; activation_at: string}[]
 }
 
+export interface WeChatRenewalAgreement {
+  id: number
+  user_id: number
+  plan_id: number
+  state: 'pending' | 'active' | 'cancelled' | 'failed'
+  period_end?: string
+  failure_code?: string
+  processing: boolean
+}
+
 export interface CheckoutInfoResponse {
+  wechat_renewal_plan_ids?: number[]
   subscription_renewal_error?: string
   subscription_renewal?: SubscriptionRenewalInfo
   methods: Record<string, MethodLimit>
@@ -196,6 +207,7 @@ export interface ProviderInstance {
 // ==================== Request / Response ====================
 
 export interface CreateOrderRequest {
+  wechat_auto_renew?: boolean
   amount: number
   payment_type: string
   order_type: string

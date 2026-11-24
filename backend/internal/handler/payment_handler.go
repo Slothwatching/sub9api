@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -166,6 +167,7 @@ func (h *PaymentHandler) GetCheckoutInfo(c *gin.Context) {
 	}
 	response.Success(c, checkoutInfoResponse{
 		SubscriptionRenewal:           renewal,
+		WeChatRenewalPlanIDs:          h.paymentService.WeChatRenewalPlanIDs(),
 		SubscriptionRenewalError:      renewalError,
 		Methods:                       limitsResp.Methods,
 		GlobalMin:                     limitsResp.GlobalMin,
@@ -187,6 +189,7 @@ func (h *PaymentHandler) GetCheckoutInfo(c *gin.Context) {
 }
 
 type checkoutInfoResponse struct {
+	WeChatRenewalPlanIDs          []int64                          `json:"wechat_renewal_plan_ids,omitempty"`
 	SubscriptionRenewalError      string                           `json:"subscription_renewal_error,omitempty"`
 	SubscriptionRenewal           *service.SubscriptionRenewalInfo `json:"subscription_renewal,omitempty"`
 	Methods                       map[string]service.MethodLimits  `json:"methods"`
@@ -264,6 +267,7 @@ func (h *PaymentHandler) GetLimits(c *gin.Context) {
 
 // CreateOrderRequest is the request body for creating a payment order.
 type CreateOrderRequest struct {
+	WeChatAutoRenew   bool    `json:"wechat_auto_renew"`
 	Amount            float64 `json:"amount"`
 	PaymentType       string  `json:"payment_type" binding:"required"`
 	OpenID            string  `json:"openid"`
@@ -297,18 +301,30 @@ func (h *PaymentHandler) CreateOrder(c *gin.Context) {
 			response.ErrorFrom(c, err)
 			return
 		}
+		if req.WeChatAutoRenew {
+			redirect, err := url.Parse(claims.RedirectTo)
+			if err != nil || redirect.Query().Get("wechat_auto_renew") != "1" {
+				response.BadRequest(c, "Invalid WeChat automatic renewal resume")
+				return
+			}
+		}
 		if err := applyWeChatPaymentResumeClaims(&req, claims); err != nil {
 			response.ErrorFrom(c, err)
 			return
 		}
 	}
 
+	if req.WeChatAutoRenew && strings.TrimSpace(req.OpenID) != "" && strings.TrimSpace(req.WechatResumeToken) == "" {
+		response.BadRequest(c, "WeChat automatic renewal requires a verified WeChat account")
+		return
+	}
 	mobile := isMobile(c)
 	if req.IsMobile != nil {
 		mobile = *req.IsMobile
 	}
 	result, err := h.paymentService.CreateOrder(c.Request.Context(), service.CreateOrderRequest{
 		UserID:          subject.UserID,
+		WeChatAutoRenew: req.WeChatAutoRenew,
 		Amount:          req.Amount,
 		PaymentType:     req.PaymentType,
 		OpenID:          req.OpenID,
@@ -728,4 +744,35 @@ func sanitizePaymentOrderForResponse(order *dbent.PaymentOrder) *PaymentOrderRes
 
 func isWeChatBrowser(c *gin.Context) bool {
 	return strings.Contains(strings.ToLower(c.GetHeader("User-Agent")), "micromessenger")
+}
+
+func (h *PaymentHandler) ListWeChatRenewals(c *gin.Context) {
+	subject, ok := requireAuth(c)
+	if !ok {
+		return
+	}
+	page, _ := strconv.Atoi(c.Query("page"))
+	rows, err := h.paymentService.ListWeChatRenewals(c.Request.Context(), subject.UserID, page)
+	if err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, rows)
+}
+
+func (h *PaymentHandler) CancelWeChatRenewal(c *gin.Context) {
+	subject, ok := requireAuth(c)
+	if !ok {
+		return
+	}
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil || id <= 0 {
+		response.BadRequest(c, "Invalid agreement ID")
+		return
+	}
+	if err := h.paymentService.CancelWeChatRenewal(c.Request.Context(), id, subject.UserID); err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	response.Success(c, nil)
 }

@@ -44,6 +44,8 @@ func RegisterPaymentRoutes(
 	authenticated.Use(panelRateLimiter.Global())
 	{
 		authenticated.GET("/config", paymentHandler.GetPaymentConfig)
+		authenticated.GET("/wechat-renewals", paymentHandler.ListWeChatRenewals)
+		authenticated.POST("/wechat-renewals/:id/cancel", paymentHandler.CancelWeChatRenewal)
 		authenticated.GET("/checkout-info", paymentHandler.GetCheckoutInfo)
 		authenticated.GET("/plans", paymentHandler.GetPlans)
 		authenticated.GET("/limits", paymentHandler.GetLimits)
@@ -84,6 +86,7 @@ func RegisterPaymentRoutes(
 		webhook.POST("/easypay", webhookHandler.EasyPayNotify)
 		webhook.POST("/alipay", webhookHandler.AlipayNotify)
 		webhook.POST("/wxpay", webhookHandler.WxpayNotify)
+		webhook.POST("/wechat-renewal/:kind", webhookHandler.WeChatRenewalNotify)
 		webhook.POST("/stripe", webhookHandler.StripeWebhook)
 		webhook.POST("/airwallex", webhookHandler.AirwallexWebhook)
 	}
@@ -97,6 +100,8 @@ func RegisterPaymentRoutes(
 	{
 		// Dashboard
 		adminGroup.GET("/dashboard", adminPaymentHandler.GetDashboard)
+		adminGroup.GET("/wechat-renewals", adminPaymentHandler.ListWeChatRenewals)
+		adminGroup.POST("/wechat-renewals/:id/cancel", adminPaymentHandler.CancelWeChatRenewal)
 
 		// Config
 		adminGroup.GET("/config", adminPaymentHandler.GetConfig)

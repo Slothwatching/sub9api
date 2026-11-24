@@ -287,6 +287,16 @@ export default {
 
   // Payment System
   payment: {
+    wechatRenewal: {
+      title: 'WeChat automatic renewal',
+      consent: 'Pay {amount} each period ({period}). WeChat will notify you before charging. A failed renewal suspends this subscription immediately. You can cancel automatic renewal.',
+      agreement: 'Order #{id} · Plan #{plan}',
+      account: 'User #{id}',
+      pending: 'Awaiting first payment or agreement', active: 'Enabled', cancelled: 'Cancelled', failed: 'Payment failed. Automatic renewal stopped.', processing: 'Debit processing',
+      cancel: 'Cancel automatic renewal', askCancel: 'Cancel automatic renewal? You can still use the time you paid for.',
+      cancelError: 'WeChat could not confirm cancellation. Try again or cancel in your WeChat payment settings.',
+      next: 'Next page', previous: 'Previous page',
+    },
     title: 'Recharge / Subscription',
     amountLabel: 'Amount',
     paymentAmount: 'Payment Amount',

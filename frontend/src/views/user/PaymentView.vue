@@ -183,6 +183,13 @@
                   @select="selectedMethod = $event"
                 />
               </div>
+              <label v-if="canEnableWechatRenewal" class="card flex items-start gap-3 p-4 text-sm">
+                <input v-model="wechatAutoRenew" type="checkbox" class="mt-1" />
+                <span>
+                  <strong>{{ t('payment.wechatRenewal.title') }}</strong><br />
+                  {{ t('payment.wechatRenewal.consent', { amount: formatSelectedPaymentAmount(subTotalAmount), period: planValiditySuffix }) }}
+                </span>
+              </label>
               <div v-if="feeRate > 0 && selectedPlan.price > 0" class="card p-6">
                 <div class="space-y-2 text-sm">
                   <div class="flex justify-between">
@@ -244,6 +251,7 @@
             </template>
           </template>
         </template>
+        <WeChatRenewalList v-if="paymentPhase === 'select' && checkout.wechat_renewal_plan_ids?.length" />
         <div v-if="(checkout.help_text || checkout.help_image_url) && paymentPhase === 'select' && (!selectedPlan || checkout.subscription_renewal_error)" class="card p-4">
           <div class="flex flex-col items-center gap-3">
             <img v-if="checkout.help_image_url" :src="checkout.help_image_url" alt=""
@@ -283,6 +291,7 @@
 </template>
 
 <script setup lang="ts">
+import WeChatRenewalList from '@/components/payment/WeChatRenewalList.vue'
 import BillingPolicyNotice from '@/components/payment/BillingPolicyNotice.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -365,6 +374,7 @@ const previewImage = ref('')
 const paymentPhase = ref<'select' | 'paying'>('select')
 
 interface CreateOrderOptions {
+  wechatAutoRenew?: boolean
   openid?: string
   wechatResumeToken?: string
   paymentType?: string
@@ -773,6 +783,12 @@ const subMethodOptions = computed<PaymentMethodOption[]>(() => {
   })
 })
 
+const wechatAutoRenew = ref(false)
+const canEnableWechatRenewal = computed(() => !!selectedPlan.value && checkout.value.balance_disabled &&
+  checkout.value.wechat_renewal_plan_ids?.includes(selectedPlan.value.id) &&
+  normalizeVisibleMethod(selectedMethod.value) === 'wxpay' && isMobileDevice())
+watch([selectedPlan, selectedMethod], () => { wechatAutoRenew.value = false })
+
 const canSubmitSubscription = computed(() =>
   selectedPlan.value !== null
     && !checkout.value.subscription_renewal_error
@@ -849,7 +865,7 @@ async function handleSubmitRecharge() {
 
 async function confirmSubscribe() {
   if (!canSubmitSubscription.value || !selectedPlan.value || submitting.value) return
-  await createOrder(selectedPlan.value.price, 'subscription', selectedPlan.value.id)
+  await createOrder(selectedPlan.value.price, 'subscription', selectedPlan.value.id, { wechatAutoRenew: !!canEnableWechatRenewal.value && wechatAutoRenew.value })
 }
 
 async function createOrder(orderAmount: number, orderType: OrderType, planId?: number, options: CreateOrderOptions = {}) {
@@ -869,6 +885,7 @@ async function createOrder(orderAmount: number, orderType: OrderType, planId?: n
       forceQRCode: !!(checkout.value.alipay_force_qrcode && normalizeVisibleMethod(requestType) === 'alipay'),
       mobilePrecreateDeepLink: checkout.value.alipay_mobile_precreate_deep_link === true,
     })
+    if (options.wechatAutoRenew) payload.wechat_auto_renew = true
     if (options.openid) {
       payload.openid = options.openid
     }
@@ -968,7 +985,7 @@ async function createOrder(orderAmount: number, orderType: OrderType, planId?: n
               orderType,
               planId,
               paymentType: visibleMethod,
-              attempted: options.mobileQrFallbackAttempted === true,
+              attempted: options.wechatAutoRenew === true || options.mobileQrFallbackAttempted === true,
             },
           )
           if (!fallbackApplied) {
@@ -986,7 +1003,7 @@ async function createOrder(orderAmount: number, orderType: OrderType, planId?: n
           orderType,
           planId,
           paymentType: visibleMethod,
-          attempted: options.mobileQrFallbackAttempted === true,
+          attempted: options.wechatAutoRenew === true || options.mobileQrFallbackAttempted === true,
         })
         if (!fallbackApplied) {
           throw err
@@ -1015,7 +1032,7 @@ async function createOrder(orderAmount: number, orderType: OrderType, planId?: n
       orderType,
       planId,
       paymentType: requestType,
-      attempted: options.mobileQrFallbackAttempted === true,
+      attempted: options.wechatAutoRenew === true || options.mobileQrFallbackAttempted === true,
     })) {
       return
     } else {
@@ -1162,11 +1179,15 @@ async function resumeWechatPaymentFromQuery() {
     selectedPlan.value = checkout.value.plans.find(plan => plan.id === resume.planId) ?? null
   }
 
-  await router.replace({ path: route.path, query: stripWechatResumeQuery(route.query) })
+  const wechatAutoRenew = route.query.wechat_auto_renew === '1'
+  const query = stripWechatResumeQuery(route.query)
+  delete query.wechat_auto_renew
+  await router.replace({ path: route.path, query })
 
   if (resume.wechatResumeToken) {
     await createOrder(0, resume.orderType, resume.planId, {
       wechatResumeToken: resume.wechatResumeToken,
+      wechatAutoRenew,
       paymentType: resume.paymentType,
       isResume: true,
     })
@@ -1176,6 +1197,7 @@ async function resumeWechatPaymentFromQuery() {
   if (resume.orderAmount > 0 && resume.openid) {
     await createOrder(resume.orderAmount, resume.orderType, resume.planId, {
       openid: resume.openid,
+      wechatAutoRenew,
       paymentType: resume.paymentType,
       isResume: true,
     })

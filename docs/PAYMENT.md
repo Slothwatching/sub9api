@@ -285,3 +285,30 @@ If you previously used [Sub2ApiPay](https://github.com/touwaeriol/sub2apipay) as
 4. Decommission the Sub2ApiPay service
 
 > **Note**: Historical order data from Sub2ApiPay will not be automatically migrated. Keep Sub2ApiPay running for a while to access historical records.
+
+## WeChat automatic renewal (direct merchant)
+
+Automatic renewal is opt-in at mobile checkout for selected subscription plans. The first order uses WeChat Pay v2 payment-with-contract. External mobile browsers use MWEB and the WeChat browser uses the existing JSAPI OAuth flow. The first confirmed payment grants access. Renewal becomes active when WeChat's agreement and payment identify the same payer.
+
+### Merchant and deployment configuration
+
+Enable subscription sales and disable balance top-ups in the payment settings. Set the visible WeChat channel to direct WeChat Pay and configure its H5 and JSAPI capabilities and authorized domains. The merchant needs approved payment-with-contract and periodic debit capabilities for each configured WeChat agreement template. Use the template mode in which WeChat sends the notice upon debit submission and attempts the debit approximately 24 hours later. This integration uses that notice mode.
+
+Pass these environment variables to the application process on every replica. On Docker Compose deployments, pass them through to the application container using the deployment's Compose override.
+
+| Variable | Value |
+|---|---|
+| `WECHAT_RENEWAL_ORIGIN` | Public HTTPS origin used to construct notifications, with no path or query string |
+| `WECHAT_RENEWAL_APP_ID` | AppID matching the selected direct WeChat payment instance and the WeChat OAuth AppID |
+| `WECHAT_RENEWAL_MERCHANT_ID` | Matching direct merchant number |
+| `WECHAT_RENEWAL_API_V2_KEY` | 32-byte WeChat Pay APIv2 signing key, supplied through the deployment secret store |
+| `WECHAT_RENEWAL_PLAN_TEMPLATES` | JSON object mapping local subscription-plan IDs to approved WeChat template IDs, for example `{"17":"12345"}` |
+
+Set the merchant template's termination callback to `/api/v1/payment/webhook/wechat-renewal/contract` on the configured public origin. The same endpoint receives agreement confirmation. `/api/v1/payment/webhook/wechat-renewal/payment` receives payment notifications. The local plan's period and displayed payment amount must match the merchant template. The first order fixes the renewal price and term for that agreement. Changes to those terms require a new agreement.
+
+### Lifecycle
+
+- The scheduler opens one renewal order per paid period and queries ambiguous outcomes using the same merchant order number. Confirmed renewal extends the subscription once. A final debit failure ends the entitlement tied to that paid period. API requests already in flight can finish.
+- Cancelling renewal preserves access for the current paid period. A debit submitted before cancellation can still settle. The subscription will reflect any settled payment.
+- Users can manage renewal from the purchase page. Administrators can view agreement status, pending payments and failure codes on the payment dashboard and cancel future renewal.
+- To pause submission, disable online payment or re-enable balance top-ups in payment settings. Leave merchant credentials and callback routes configured while outstanding payments settle. Verify both browser flows, agreement callbacks, one successful renewal, one final decline and both cancellation paths on a controlled merchant account before making the option available to customers.
