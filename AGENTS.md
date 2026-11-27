@@ -10,6 +10,12 @@ D76 (2026-10-21) supersedes D74's mandatory peer/two-maintainer approval require
 
 Public PRs reference only a decision ID and a safe technical summary, never private log contents or credentials. External contributors without ops access explain their intent in the PR; an internal maintainer records it privately before accepting the change. If an internal maintainer lacks ops access, report the missing record rather than inventing a public replacement. This is a documented collaboration workflow, not automatic cross-repository synchronization.
 
+### Orca companion repository (D157)
+
+- Register the existing `sub9api-ops` checkout as a separate Git project in Orca, not as a submodule or nested checkout. Orca registration is a local shortcut, not a sync trigger or permission grant.
+- From an Orca worktree, resolve the sibling ops checkout from the primary product checkout, not from the generated worktree directory. If needed, look up `sub9api-ops` in Orca's repo list or use the documented local compatibility path. Before writing, verify the ops Git root, `origin` (`Slothwatching/sub9api-ops`), and canonical `decisions/sub9api-development-log.md`. If the checkout cannot be verified, stop the ops write and report the blocker; never create a substitute log.
+- Run Git commands for ops explicitly with `git -C "$ops_root" …`. Check its branch and working tree, sync with `origin/main` by fast-forward only, and commit/push only the authorized ops files. If dirty, divergent, or inaccessible, report the blocker instead of resetting, force-pushing, or including unrelated changes. Product branches and private records remain separate.
+
 `Slothwatching/sub9api` is the product source repository. `Slothwatching/sub9api-ops` is its private, canonical decision and operations record, not a second product. Treat them as one project with two complementary repositories: product changes must reference current decisions in ops, and ops records must identify the corresponding product branch, PR, commit, release, or explicitly state that no product code changed. See `docs/DECISIONS.md` for the cross-repository workflow.
 
 The canonical private records repository is `Slothwatching/sub9api-ops`, checked out at `/Users/victorwu/Developer/sub9api-ops`. Its `decisions/sub9api-development-log.md` is the source of truth; the existing external log path is a compatibility symlink. Update and commit/push authorized decision/operations records in that private repository; keep secrets out.
